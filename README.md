@@ -1,29 +1,56 @@
 # Econometrics Study Guide
 
 An interactive, plain-language study guide for an introductory Econometrics course.
-Written for quick, low-overwhelm studying: one lecture per tab, the three key ideas first,
-formulas translated into words, worked examples and self-check questions.
+It is written for low-overwhelm studying: one lecture per tab, the three key ideas first,
+formulas translated into words, and a learning path in every lecture.
 
 **Open it:** https://sweetheartapi.github.io/learn_econometrics/
 
 ## What's inside
 
-| Tab | Topic |
-| --- | --- |
-| Basics | Plain definitions of the simple stuff (mean, variance, SE, p-value, log, Greek letters), with search |
-| 1 | Regression basics |
-| 2 | Maximum likelihood |
-| 3 | Bootstrap (with a live resampling demo) |
-| 4 | Intro to causality |
-| 5 | Instrumental variables |
-| 6 | Regression discontinuity |
-| 7 | Difference-in-differences |
-| Cheat sheet | Methods side by side and a "which method?" guide |
+| Tab | Topic | Interactive demo |
+| --- | --- | --- |
+| Basics | Plain definitions (mean, variance, SE, p-value, log, Greek letters), with search | |
+| 1 | Regression basics | Regression playground: noise, heteroskedasticity, omitted variable, outlier |
+| 2 | Maximum likelihood | Likelihood explorer: score, curvature, standard error |
+| 3 | Bootstrap | Resampling demo with sample-size choice and a coverage check |
+| 4 | Intro to causality | Coin flip vs self-selection: ATT + selection bias |
+| 5 | Instrumental variables | 500 simulated studies: weak and invalid instruments |
+| 6 | Regression discontinuity | Bandwidth simulator with placebo cut-offs |
+| 7 | Difference-in-differences | Parallel trends and what happens when they fail |
+| Cheat sheet | Methods side by side, how they connect, "choose the design" scenarios | |
+| Exam mode | Mixed, optionally timed questions with results by topic | |
 
-Features: a "Just the gist" mode that hides the deeper sections, progress ticks saved in the
-browser, light and dark themes, and a phone-friendly layout.
+Every lecture follows the same five steps: **Understand → See it → Apply → Challenge → Review**.
+It also has learning objectives marked Foundational / Intermediate / Advanced, a "method in five
+questions" card (problem, solution, assumptions, failures, checks), Simple / Intuitive / Technical
+explanations of tricky concepts, scored practice with feedback on each wrong answer, and an optional
+"Try it in R" lab with the exact output to expect.
+
+Progress has three stages per lecture: **studied** (ticked), **practised** (every practice question
+answered) and **mastered** (at least 80 % right in exam mode). It is saved in the browser only.
+
+Other features: whole-guide search (press `/`), "Just the gist" mode, light and dark themes,
+a phone-friendly layout, keyboard navigation and a printable cheat sheet.
+
+## Files
+
+- `index.html`: the whole site (no build step).
+- `r/`: one R script per lab (simulated data with fixed seeds, so the output matches the guide).
+- `data/`: the simulated data from each lab as CSV, for use in other software.
+- `Econometrics-Learnbook.pdf`: the printable learnbook (second edition).
+- `tests/check.cjs`: automated checks, run on every push by GitHub Actions
+  (`.github/workflows/check.yml`).
+
+## Checks
+
+`npm install && npx playwright install chromium && npm test` opens the site in a headless browser and
+checks that every page loads without errors, that each practice question accepts its own answer, that the
+numbers in worked examples recompute, that the demos, exam mode and search work, that nothing scrolls
+sideways on a phone, and that axe-core finds no serious accessibility problems in light or dark mode.
 
 ## Sources
 
 Based on the course lecture slides, *Mastering 'Metrics* (Angrist & Pischke) and
-*Linear Models with R* (Faraway). The whole site is a single `index.html` file with no build step.
+*Linear Models with R* (Faraway). The R labs need `ggplot2`, `sandwich`, `lmtest`, `AER`, `boot`,
+`rdrobust`, `rddensity` and `dplyr`.

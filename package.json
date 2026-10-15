@@ -1,0 +1,7 @@
+{
+  "name": "learn-econometrics",
+  "private": true,
+  "description": "Checks for the econometrics study guide (GitHub Pages site).",
+  "scripts": { "test": "node tests/check.cjs" },
+  "devDependencies": { "axe-core": "4.10.2", "playwright": "1.49.1" }
+}
