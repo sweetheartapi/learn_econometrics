@@ -1,0 +1,1752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Plain-language interactive study guide for an Econometrics course: regression, maximum likelihood, bootstrap, causality, IV, RDD and DiD.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Econometrics Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one lecture at a time, single readable column under a sticky tab strip; highlighter-marker accents for "must remember" bits. */
+:root{
+  --paper:#F2F4F7; --surface:#FFFFFF; --ink:#18212E; --muted:#566275; --line:#D8DDE5;
+  --accent:#1D6A86; --accent-soft:#E2EFF4;
+  --hl:rgba(255,222,64,.75); --hl-box:#FFF6C9; --hl-edge:#E8CB43;
+  --warn:#9A4A0B; --warn-soft:#FBEBDD; --good:#17703A; --good-soft:#E1F2E7;
+  --chart-a:#1D6A86; --chart-b:#B0570F; --chart-mute:#9AA5B5;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Verdana", "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#0F141B; --surface:#171E29; --ink:#E5E9EF; --muted:#9BA7B8; --line:#2B3544;
+  --accent:#62B6D3; --accent-soft:#183140;
+  --hl:rgba(255,214,10,.32); --hl-box:#2C2A17; --hl-edge:#6E6320;
+  --warn:#F0A766; --warn-soft:#33241A; --good:#6FCF93; --good-soft:#16301F;
+  --chart-a:#62B6D3; --chart-b:#F0A766; --chart-mute:#5C687A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0F141B; --surface:#171E29; --ink:#E5E9EF; --muted:#9BA7B8; --line:#2B3544;
+  --accent:#62B6D3; --accent-soft:#183140;
+  --hl:rgba(255,214,10,.32); --hl-box:#2C2A17; --hl-edge:#6E6320;
+  --warn:#F0A766; --warn-soft:#33241A; --good:#6FCF93; --good-soft:#16301F;
+  --chart-a:#62B6D3; --chart-b:#F0A766; --chart-mute:#5C687A; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:1.0625rem;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 4rem}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.55rem;font-weight:800;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:var(--f-mono);font-size:.9em}
+mark{background:var(--hl);color:inherit;padding:0 .12em;border-radius:.2em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+[hidden]{display:none!important}
+.wrap{max-width:46rem;margin:0 auto}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);
+  margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{max-width:46rem;margin:0 auto;display:flex;flex-direction:column;gap:.4rem;padding-block:.6rem .5rem}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:800;font-size:1rem;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-weight:600}
+.progress{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:thin;padding-bottom:.25rem}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.88rem;
+  padding:.35rem .7rem;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap}
+.tab b{font-family:var(--f-mono);font-weight:600;font-size:.8rem;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab[aria-selected="true"] b{color:var(--paper)}
+.tab .dot{width:.55rem;height:.55rem;border-radius:50%;border:1.5px solid currentColor;opacity:.6}
+.tab.done .dot{background:var(--good);border-color:var(--good);opacity:1}
+.tab:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.mode{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.mode button{font:inherit;font-size:.8rem;border:0;background:transparent;color:var(--muted);padding:.25rem .65rem;cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+
+/* lecture page */
+.page{display:flex;flex-direction:column;gap:2.2rem;padding-top:2rem}
+.page-head{display:flex;flex-direction:column;gap:.8rem}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lede{font-size:1.25rem;line-height:1.5;max-width:40rem}
+.meta{display:flex;flex-wrap:wrap;gap:.4rem .9rem;font-size:.85rem;color:var(--muted)}
+
+.remember{background:var(--hl-box);border:1px solid var(--hl-edge);border-radius:.6rem;padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.6rem}
+.remember h3{font-size:1rem}
+.remember ol{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.45rem}
+
+.chunk{display:flex;flex-direction:column;gap:.75rem}
+.chunk > h2{padding-top:.4rem}
+.chunk ul,.chunk ol{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.35rem}
+.chunk .sub{font-family:var(--f-display);font-weight:600;font-size:1.05rem;margin-top:.3rem}
+
+.analogy{border-left:3px solid var(--accent);padding:.2rem 0 .2rem 1rem;display:flex;flex-direction:column;gap:.35rem}
+.label{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.analogy .label{color:var(--accent)}
+
+.formula{background:var(--surface);border:1px solid var(--line);border-radius:.6rem;overflow:hidden}
+.formula .eq{font-family:var(--f-mono);font-size:1rem;padding:.85rem 1rem;background:var(--accent-soft);overflow-x:auto;white-space:nowrap}
+.formula dl{margin:0;padding:.75rem 1rem;display:grid;grid-template-columns:max-content 1fr;gap:.35rem .9rem;font-size:.95rem}
+.formula dt{font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.formula dd{margin:0;min-width:0}
+.formula .say{padding:0 1rem .85rem;font-size:.95rem}
+
+.example{background:var(--surface);border:1px solid var(--line);border-radius:.6rem;padding:1rem 1.15rem;display:flex;flex-direction:column;gap:.6rem}
+.example .label{color:var(--good)}
+.example ol{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.3rem}
+.result{font-weight:700}
+
+.trap{background:var(--warn-soft);border-radius:.6rem;padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:.4rem}
+.trap .label{color:var(--warn)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:.6rem;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-display);font-weight:600;background:var(--accent-soft)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+
+figure{margin:0;display:flex;flex-direction:column;gap:.4rem}
+figure svg{width:100%;height:auto;max-width:100%;display:block;background:var(--surface);border:1px solid var(--line);border-radius:.6rem}
+figcaption{font-size:.85rem;color:var(--muted)}
+svg text{font-family:var(--f-body);fill:var(--muted);font-size:13px}
+svg .ink{fill:var(--ink)}
+
+.quiz{display:flex;flex-direction:column;gap:.5rem}
+details.q{background:var(--surface);border:1px solid var(--line);border-radius:.6rem}
+details.q summary{cursor:pointer;padding:.75rem 1rem;font-weight:700;list-style:none;display:flex;gap:.6rem}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary::before{content:"?";font-family:var(--f-mono);color:var(--accent);flex:0 0 auto}
+details.q[open] summary::before{content:"→"}
+details.q .a{padding:0 1rem .9rem 2.15rem;display:flex;flex-direction:column;gap:.4rem}
+
+.read{display:flex;flex-direction:column;gap:.5rem;border-top:1px solid var(--line);padding-top:1.2rem}
+.read ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.3rem;font-size:.95rem}
+
+.finish{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:.6rem;padding:.9rem 1.1rem}
+.finish label{display:flex;gap:.55rem;align-items:center;cursor:pointer;font-weight:700}
+.finish input{width:1.15rem;height:1.15rem;accent-color:var(--good)}
+.btn{font:inherit;font-weight:700;border:0;border-radius:999px;background:var(--accent);color:var(--surface);padding:.5rem 1rem;cursor:pointer}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.75rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:.6rem;padding:1rem;display:flex;flex-direction:column;gap:.45rem;min-width:0}
+.card h3{font-size:1.05rem}
+.card p{font-size:.95rem}
+.card .go{margin-top:auto;align-self:flex-start;font:inherit;font-size:.88rem;font-weight:700;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+
+.boot{display:flex;flex-direction:column;gap:.7rem}
+.boot-row{display:flex;flex-wrap:wrap;gap:.5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;font-family:var(--f-mono);font-size:.85rem}
+.chips span{border:1px solid var(--line);border-radius:.35rem;padding:.1rem .4rem;background:var(--paper)}
+.chips span.rep{background:var(--hl-box);border-color:var(--hl-edge)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.stat{font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+
+.refresh{border:1px dashed var(--line);border-radius:.6rem;padding:.8rem 1rem;display:flex;flex-direction:column;gap:.45rem;background:var(--surface)}
+.refresh dl,.gloss{margin:0;display:grid;grid-template-columns:minmax(8rem,max-content) 1fr;gap:.4rem 1rem;font-size:.95rem}
+.refresh dt,.gloss dt{font-weight:700}
+.refresh dd,.gloss dd{margin:0;min-width:0}
+.gloss{background:var(--surface);border:1px solid var(--line);border-radius:.6rem;padding:.9rem 1rem}
+.gloss-group{display:flex;flex-direction:column;gap:.7rem}
+.search{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem;position:sticky;top:calc(env(safe-area-inset-top,0px) + 6.2rem);z-index:2;background:var(--paper);padding-block:.4rem}
+.search input{font:inherit;flex:1 1 14rem;min-width:0;padding:.5rem .75rem;border:1px solid var(--line);border-radius:.5rem;background:var(--surface);color:var(--ink)}
+ol.flow{counter-reset:none}
+ol.flow li{padding-left:.2rem}
+@media (max-width:30rem){ .refresh dl,.gloss{grid-template-columns:1fr} .refresh dd,.gloss dd{margin-bottom:.35rem} }
+
+/* gist mode hides the deeper chunks */
+body.gist .deep{display:none}
+.deep-tag{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:.3rem;padding:0 .35rem;vertical-align:middle;margin-left:.4rem;font-weight:400}
+.gist-note{display:none;font-size:.9rem;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:.6rem;padding:.6rem .9rem}
+body.gist .gist-note{display:block}
+
+@media (max-width:30rem){ .formula dl{grid-template-columns:1fr} .formula dt{margin-top:.3rem} body{font-size:1rem} }
+@media (prefers-reduced-motion:no-preference){ .page{animation:in .25s ease-out} @keyframes in{from{transform:translateY(6px)}to{transform:none}} }
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="top-row">
+      <div class="brand">Econometrics <span>· study guide</span></div>
+      <div class="top-row" style="gap:.6rem">
+        <span class="progress" id="progress">0 of 7 lectures done</span>
+        <div class="mode" role="group" aria-label="Reading depth">
+          <button type="button" id="m-full" aria-pressed="true">Full</button>
+          <button type="button" id="m-gist" aria-pressed="false">Just the gist</button>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Lectures">
+      <button class="tab" role="tab" data-t="start" aria-selected="true">Start here</button>
+      <button class="tab" role="tab" data-t="basics">Basics</button>
+      <button class="tab" role="tab" data-t="l1"><b>1</b>Regression<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l2"><b>2</b>Max likelihood<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l3"><b>3</b>Bootstrap<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l4"><b>4</b>Causality<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l5"><b>5</b>IV<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l6"><b>6</b>RDD<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l7"><b>7</b>DiD<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="cheat">Cheat sheet</button>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+
+<section class="page" id="start" data-page>
+  <div class="page-head">
+    <div class="eyebrow">Start here</div>
+    <h1>The whole course in two sentences</h1>
+    <p class="lede">Lectures 1–3 teach you how to <mark>fit a model to data and say how sure you are</mark>. Lectures 4–7 teach you how to tell whether X actually <mark>causes</mark> Y, or just happens to move with it.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>How to use this guide</h2>
+    <ul>
+      <li><strong>One lecture per tab.</strong> Only one is on screen at a time, so there's less to look at.</li>
+      <li><strong>Basics tab</strong> defines the "easy" words (mean, variance, standard error, log, p-value…) with a search box. Each lecture also starts with a small <em>Quick reminders</em> box for the basics it uses.</li>
+      <li><strong>Yellow box first.</strong> Every lecture opens with the 3 things to remember. If you're tired, read just that.</li>
+      <li><strong>"Just the gist" button</strong> (top right) hides the deeper sections marked <span class="deep-tag">deeper</span>. Use it for a first pass, then switch to Full.</li>
+      <li><strong>Formula boxes</strong> translate every symbol into words. You never have to decode Greek letters on your own.</li>
+      <li><strong>Self-check questions</strong> at the end: answer in your head first, then tap to reveal.</li>
+      <li><strong>Tick "I've got this"</strong> at the bottom of a lecture. Your progress stays in this browser.</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>The map</h2>
+    <div class="grid2">
+      <div class="card"><div class="label">Part A · toolbox</div><h3>1 · Regression basics</h3><p>Draw the best line through data, read its numbers, know what can go wrong.</p><button class="go" data-go="l1">Open lecture 1</button></div>
+      <div class="card"><div class="label">Part A · toolbox</div><h3>2 · Maximum likelihood</h3><p>Pick the parameter that makes your data least surprising.</p><button class="go" data-go="l2">Open lecture 2</button></div>
+      <div class="card"><div class="label">Part A · toolbox</div><h3>3 · Bootstrap</h3><p>Measure uncertainty by resampling your own data, over and over.</p><button class="go" data-go="l3">Open lecture 3</button></div>
+      <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>4 · Intro to causality</h3><p>Why correlation isn't causation, and why randomness is the cure.</p><button class="go" data-go="l4">Open lecture 4</button></div>
+      <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>5 · Instrumental variables</h3><p>Use an outside "knob" that nudges the treatment to get a clean effect.</p><button class="go" data-go="l5">Open lecture 5</button></div>
+      <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>6 · Regression discontinuity</h3><p>Compare people just above and just below a cut-off.</p><button class="go" data-go="l6">Open lecture 6</button></div>
+      <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>7 · Difference-in-differences</h3><p>Compare how much two groups changed, before vs after a policy.</p><button class="go" data-go="l7">Open lecture 7</button></div>
+      <div class="card"><div class="label">Any time</div><h3>Basics refresher</h3><p>Plain definitions of the simple stuff: mean, variance, SE, log, derivative, Greek letters.</p><button class="go" data-go="basics">Open basics</button></div>
+      <div class="card"><div class="label">Revision</div><h3>Cheat sheet</h3><p>All methods side by side, a "which method?" guide, and a glossary.</p><button class="go" data-go="cheat">Open cheat sheet</button></div>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Five words you'll see everywhere</h2>
+    <div class="tbl"><table>
+      <tr><th>Word</th><th>Plain meaning</th></tr>
+      <tr><td><strong>Y</strong> (outcome)</td><td>The thing you care about: wage, test score, cholera deaths.</td></tr>
+      <tr><td><strong>X</strong> or <strong>D</strong> (regressor / treatment)</td><td>The thing you think affects Y: education, going to a charter school, clean water.</td></tr>
+      <tr><td><strong>β</strong> ("beta")</td><td>The true size of the effect. Unknown. We try to guess it.</td></tr>
+      <tr><td><strong>β̂</strong> ("beta hat")</td><td>Our guess of β from the data. The hat always means "estimated".</td></tr>
+      <tr><td><strong>ε</strong> (error)</td><td>Everything else that affects Y that we didn't put in the model.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="read">
+    <div class="label">Your two books, in one line each</div>
+    <ul>
+      <li><strong>Mastering 'Metrics</strong> (Angrist &amp; Pischke): friendly, story-driven, perfect for lectures 4–7. Chapters map almost 1:1 to the causal lectures.</li>
+      <li><strong>Linear Models with R</strong> (Faraway): more technical, with R code. Use it for lecture 1, one topic at a time.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="page" id="basics" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Basics refresher</div>
+    <h1>The simple stuff, defined</h1>
+    <p class="lede">Every "obvious" word the lectures assume you know, in one or two lines each. <mark>Look things up here whenever a word feels fuzzy.</mark></p>
+  </div>
+
+  <div class="search">
+    <label class="label" for="g-search">Find a word</label>
+    <input type="search" id="g-search" placeholder="e.g. variance, p-value, log" autocomplete="off">
+    <span class="stat" id="g-count"></span>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Data and variables</h2>
+    <dl class="gloss">
+      <dt>Observation</dt><dd>One row of data: one person, firm, country or store at one time.</dd>
+      <dt>Variable</dt><dd>One column of data, something measured for each observation (wage, age).</dd>
+      <dt>Population vs sample</dt><dd>Population = everyone you care about. Sample = the part you actually observed. We use the sample to learn about the population.</dd>
+      <dt>Parameter</dt><dd>A fixed but unknown number describing the population, like the true mean μ or true slope β.</dd>
+      <dt>Dummy (indicator) variable</dt><dd>A variable that is 1 or 0: treated or not, female or not, NJ or PA.</dd>
+      <dt>Continuous vs discrete</dt><dd>Continuous can take any value in a range (height). Discrete takes separate values (number of kids).</dd>
+      <dt>Cross-section / time series / panel</dt><dd>Many units at one time / one unit over many times / many units over many times.</dd>
+      <dt>Observational data</dt><dd>Data you just collected from the world, with no experiment. Treatment wasn't randomised, so causality is hard.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Describing data</h2>
+    <dl class="gloss">
+      <dt>Mean (average), x̄</dt><dd>Add everything up, divide by how many. <code>x̄ = Σxᵢ / n</code>.</dd>
+      <dt>Median</dt><dd>The middle value when sorted. Not pulled around by extreme values like the mean is.</dd>
+      <dt>Mode</dt><dd>The most common value, or a peak in a distribution. "Unimodal" = one peak.</dd>
+      <dt>Variance</dt><dd>Average squared distance from the mean: how spread out the data are. <code>Var(x) = Σ(xᵢ − x̄)² / n</code> (or n − 1 for the sample version).</dd>
+      <dt>Standard deviation (SD, σ)</dt><dd>Square root of the variance. Spread in the original units. "0.48 SD" = 0.48 of a standard deviation.</dd>
+      <dt>Covariance</dt><dd>Do two variables move together? <code>Cov(x,y) = Σ(xᵢ − x̄)(yᵢ − ȳ) / n</code>. Positive = up together, negative = opposite. Units are awkward.</dd>
+      <dt>Correlation</dt><dd>Covariance rescaled to lie between −1 and 1. ±1 = perfect straight line; 0 = no linear relationship.</dd>
+      <dt>Percentile</dt><dd>The value below which that % of data falls. 75th percentile: 75 % of values are lower.</dd>
+      <dt>Outlier</dt><dd>A point far from the rest. Can drag means and regression lines around.</dd>
+      <dt>Demeaning</dt><dd>Subtracting the mean from a variable, so the new version averages zero: <code>x̃ᵢ = xᵢ − x̄</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Probability</h2>
+    <dl class="gloss">
+      <dt>Random variable</dt><dd>A quantity whose value depends on chance, like a die roll or the wage of a randomly picked person.</dd>
+      <dt>Distribution</dt><dd>The full list of possible values and how likely each one is.</dd>
+      <dt>PDF (density)</dt><dd>Probability density function: the curve showing where values are likely. Area under it = probability.</dd>
+      <dt>CDF</dt><dd>Cumulative distribution function: F(x) = P(X ≤ x), the probability of being at most x. Goes from 0 up to 1.</dd>
+      <dt>Expectation, E[X]</dt><dd>The long-run average value of a random variable, its "population mean".</dd>
+      <dt>Conditional expectation, E[Y | X]</dt><dd>The average of Y among those with a given X. E[wage | educ = 12] = average wage of people with 12 years of school.</dd>
+      <dt>Independence (⫫)</dt><dd>Knowing one variable tells you nothing about the other.</dd>
+      <dt>i.i.d.</dt><dd>Independent and identically distributed: each observation is a separate draw from the same distribution.</dd>
+      <dt>Normal distribution, N(μ, σ²)</dt><dd>The bell curve. Mean μ, variance σ². About 95 % of values lie within ±1.96 SD of the mean.</dd>
+      <dt>Bernoulli / Binomial</dt><dd>Bernoulli = one yes/no trial with probability p. Binomial = number of successes in n such trials.</dd>
+      <dt>Poisson</dt><dd>Distribution for counts (0, 1, 2…) of events.</dd>
+      <dt>Exponential</dt><dd>Distribution for waiting times between random events.</dd>
+      <dt>t, χ², F distributions</dt><dd>Distributions of test statistics. t ≈ normal but fatter tails for small samples; χ² and F are for tests of several things at once.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>The two big theorems</h2>
+    <dl class="gloss">
+      <dt>Law of Large Numbers (LLN)</dt><dd>With more and more data, the sample mean gets closer and closer to the true mean.</dd>
+      <dt>Central Limit Theorem (CLT)</dt><dd>With enough data, the sample mean is approximately normally distributed, whatever the original distribution looks like. This is why normal-based tests work so often.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Estimation</h2>
+    <dl class="gloss">
+      <dt>Estimator vs estimate</dt><dd>Estimator = the recipe (e.g. "take the sample mean"). Estimate = the number you get from your particular sample. The hat (β̂) marks both.</dd>
+      <dt>Sampling variation</dt><dd>A different sample would give a different estimate. The estimator is itself a random variable.</dd>
+      <dt>Bias</dt><dd>E[β̂] − β: how far off the estimator is on average. Unbiased = right on average.</dd>
+      <dt>Standard error (SE)</dt><dd>The standard deviation of an estimator across hypothetical repeated samples: how much it would wobble. Smaller = more precise.</dd>
+      <dt>SD vs SE</dt><dd>SD describes the spread of the <em>data</em>. SE describes the uncertainty of an <em>estimate</em>. SE shrinks as n grows (roughly SD/√n for a mean); SD doesn't.</dd>
+      <dt>Consistent</dt><dd>The estimator converges to the true value as the sample size grows.</dd>
+      <dt>Efficient</dt><dd>Has the smallest variance among a class of estimators.</dd>
+      <dt>Asymptotic</dt><dd>"In very large samples." Asymptotic results are approximations for big n.</dd>
+      <dt>Identification</dt><dd>Whether the data could in principle pin down the parameter, even with infinite data. Comes before estimation.</dd>
+      <dt>Residual vs error</dt><dd>Error ε = true unobserved deviation from the true line. Residual ε̂ = observed deviation from your fitted line.</dd>
+      <dt>Fitted value, ŷ</dt><dd>The value the model predicts for an observation.</dd>
+      <dt>Intercept / slope</dt><dd>Intercept: predicted y when all x's are 0. Slope: change in y per one-unit change in x.</dd>
+      <dt>Control variable</dt><dd>A variable added to a regression so comparisons are made between people similar in that variable.</dd>
+      <dt>Ceteris paribus</dt><dd>Latin for "other things equal": the effect of x holding everything else fixed.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Testing</h2>
+    <dl class="gloss">
+      <dt>Hypothesis</dt><dd>A claim about a parameter you want to check, e.g. "β = 0".</dd>
+      <dt>Null hypothesis (H₀)</dt><dd>The default "nothing going on" claim you test against (usually: no effect).</dd>
+      <dt>Alternative (H₁)</dt><dd>What you accept if you reject H₀ (usually: there is an effect).</dd>
+      <dt>Test statistic</dt><dd>A number computed from data to judge H₀, like t = β̂ / SE.</dd>
+      <dt>Significance level (α)</dt><dd>The cut-off for rejecting, usually 5 %. "Significant at 5 %" = p &lt; 0.05.</dd>
+      <dt>p-value</dt><dd>If the model and H₀ were true, the chance of a test statistic at least as extreme as yours. Small = data look incompatible with H₀. It is <em>not</em> the probability that H₀ is true.</dd>
+      <dt>Type I / Type II error</dt><dd>Type I: rejecting a true H₀ (false alarm). Type II: not rejecting a false H₀ (missed effect).</dd>
+      <dt>Power</dt><dd>Chance of correctly rejecting a false H₀. More data = more power.</dd>
+      <dt>Confidence interval</dt><dd>A range built by a method that captures the true value in, say, 95 % of repeated samples. Roughly estimate ± 2 × SE.</dd>
+      <dt>Degrees of freedom</dt><dd>Number of observations minus number of estimated parameters (n − p). Used to pick the right t or F distribution.</dd>
+      <dt>Stars (*, **, ***)</dt><dd>Shorthand in tables for significance at 10 %, 5 %, 1 %. Your lecturer warns against reading too much into them.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Math tools</h2>
+    <dl class="gloss">
+      <dt>Σ (sum)</dt><dd><code>Σᵢ xᵢ</code> = x₁ + x₂ + … + xₙ.</dd>
+      <dt>Π (product)</dt><dd><code>Πᵢ xᵢ</code> = x₁ · x₂ · … · xₙ.</dd>
+      <dt>log (natural log)</dt><dd>The inverse of eˣ. Key property: log(a·b) = log a + log b. A small change in log x ≈ the percentage change in x (Δlog x = 0.05 ≈ 5 %).</dd>
+      <dt>exp, e</dt><dd>e ≈ 2.718. exp(x) = eˣ. exp(log x) = x.</dd>
+      <dt>Derivative</dt><dd>The slope of a function at a point: how fast it changes. At a maximum or minimum the derivative is 0. That's why we "set the derivative to zero" (first-order condition, FOC).</dd>
+      <dt>Second derivative</dt><dd>How fast the slope changes, i.e. the curvature. Negative at a maximum.</dd>
+      <dt>argmax</dt><dd>"The value of θ that makes this biggest." The max is the height; the argmax is where it happens.</dd>
+      <dt>Limit (lim x↓c)</dt><dd>The value a function approaches as x gets closer and closer to c. ↓ = from above, ↑ = from below.</dd>
+      <dt>Indicator 1{…}</dt><dd>Equals 1 if the condition is true, 0 otherwise.</dd>
+      <dt>Matrix</dt><dd>A table of numbers. X in regression has one row per observation and one column per variable.</dd>
+      <dt>Transpose, Xᵀ</dt><dd>Flip a matrix so rows become columns.</dd>
+      <dt>Inverse, A⁻¹</dt><dd>The matrix version of dividing: A⁻¹A = I. Not every matrix has one (e.g. perfectly collinear X).</dd>
+      <dt>Identity matrix, I</dt><dd>1s on the diagonal, 0s elsewhere. The matrix version of the number 1.</dd>
+      <dt>Orthogonal (⊥)</dt><dd>Perpendicular. For data vectors: their products sum to zero, i.e. they're uncorrelated in that sense.</dd>
+    </dl>
+  </div>
+
+  <div class="gloss-group">
+    <h2>Greek letters you'll see</h2>
+    <dl class="gloss">
+      <dt>α alpha</dt><dd>intercept, or significance level</dd>
+      <dt>β beta</dt><dd>regression coefficients</dd>
+      <dt>γ gamma</dt><dd>more coefficients (often on controls or interactions)</dd>
+      <dt>δ delta</dt><dd>treatment effect (IV, DiD), or a small change</dd>
+      <dt>ε epsilon, η eta</dt><dd>error terms</dd>
+      <dt>θ theta</dt><dd>a generic parameter (MLE)</dd>
+      <dt>λ lambda</dt><dd>a parameter (exponential mean), or time fixed effects</dd>
+      <dt>μ mu</dt><dd>a mean</dd>
+      <dt>π pi</dt><dd>first-stage coefficients in IV (not 3.14 there!)</dd>
+      <dt>ρ rho, φ phi</dt><dd>reduced form and first stage in the LATE formula</dd>
+      <dt>σ sigma, Σ</dt><dd>σ = standard deviation, σ² = variance. Capital Σ = a sum, or a covariance matrix.</dd>
+      <dt>τ tau</dt><dd>treatment effect (RDD)</dd>
+    </dl>
+  </div>
+  <p class="stat" id="g-none" hidden>No word matches that. Try a shorter search.</p>
+</section>
+
+<section class="page" id="l1" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 1 · Part A</div>
+    <h1>Regression basics</h1>
+    <p class="lede">Regression draws the line that best fits a cloud of points, then tells you how steep that line is and how sure you can be about it.</p>
+    <div class="meta"><span>About 35 min in Full mode</span><span>About 10 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden. Switch to Full at the top when you're ready for more.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Variance</dt><dd>How spread out something is: the average squared distance from its mean.</dd>
+      <dt>Covariance</dt><dd>Whether two variables move together (positive) or in opposite directions (negative).</dd>
+      <dt>Residual</dt><dd>Actual y minus the y your line predicts: the leftover mistake for one data point.</dd>
+      <dt>Standard error</dt><dd>How much an estimate would wobble if you redid the study with a new sample.</dd>
+      <dt>log</dt><dd>Natural logarithm. A change of 0.05 in log y ≈ a 5 % change in y.</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>OLS picks the line that makes the squared mistakes as small as possible.</mark> The slope β̂ tells you how much Y changes when X goes up by 1, holding the other X's fixed.</li>
+      <li><mark>A regression shows association, not causation.</mark> If you leave out something that affects Y and is linked to X (like "ability"), your slope is biased.</li>
+      <li><mark>p-values and confidence intervals assume your model is right.</mark> They measure uncertainty from sampling, not whether the model is true.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>What is regression for?</h2>
+    <p>Two very different jobs:</p>
+    <div class="tbl"><table>
+      <tr><th>Prediction</th><th>Explanation</th></tr>
+      <tr><td>"What will happen?"</td><td>"Why did it happen?"</td></tr>
+      <tr><td>Easier, especially for things that repeat.</td><td>Hard. Needs real knowledge of the subject.</td></tr>
+      <tr><td>A big R² matters a lot.</td><td>A small R² is fine, if the slope is unbiased.</td></tr>
+    </table></div>
+    <p>Keep asking yourself which job you're doing. Many rules in this lecture change depending on the answer.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>The model, in words</h2>
+    <div class="formula">
+      <div class="eq">y = β₀ + β₁x₁ + β₂x₂ + … + β<sub>p</sub>x<sub>p</sub> + ε</div>
+      <dl>
+        <dt>y</dt><dd>outcome (also "dependent variable")</dd>
+        <dt>x₁ … x<sub>p</sub></dt><dd>things that might explain y ("regressors", "features")</dd>
+        <dt>β₀</dt><dd>intercept: predicted y when all x's are 0</dd>
+        <dt>β₁</dt><dd>slope: change in y when x₁ goes up by 1 and the other x's stay the same</dd>
+        <dt>ε</dt><dd>error: everything else we didn't measure</dd>
+      </dl>
+      <p class="say">In matrix form the same thing is written <code>y = Xβ + ε</code>. X is just a table: one row per person, one column per variable, plus a column of 1s for the intercept.</p>
+    </div>
+    <div class="analogy">
+      <div class="label">Think of it like</div>
+      <p>A map. A map is useful because it leaves things out. Your lecturer's line: <em>"The purpose of the model is to be useful. It is not to be correct."</em> It should be right about the part you care about.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Least squares: how the line is chosen</h2>
+    <figure>
+      <svg viewBox="0 0 400 220" role="img" aria-label="Scatter of points with a fitted line and vertical residual lines">
+        <line x1="30" y1="195" x2="390" y2="195" stroke="var(--line)" stroke-width="1.5"/>
+        <line x1="30" y1="15" x2="30" y2="195" stroke="var(--line)" stroke-width="1.5"/>
+        <g stroke="var(--chart-b)" stroke-width="1.5" stroke-dasharray="3 3">
+          <line x1="60" y1="158" x2="60" y2="172.1"/><line x1="95" y1="170" x2="95" y2="158.3"/><line x1="130" y1="128" x2="130" y2="144.5"/>
+          <line x1="165" y1="146" x2="165" y2="130.8"/><line x1="200" y1="100" x2="200" y2="117"/><line x1="235" y1="118" x2="235" y2="103.2"/>
+          <line x1="270" y1="76" x2="270" y2="89.4"/><line x1="305" y1="92" x2="305" y2="75.6"/><line x1="340" y1="52" x2="340" y2="61.8"/>
+        </g>
+        <line x1="40" y1="180" x2="370" y2="50" stroke="var(--chart-a)" stroke-width="3"/>
+        <g fill="var(--ink)">
+          <circle cx="60" cy="158" r="4.5"/><circle cx="95" cy="170" r="4.5"/><circle cx="130" cy="128" r="4.5"/><circle cx="165" cy="146" r="4.5"/>
+          <circle cx="200" cy="100" r="4.5"/><circle cx="235" cy="118" r="4.5"/><circle cx="270" cy="76" r="4.5"/><circle cx="305" cy="92" r="4.5"/><circle cx="340" cy="52" r="4.5"/>
+        </g>
+        <text x="300" y="40" class="ink">fitted line ŷ</text>
+        <text x="175" y="185">dashed = residuals (mistakes)</text>
+        <text x="365" y="212">x</text><text x="12" y="25">y</text>
+      </svg>
+      <figcaption>Each dashed line is one residual: the gap between a real point and the line. OLS squares them all, adds them up, and picks the line with the smallest total.</figcaption>
+    </figure>
+    <div class="formula">
+      <div class="eq">β̂ = (XᵀX)⁻¹ Xᵀy</div>
+      <dl>
+        <dt>Xᵀy</dt><dd>how much each x moves together with y</dd>
+        <dt>(XᵀX)⁻¹</dt><dd>divides by how much the x's vary (and overlap with each other)</dd>
+      </dl>
+      <p class="say">With one x this collapses to the formula you can remember: <mark><code>β̂₁ = Cov(x, y) / Var(x)</code></mark>. You'll see this shape again in IV.</p>
+    </div>
+    <p class="deep"><span class="sub">Geometry</span><span class="deep-tag">deeper</span><br>Fitting OLS = dropping a perpendicular from y onto the space spanned by the columns of X. The fitted values ŷ = Py are the "shadow" of y (P is the <em>projection matrix</em>). The residuals ε̂ = My are what's left (M = I − P is the <em>residual maker</em>). Both P and M are symmetric and idempotent (doing them twice changes nothing), and <mark>ŷ is perpendicular to ε̂</mark>.</p>
+    <p><strong>Why OLS is a good choice:</strong> the <strong>Gauss–Markov theorem</strong> says that if errors average zero given X and have constant variance, OLS has the smallest variance of all linear unbiased estimators. Short name: <mark>BLUE</mark> (Best Linear Unbiased Estimator).</p>
+  </div>
+
+  <div class="chunk">
+    <h2>"Linear" doesn't mean "straight"</h2>
+    <p>Linear means <mark>linear in the β's</mark>. You can transform the x's and y however you like:</p>
+    <ul>
+      <li><code>log(y) = β₀ + β₁x + β₂x² + ε</code> is still a linear model (a curve!).</li>
+      <li><code>y = β₀ · x^β₁ · ε</code> becomes linear after taking logs: <code>log y = log β₀ + β₁ log x + log ε</code>.</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>R²: how much variation the line explains</h2>
+    <div class="formula">
+      <div class="eq">R² = 1 − RSS / TSS</div>
+      <dl>
+        <dt>RSS</dt><dd>residual sum of squares: total squared mistakes left over</dd>
+        <dt>TSS</dt><dd>total sum of squares: how spread out y is around its mean</dd>
+      </dl>
+      <p class="say">R² goes from 0 (line explains nothing) to 1 (perfect fit). It also equals the squared correlation between ŷ and y.</p>
+    </div>
+    <div class="trap"><div class="label">Trap</div><p>Very different datasets can have the same R² (Faraway shows four with R² = 0.65). <strong>Always plot your data.</strong> For explanation, a low R² is not automatically a problem.</p></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Reading the coefficients (the log table)</h2>
+    <p>This shows up on exams all the time. Learn this table:</p>
+    <div class="tbl"><table>
+      <tr><th>Model</th><th>x goes up by…</th><th>y changes by…</th></tr>
+      <tr><td><code>y = β₁x</code> (level–level)</td><td>1 unit</td><td>β₁ units</td></tr>
+      <tr><td><code>log y = β₁x</code> (log–level)</td><td>1 unit</td><td>about <strong>β₁·100 %</strong></td></tr>
+      <tr><td><code>y = β₁ log x</code> (level–log)</td><td>1 %</td><td>about <strong>β₁/100</strong> units</td></tr>
+      <tr><td><code>log y = β₁ log x</code> (log–log)</td><td>1 %</td><td>about <strong>β₁ %</strong> (an elasticity)</td></tr>
+    </table></div>
+    <div class="example">
+      <div class="label">Worked example</div>
+      <p><code>log(wage) = β₀ + β₁·education + β₂·age + ε</code>, and say β̂₁ = 0.07.</p>
+      <p class="result">Correct sentence: "For people of the same age, one more year of education is associated with about 7 % higher wages."</p>
+      <p>Note the words <em>same age</em> (holding others fixed) and <em>associated with</em> (not "causes"). Your lecturer stresses both.</p>
+    </div>
+    <p class="deep"><span class="sub">Interaction terms</span><span class="deep-tag">deeper</span><br><code>log(wage) = β₀ + β₁educ + β₂south + β₃south·educ + ε</code>. Outside the South the education slope is β₁. In the South it is <strong>β₁ + β₃</strong> and the intercept shifts by β₂. So β₃ answers "is the return to education different in the South?"</p>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Inference: t-tests, F-tests, intervals <span class="deep-tag">deeper</span></h2>
+    <p>If errors are normal, β̂ is normal too: <code>β̂ ~ N(β, σ²(XᵀX)⁻¹)</code>. That lets us test things.</p>
+    <div class="formula">
+      <div class="eq">t = β̂ᵢ / se(β̂ᵢ)  ~  t<sub>n−p</sub></div>
+      <dl>
+        <dt>se(β̂ᵢ)</dt><dd>standard error: how much β̂ᵢ would jump around across samples</dd>
+        <dt>n − p</dt><dd>degrees of freedom: observations minus parameters</dd>
+      </dl>
+      <p class="say">Tests H₀: βᵢ = 0. Big |t| means the estimate is many standard errors away from zero.</p>
+    </div>
+    <p><strong>F-test</strong> compares a big model Ω with a smaller one ω that drops some variables: <code>F = [(RSS<sub>ω</sub> − RSS<sub>Ω</sub>)/q] / [RSS<sub>Ω</sub>/(n−p)]</code>, where q is the number of dropped variables. "Do these variables together add anything?"</p>
+    <p><strong>Confidence interval:</strong> <code>β̂ᵢ ± t · se(β̂ᵢ)</code>. The parameter is fixed. <mark>The interval is the random thing.</mark></p>
+    <p><strong>Predicting a new point x₀:</strong> the interval for the <em>average</em> y at x₀ uses <code>√(x₀ᵀ(XᵀX)⁻¹x₀)</code>. The interval for <em>one future</em> y uses <code>√(1 + x₀ᵀ(XᵀX)⁻¹x₀)</code>. The extra "1+" is the new person's own error ε₀, so prediction intervals are always wider.</p>
+    <p><strong>t-test = regression.</strong> Regressing y on two group dummies makes exactly the same assumptions as a two-sample t-test (equal variances, normal). Same answer.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>What can go wrong</h2>
+    <p class="sub">1 · Omitted variable bias (the big one)</p>
+    <p>True model includes ability, but we can't measure it:</p>
+    <div class="formula">
+      <div class="eq">β₁(what we get) = β₁* + β₃* · γ₁</div>
+      <dl>
+        <dt>β₁*</dt><dd>true effect of education</dd>
+        <dt>β₃*</dt><dd>effect of ability on wage</dd>
+        <dt>γ₁</dt><dd>how ability moves with education</dd>
+      </dl>
+      <p class="say">The bias disappears only if <mark>ability doesn't affect wages (β₃* = 0) <em>or</em> isn't related to education (γ₁ = 0)</mark>. Otherwise your slope picks up part of ability's effect.</p>
+    </div>
+    <p>Related: <strong>Simpson's paradox</strong>. Adding one variable can flip the sign of another coefficient. So two models can give completely different β̂₁.</p>
+
+    <p class="sub">2 · Collinearity</p>
+    <p>When x's are strongly correlated with each other, OLS can't tell them apart. Estimates get <mark>high variance</mark> and become unstable.</p>
+    <ul>
+      <li>Spot it: correlations near ±1; regressing xⱼ on the other x's gives Rⱼ² near 1; condition number √(λ₁/λ<sub>p</sub>) ≥ 30.</li>
+      <li>Measure it: variance of β̂ⱼ is multiplied by <code>1/(1 − Rⱼ²)</code>, the <em>variance inflation factor</em>.</li>
+    </ul>
+
+    <p class="sub">3 · Heteroskedasticity</p>
+    <p>"Hetero" = different, "skedastic" = spread. The errors are bigger for some x's than others (e.g. <code>y = 1 + 3x + x·ε</code>: bigger x, bigger noise). OLS assumed constant spread σ².</p>
+    <ul>
+      <li><strong>Fix A, weighted least squares:</strong> give noisy points less weight, wᵢ = 1/var(yᵢ). Example: if yᵢ is an average over nᵢ people, use wᵢ = nᵢ.</li>
+      <li><strong>Fix B, robust standard errors</strong> (HC0–HC3): keep OLS β̂, fix only the standard errors. Angrist &amp; Pischke prefer this one.</li>
+    </ul>
+
+    <p class="sub">4 · Clustered errors</p>
+    <p>People in the same school or town share shocks. Cluster your standard errors when <mark>treatment is assigned at group level</mark>, or when you sampled groups first and people second.</p>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Choosing a model <span class="deep-tag">deeper</span></h2>
+    <ul>
+      <li><strong>Occam's razor:</strong> among similar models, prefer the simpler one (especially for explanation). For prediction, a bigger model can be fine.</li>
+      <li><strong>Automatic selection by p-values is risky.</strong> After many tests the p-values are no longer valid and results look better than reality. Freedman (1983): with p = 50 variables and n = 100, you find "patterns" in pure noise.</li>
+      <li><strong>Information criteria</strong> = fit minus a penalty for complexity. AIC = −2·logL + 2p. BIC uses a bigger penalty (p·log n in most textbooks; your slide writes it as 2p·log n), so BIC prefers smaller models. <mark>Lower is better.</mark></li>
+      <li>If models that fit equally well give very different answers, the honest conclusion may be that the data can't answer the question.</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>What p-values and CIs actually mean</h2>
+    <p>Your lecturer spends several slides on this, so expect it in an exam.</p>
+    <div class="trap"><div class="label">All of these are wrong</div>
+      <ul>
+        <li>"p = 0.08 means an 8 % chance that chance alone produced the result."</li>
+        <li>"p = 0.01 means the null hypothesis has a 1 % chance of being true."</li>
+        <li>"p ≤ 0.05 means the null is false."</li>
+        <li>"This 95 % CI has a 95 % chance of containing the true value."</li>
+        <li>"If two CIs overlap, the difference isn't significant."</li>
+      </ul>
+    </div>
+    <div class="example"><div class="label">Correct versions</div>
+      <p><strong>p-value:</strong> <mark>If the model is right and the null hypothesis is true</mark>, then in repeated samples you'd see a test statistic at least this extreme about p·100 % of the time. It measures how compatible your data are with the model + null.</p>
+      <p><strong>95 % CI:</strong> a recipe that, in repeated samples, produces intervals that cover the true value about 95 % of the time. Any single interval either covers it or doesn't.</p>
+      <p><strong>Statistical ≠ practical significance.</strong> A tiny effect can be "significant" with lots of data. Always ask whether the size matters economically.</p>
+    </div>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Other bits from the slides <span class="deep-tag">deeper</span></h2>
+    <ul>
+      <li><strong>Logistic regression:</strong> for 0/1 outcomes (got a job, passed a test). Models log(p/(1−p)), so predicted probabilities stay between 0 and 1.</li>
+      <li><strong>Poisson regression:</strong> for counts (0, 1, 2…). Models log(mean).</li>
+      <li><strong>GLMs</strong> are the family that includes normal, logistic and Poisson: a linear predictor η = Xβ plus a "link" that connects it to the mean.</li>
+      <li><strong>PCA:</strong> squeeze many correlated x's into a few uncorrelated "components" that keep most of the variance.</li>
+      <li><strong>Missing values:</strong> deletion, imputation, matching. First ask <em>why</em> they're missing.</li>
+      <li><strong>Practical habits:</strong> always plot the data, ask how it was collected, never edit the raw file, comment your code.</li>
+    </ul>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>In log(wage) = 0.5 + 0.08·educ, what does 0.08 mean?</summary><div class="a"><p>One more year of education is associated with about 8 % higher wage (log–level ⇒ β·100 %).</p></div></details>
+    <details class="q"><summary>When does leaving out "ability" NOT bias the education coefficient?</summary><div class="a"><p>When ability has no effect on wages, or when ability is uncorrelated with education. Either one is enough.</p></div></details>
+    <details class="q"><summary>Is y = β₀ + β₁x + β₂x² a linear model?</summary><div class="a"><p>Yes. It's linear in the β's, even though the curve isn't straight.</p></div></details>
+    <details class="q"><summary>Why is a prediction interval wider than a confidence interval for the mean?</summary><div class="a"><p>It adds the new observation's own error ε₀, the "1 +" inside the square root.</p></div></details>
+    <details class="q"><summary>Your errors get bigger as x grows. Name two fixes.</summary><div class="a"><p>Weighted least squares (weights = 1/variance), or keep OLS and use heteroskedasticity-robust standard errors.</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li><strong>Faraway</strong>: ch. 2 (estimation, Gauss–Markov, R²), ch. 3 (tests and CIs), ch. 4 (diagnostics), §5.3 (collinearity), §6.1–6.2 (GLS/WLS), ch. 8 (variable selection), §9.1 (PCA), ch. 12 (missing data).</li>
+      <li><strong>Mastering 'Metrics</strong>: ch. 2 "Regression", especially the omitted variables bias part. Very readable.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l1" id="done-l1">I've got this</label><button class="btn" data-go="l2">Next: Max likelihood →</button></div>
+</section>
+
+<section class="page" id="l2" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 2 · Part A</div>
+    <h1>Maximum likelihood</h1>
+    <p class="lede">Maximum likelihood asks: <mark>which parameter value would make the data I actually saw most probable?</mark> That value is your estimate.</p>
+    <div class="meta"><span>About 25 min in Full mode</span><span>About 8 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Probability distribution</dt><dd>A rule saying how likely each possible value is (e.g. binomial for coin flips).</dd>
+      <dt>i.i.d.</dt><dd>Independent, identically distributed: separate draws from the same distribution.</dd>
+      <dt>Derivative</dt><dd>The slope of a curve. It's 0 at the top of a hill, which is how we find maximums.</dd>
+      <dt>log(a·b)</dt><dd>= log a + log b. Logs turn products into sums.</dd>
+      <dt>Π and Σ</dt><dd>Π = multiply them all; Σ = add them all.</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>Likelihood = probability of your data, viewed as a function of the parameter.</mark> The data are fixed; you slide the parameter around.</li>
+      <li><mark>Take logs, take the derivative, set it to zero.</mark> Logs turn a product into a sum, which is much easier.</li>
+      <li><mark>A sharp peak means a precise estimate.</mark> The curvature at the top (Fisher information) gives you the standard error.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>The coin example</h2>
+    <p>You flip a coin 500 times and get <strong>97 heads</strong> and 403 tails. Is it fair?</p>
+    <p>If p = 0.5, seeing exactly 97 heads has probability about 9.3 × 10⁻⁴⁶. Basically impossible. So which p fits best?</p>
+    <figure>
+      <svg viewBox="0 0 400 220" role="img" aria-label="Likelihood curve for p peaking at 0.194">
+        <line x1="40" y1="180" x2="380" y2="180" stroke="var(--line)" stroke-width="1.5"/>
+        <g stroke="var(--line)"><line x1="40" y1="180" x2="40" y2="186"/><line x1="125" y1="180" x2="125" y2="186"/><line x1="210" y1="180" x2="210" y2="186"/><line x1="295" y1="180" x2="295" y2="186"/><line x1="380" y1="180" x2="380" y2="186"/></g>
+        <text x="40" y="200" text-anchor="middle">0.10</text><text x="125" y="200" text-anchor="middle">0.15</text><text x="210" y="200" text-anchor="middle">0.20</text><text x="295" y="200" text-anchor="middle">0.25</text><text x="380" y="200" text-anchor="middle">0.30</text>
+        <text x="210" y="216" text-anchor="middle">p (chance of heads)</text>
+        <line x1="199.8" y1="30" x2="199.8" y2="180" stroke="var(--chart-b)" stroke-dasharray="4 3" stroke-width="1.5"/>
+        <polyline fill="none" stroke="var(--chart-a)" stroke-width="3" points="40.0,180.0 91.0,180.0 101.2,179.8 108.0,179.4 114.8,178.6 121.6,176.9 128.4,173.9 135.2,168.6 142.0,160.5 148.8,148.7 155.6,133.1 162.4,114.1 169.2,93.0 176.0,71.7 182.8,52.7 189.6,38.5 193.0,33.8 196.4,31.0 199.8,30.0 203.2,31.0 206.6,33.8 210.0,38.3 216.8,51.7 223.6,69.2 230.4,88.6 237.2,107.9 244.0,125.6 250.8,140.7 257.6,152.7 264.4,161.8 271.2,168.4 278.0,172.8 284.8,175.8 291.6,177.6 298.4,178.7 308.6,179.5 322.2,179.9 380.0,180.0"/>
+        <text x="206" y="26" class="ink">p̂ = 97/500 = 0.194</text>
+        <text x="48" y="40">likelihood</text><text x="48" y="55">(scaled)</text>
+      </svg>
+      <figcaption>The likelihood of the data for each possible p. The top of the hill is the maximum likelihood estimate. p = 0.5 is way off the right edge.</figcaption>
+    </figure>
+    <div class="example"><div class="label">Worked example</div>
+      <ol>
+        <li>Probability of the data: <code>L(p) = C · p⁹⁷ (1−p)⁴⁰³</code> (C is a constant that doesn't depend on p).</li>
+        <li>Take logs: <code>ℓ(p) = 97·log p + 403·log(1−p) + const</code>.</li>
+        <li>Derivative = 0: <code>97/p − 403/(1−p) = 0</code>.</li>
+        <li>Solve: <code>p̂ = 97/500 = 0.194</code>.</li>
+      </ol>
+      <p class="result">The MLE is just the share of heads. Most simple MLEs match your intuition like this.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>The recipe</h2>
+    <ol>
+      <li>Pick a distribution for your data with an unknown parameter θ: <code>f(x | θ)</code>.</li>
+      <li>Write the likelihood. With independent (i.i.d.) observations it's a product: <code>L(θ) = f(X₁|θ) · f(X₂|θ) · … · f(Xₙ|θ)</code>. Independence is what lets you multiply.</li>
+      <li>Take logs: <code>ℓ(θ) = Σ log f(Xᵢ|θ)</code>. Same maximum, numerically more stable.</li>
+      <li>Set the derivative (the <strong>score</strong>) to zero and solve. If there's no formula, a computer climbs the hill numerically.</li>
+    </ol>
+    <div class="analogy"><div class="label">Think of it like</div>
+      <p>A detective with fixed evidence (the data) trying out different suspects (parameter values). The best suspect is the one under whom this evidence is least surprising.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Waiting-time example (exponential)</h2>
+    <p>100 waiting times between insurance claims. Model: exponential with mean λ, <code>f(x|λ) = e^(−x/λ) / λ</code>.</p>
+    <div class="example"><div class="label">Worked example</div>
+      <ol>
+        <li><code>ℓ(λ) = −n·log λ − n·X̄/λ</code></li>
+        <li>Score: <code>−n/λ + n·X̄/λ² = 0</code></li>
+        <li class="result">λ̂ = X̄, the sample mean.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Challenger: why logistic regression needs ML</h2>
+    <p>Each shuttle launch had 6 O-rings; some failed. We want the failure probability pᵢ as a function of temperature.</p>
+    <ul>
+      <li>A straight line <code>pᵢ = β₀ + β₁·temp</code> can predict probabilities below 0 or above 1. Bad.</li>
+      <li>Fix: model the <strong>log-odds</strong>, <code>log(pᵢ/(1−pᵢ)) = β₀ + β₁·tempᵢ</code>. Any β gives a p between 0 and 1.</li>
+      <li>Randomness: failures yᵢ ~ Binomial(6, pᵢ). Now the model is fully described except for β₀, β₁.</li>
+      <li>Likelihood: multiply <code>C(6,yᵢ)·pᵢ^yᵢ·(1−pᵢ)^(6−yᵢ)</code> across launches, take logs, and let the computer find the β's that maximise it.</li>
+    </ul>
+  </div>
+
+  <div class="chunk deep">
+    <h2>The vocabulary of the hill <span class="deep-tag">deeper</span></h2>
+    <div class="tbl"><table>
+      <tr><th>Term</th><th>Formula</th><th>Plain meaning</th></tr>
+      <tr><td>Score</td><td><code>Sₙ(θ) = ∂ℓₙ/∂θ</code></td><td>Slope of the log-likelihood. Zero at the top.</td></tr>
+      <tr><td>Hessian</td><td><code>Hₙ(θ) = −∂²ℓₙ/∂θ∂θᵀ</code></td><td>How curved the hill is. Sharper hill, more information.</td></tr>
+      <tr><td>Efficient score</td><td><code>S = ∂ log f(X|θ₀)/∂θ</code></td><td>Score of one observation at the true θ. Its average is 0.</td></tr>
+      <tr><td>Fisher information</td><td><code>J = E[SSᵀ]</code></td><td>Variance of the score: how much one observation tells you about θ.</td></tr>
+      <tr><td>Expected Hessian</td><td><code>H = −E[∂² log f/∂θ∂θᵀ]</code></td><td>Average curvature for one observation.</td></tr>
+    </table></div>
+    <p><strong>Information matrix equality:</strong> if the model is correctly specified, <mark>J = H</mark>. Exponential example: both equal 1/λ₀².</p>
+    <p><strong>Why the MLE is approximately normal:</strong> a Taylor expansion of the score around θ₀ gives <code>√n(θ̂ − θ₀) → N(0, H⁻¹JH⁻¹) = N(0, J⁻¹)</code>. So for large n, <mark>Var(θ̂) ≈ 1/(n·J)</mark>. For the exponential: Var(λ̂) ≈ λ²/n, so SE ≈ λ̂/√n.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Why people love MLE</h2>
+    <ul>
+      <li><strong>Consistent:</strong> θ̂ → true θ as n grows (needs i.i.d. data, identification and some regularity conditions).</li>
+      <li><strong>Asymptotically normal:</strong> you can build t-tests and confidence intervals.</li>
+      <li><strong>Asymptotically efficient:</strong> it hits the <em>Cramér–Rao lower bound</em>, the smallest variance any unbiased estimator can have: <code>Var(θ̃) ≥ (nJ)⁻¹</code>.</li>
+      <li><strong>Invariant:</strong> if θ̂ is the MLE of θ, then h(θ̂) is the MLE of h(θ). Example: the MLE of p² is p̂².</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>Link back to lecture 1</h2>
+    <p>If <code>y = Xβ + ε</code> with <mark>normal errors</mark>, the log-likelihood is a constant minus <code>(1/2σ²)·Σ(yᵢ − xᵢβ)²</code>. Maximising it is the same as minimising the sum of squared residuals.</p>
+    <p class="result">So OLS = MLE when errors are normal. (Small difference: MLE estimates σ² = ε̂ᵀε̂/n, dividing by n instead of n − p.)</p>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>What's the difference between a density and a likelihood?</summary><div class="a"><p>Same formula. A density is a function of the data with the parameter fixed. A likelihood is a function of the parameter with the data fixed.</p></div></details>
+    <details class="q"><summary>Why do we take logs?</summary><div class="a"><p>A product of many small numbers becomes a sum, which is easier to differentiate and numerically stable. The maximiser doesn't change because log is increasing.</p></div></details>
+    <details class="q"><summary>You flip 200 times and get 50 heads. MLE of p?</summary><div class="a"><p>50/200 = 0.25.</p></div></details>
+    <details class="q"><summary>Two log-likelihoods peak at the same θ̂, but one is much more sharply curved. Which estimate is more precise?</summary><div class="a"><p>The sharply curved one. More curvature = more Fisher information = smaller variance (≈ 1/(nJ)).</p></div></details>
+    <details class="q"><summary>When is OLS the same as MLE?</summary><div class="a"><p>When the errors are normally distributed (with constant variance).</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li>Neither of your two books covers MLE in depth. The lecture recommends: Lanot, "Maximum likelihood and economic modeling", <em>IZA World of Labor</em> 326 (very non-technical, start here), and Hansen's <em>Probability</em>, ch. 10.</li>
+      <li><strong>Faraway</strong> ch. 2 is useful for the OLS = MLE connection.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l2" id="done-l2">I've got this</label><button class="btn" data-go="l3">Next: Bootstrap →</button></div>
+</section>
+
+<section class="page" id="l3" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 3 · Part A</div>
+    <h1>The bootstrap</h1>
+    <p class="lede">You only have one sample, but you want to know how much your estimate would change with a different sample. So you <mark>pretend your sample is the population and resample from it</mark>, many times.</p>
+    <div class="meta"><span>About 20 min in Full mode</span><span>About 7 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Sampling distribution</dt><dd>How an estimate (like a mean) would be spread out over many different samples.</dd>
+      <dt>Standard error</dt><dd>The standard deviation of that sampling distribution.</dd>
+      <dt>Percentile</dt><dd>The value below which that % of numbers fall (2.5th percentile: 2.5 % are lower).</dd>
+      <dt>With replacement</dt><dd>After picking a value you put it back, so it can be picked again.</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>Resample n observations from your data, with replacement.</mark> Some values appear twice, some not at all.</li>
+      <li><mark>Recompute your estimate on each resample, thousands of times.</mark> The spread of those estimates is your standard error. Their 2.5th and 97.5th percentiles give a 95 % CI.</li>
+      <li><mark>It needs few assumptions but can fail</mark>, e.g. when the parameter sits on the edge of what's allowed, or for the sample maximum.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>Try it yourself</h2>
+    <p>Here are 9 waiting times (days between insurance claims). The estimate is the mean. Press the buttons and watch the bootstrap distribution build up.</p>
+    <div class="boot card">
+      <div class="label">Original sample (n = 9)</div>
+      <div class="chips" id="b-orig"></div>
+      <div class="stat" id="b-origmean"></div>
+      <div class="boot-row">
+        <button class="btn" type="button" id="b-one">Draw 1 resample</button>
+        <button class="btn ghost" type="button" id="b-many">Draw 1,000</button>
+        <button class="btn ghost" type="button" id="b-reset">Reset</button>
+      </div>
+      <div class="label">Latest resample (yellow = picked more than once)</div>
+      <div class="chips" id="b-last"><span>press a button</span></div>
+      <svg id="b-hist" viewBox="0 0 400 170" role="img" aria-label="Histogram of bootstrap means"></svg>
+      <div class="stat" id="b-sum">0 resamples so far</div>
+    </div>
+    <p>Notice: the histogram of means is much narrower than the data itself, and it's lopsided because two big values (13.95, 18.03) drag some resamples up. A normal approximation would miss that lopsidedness.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>The algorithm</h2>
+    <ol>
+      <li>Draw a sample of size n <strong>from your data</strong> (the empirical distribution F̂ₙ), with replacement.</li>
+      <li>Compute your statistic on it: T*.</li>
+      <li>Repeat B times (say 1,000–10,000).</li>
+      <li>Use the B values of T*: their standard deviation = SE, their percentiles = CI, their mean minus the original = bias estimate.</li>
+    </ol>
+    <div class="analogy"><div class="label">Think of it like</div>
+      <p>You can't go back and survey the country again. But your 1,000 respondents are a mini-version of the country. Drawing from them with replacement is like running the survey again in that mini-country.</p>
+    </div>
+    <p>The key logic: <mark>F̂ₙ is close to the true F</mark>, so how estimates vary when sampling from F̂ₙ is close to how they vary when sampling from F. More resamples B only make the simulation more accurate; they don't add real information.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>When to reach for it</h2>
+    <ul>
+      <li><strong>Small sample</strong>, so "large n" formulas aren't trustworthy (e.g. n = 15 in a regression).</li>
+      <li><strong>Complicated estimator</strong> with no known formula for its variance (e.g. the output of a numerical optimisation).</li>
+      <li><strong>Formula depends on unknowns.</strong> The sample median's variance is 1/(4n·f(m)²), which needs the unknown density f at the median.</li>
+      <li><strong>Dubious assumptions</strong>, e.g. stock returns with fat tails, where normality is wrong.</li>
+    </ul>
+  </div>
+
+  <div class="chunk deep">
+    <h2>The stamp example <span class="deep-tag">deeper</span></h2>
+    <p>Question: were stamps printed on one type of paper or several? If one, the distribution of thickness should have <strong>one mode</strong> (one peak).</p>
+    <ul>
+      <li>H₀: number of modes = 1. Find ĥ₁ = 0.0068, the smallest smoothing level at which the estimated density has one peak.</li>
+      <li>Draw bootstrap samples from a <em>smoothed</em> version of the data that has exactly one mode (a <strong>smooth bootstrap</strong>, adjusted to keep the right variance).</li>
+      <li>For each, compute ĥ₁*. Count how often ĥ₁* ≥ ĥ₁: that share is the achieved significance level.</li>
+      <li>With B = 5,000 it came out at 0.0002 &lt; 5 %, so reject "one paper type".</li>
+    </ul>
+    <p>Lesson: choosing a clever test statistic and null hypothesis improves the <em>power</em> of the test.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>When the bootstrap fails</h2>
+    <ul>
+      <li><strong>Parameter on the boundary.</strong> E.g. X ~ N(μ, 1) but μ is only allowed to be ≥ 0, and the true μ = 0 (Andrews, 2000).</li>
+      <li><strong>Sample maximum.</strong> If data are uniform on [0, θ], the bootstrap max equals the sample max with probability 1 − (1 − 1/n)ⁿ → <mark>1 − 1/e ≈ 63 %</mark>. The real sampling distribution has no such spike. So the bootstrap gets it wrong.</li>
+      <li>The paradox: we want the bootstrap in complicated situations, but those are exactly where it's hardest to prove it works.</li>
+    </ul>
+    <p><strong>Fix: subsampling.</strong> Draw <em>smaller</em> samples (size m &lt; n) <em>without</em> replacement. Works more generally, but is less efficient when the normal bootstrap works, and you have to choose m.</p>
+  </div>
+
+  <div class="chunk deep">
+    <h2>The theory words <span class="deep-tag">deeper</span></h2>
+    <ul>
+      <li><strong>Gₙ(τ, F₀)</strong>: true distribution (CDF) of your test statistic. Unknown because F₀ is unknown.</li>
+      <li><strong>Bootstrap estimate</strong>: Gₙ(τ, F̂ₙ). Plug in the data's distribution instead of the true one.</li>
+      <li><strong>Pivotal</strong>: the statistic's distribution doesn't depend on F at all. <strong>Asymptotically pivotal</strong>: true in large samples (e.g. a t-statistic).</li>
+      <li><strong>Bootstrap consistency</strong>: Gₙ(·, F̂ₙ) → Gₙ(·, F₀) as n → ∞. Beran &amp; Ducharme's sufficient conditions: F̂ₙ is a good estimate of F₀, the limit distribution is continuous in τ, and it changes smoothly with F.</li>
+    </ul>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>Why "with replacement"?</summary><div class="a"><p>Without replacement, a sample of size n from n values is just the original data shuffled. The statistic would never change.</p></div></details>
+    <details class="q"><summary>Does increasing B (number of resamples) make your estimate more precise?</summary><div class="a"><p>No. It only reduces simulation noise in the bootstrap distribution. Precision depends on the real sample size n.</p></div></details>
+    <details class="q"><summary>How do you get a 95 % percentile confidence interval?</summary><div class="a"><p>Sort the B bootstrap estimates and take the 2.5th and 97.5th percentiles.</p></div></details>
+    <details class="q"><summary>Name one case where the bootstrap fails, and a fix.</summary><div class="a"><p>Sample maximum, or a parameter on the boundary. Fix: subsampling (smaller samples without replacement).</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li>Not in your two books. The lecture recommends Efron &amp; Tibshirani, <em>An Introduction to the Bootstrap</em>, and these animations: <a href="https://www.stat.auckland.ac.nz/~wild/BootAnim/" target="_blank" rel="noopener">Wild's bootstrap animations</a>.</li>
+      <li>Short blog explanation: <a href="https://normaldeviate.wordpress.com/2013/01/19/bootstrapping-and-subsampling-part-i/" target="_blank" rel="noopener">Wasserman, bootstrapping and subsampling (part I)</a>.</li>
+      <li><strong>Faraway</strong> §3.3 (permutation tests) uses the same "simulate from your own data" idea.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l3" id="done-l3">I've got this</label><button class="btn" data-go="l4">Next: Causality →</button></div>
+</section>
+
+<section class="page" id="l4" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 4 · Part B</div>
+    <h1>Intro to causality</h1>
+    <p class="lede">To know if something <em>causes</em> an outcome, you need to compare people who are alike in every way except the treatment. <mark>Randomness is what makes that comparison fair.</mark></p>
+    <div class="meta"><span>About 20 min in Full mode</span><span>About 7 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Treatment</dt><dd>Whatever's being tested: a policy, a drug, a school, clean water. D = 1 if you got it.</dd>
+      <dt>Independent (⫫)</dt><dd>Knowing one thing tells you nothing about the other.</dd>
+      <dt>E[Y | D = 1]</dt><dd>Average Y among people with D = 1.</dd>
+      <dt>Confounder</dt><dd>A hidden factor that affects both treatment and outcome, so it fakes or hides an effect.</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>Everyone has two potential outcomes, Y(1) with treatment and Y(0) without, but we only ever see one.</mark> That's the fundamental problem of causal inference.</li>
+      <li><mark>Random assignment makes the treated and untreated groups comparable</mark>, so a simple difference in means gives the causal effect.</li>
+      <li><mark>When you can't experiment, find a natural source of randomness</mark>: a lottery, nature, a law change, a cut-off. Lectures 5–7 are three ways to use one.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>Correlation ≠ causation</h2>
+    <p>The 2021 Economics Nobel (Card, Angrist, Imbens) went to the "credibility revolution": methods for getting causal answers from real-world data. This lecture is the trailer for the rest of the course.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Potential outcomes</h2>
+    <p>Imagine we could see both versions of each person:</p>
+    <div class="tbl"><table>
+      <tr><th></th><th class="num">Y(1) treated</th><th class="num">Y(0) untreated</th><th class="num">Effect Y(1) − Y(0)</th></tr>
+      <tr><td>Adam</td><td class="num">4</td><td class="num">6</td><td class="num">−2</td></tr>
+      <tr><td>Boris</td><td class="num">5</td><td class="num">7</td><td class="num">−2</td></tr>
+      <tr><td>Cyril</td><td class="num">8</td><td class="num">6</td><td class="num">+2</td></tr>
+      <tr><td>Diana</td><td class="num">3</td><td class="num">7</td><td class="num">−4</td></tr>
+      <tr><td>Ema</td><td class="num">3</td><td class="num">4</td><td class="num">−1</td></tr>
+      <tr><td>Filip</td><td class="num">1</td><td class="num">3</td><td class="num">−2</td></tr>
+    </table></div>
+    <p>In reality, half the cells are missing. Adam got treated, so we see his 4 and never his 6. Cyril didn't, so we see his 6 and never his 8. <mark>Individual effects are never observed.</mark></p>
+    <div class="example"><div class="label">Worked example (from the slides)</div>
+      <p>With the full class, the true average effect is about <strong>−1.6</strong>. After random assignment we only see one column per person. Treated mean = 4.5, untreated mean = 6.0.</p>
+      <p class="result">Estimated effect = 4.5 − 6.0 = −1.5. Very close to the truth, because assignment was random.</p>
+    </div>
+    <div class="formula">
+      <div class="eq">Y(1), Y(0) ⫫ D</div>
+      <dl><dt>⫫</dt><dd>"is independent of"</dd><dt>D</dt><dd>treatment indicator (1 = treated, 0 = not)</dd></dl>
+      <p class="say">Who gets treated has nothing to do with how they would do either way. That's what a coin flip guarantees.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>The problem: we usually can't randomise</h2>
+    <p>Questions where a proper experiment is impossible or unethical:</p>
+    <ul>
+      <li>Do veterans earn less because of the war?</li>
+      <li>Does education increase wages?</li>
+      <li>How does the minimum wage affect unemployment?</li>
+      <li>Does class size affect learning? Does alcohol cause car crashes?</li>
+    </ul>
+    <p><strong>Option 1:</strong> compare similar people, <code>Y(1), Y(0) ⫫ D | X</code> ("random once we control for X"). Works only if you've measured everything that matters.</p>
+    <p><strong>Option 2:</strong> find a <mark>source of randomness</mark>, a "quasi-experiment".</p>
+  </div>
+
+  <div class="chunk">
+    <h2>The quasi-experiment idea</h2>
+    <p>Some Z (a lottery, a birth date, the weather) pushes the treatment D, and touches Y <em>only</em> through D:</p>
+    <div class="formula">
+      <div class="eq">Z → D → Y,   and no arrow Z → Y</div>
+      <p class="say" style="padding-top:.75rem">Then: <code>β̂ = effect(Z→Y) / effect(Z→D) = Cov(Y,Z)/Cov(D,Z)</code>. With a 0/1 Z: <code>(E[Y|Z=1] − E[Y|Z=0]) / (E[D|Z=1] − E[D|Z=0])</code>. This is exactly the IV estimator of lecture 5.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Famous examples (you'll meet them again)</h2>
+    <div class="tbl"><table>
+      <tr><th>Study</th><th>Source of randomness</th><th>Method</th></tr>
+      <tr><td>Vietnam veterans' earnings (Angrist 1990)</td><td>Draft lottery by birth date</td><td>IV</td></tr>
+      <tr><td>Returns to schooling (Angrist &amp; Krueger 1991)</td><td>Quarter of birth affects years of compulsory school. Result: about 7 % per year</td><td>IV</td></tr>
+      <tr><td>Demand for fish (Angrist, Graddy &amp; Imbens 2000)</td><td>Weather at sea shifts supply</td><td>IV</td></tr>
+      <tr><td>Class size (Angrist &amp; Lavy 1999)</td><td>Maimonides' rule: 40 pupils → 1 class, 41 → 2 classes</td><td>RDD / IV</td></tr>
+      <tr><td>Minimum wage (Card &amp; Krueger 1994)</td><td>New Jersey raised it, Pennsylvania didn't</td><td>DiD</td></tr>
+      <tr><td>Mobile phones &amp; fish markets (Jensen 2007)</td><td>Phone coverage arrived at different times in Kerala</td><td>DiD-style</td></tr>
+      <tr><td>Chernobyl fallout (Almond et al.)</td><td>Rainfall decided where fallout landed</td><td>Natural experiment</td></tr>
+    </table></div>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Keep a critical eye <span class="deep-tag">deeper</span></h2>
+    <ul>
+      <li><strong>Generalisation:</strong> does the result apply beyond this sample?</li>
+      <li><strong>Heterogeneity:</strong> the effect may differ across people.</li>
+      <li><strong>Is the "natural" experiment really random?</strong> Is quarter of birth truly random? Its link to schooling is also weak.</li>
+      <li><strong>Even real experiments break:</strong> people don't respond, measurement error, a too-specific sample, conditions change.</li>
+      <li><strong>Qualitative support for causality:</strong> the effect is strong, consistent, specific, stable over time, monotone (more dose, more effect), plausible, and confirmed by experiments.</li>
+    </ul>
+    <p>The lecture's conclusion: results are based on models, so be critical. But some questions matter so much that an imperfect answer beats none.</p>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>What is the "fundamental problem of causal inference"?</summary><div class="a"><p>For each person we observe only one potential outcome, Y(1) or Y(0), never both. So individual effects can't be observed.</p></div></details>
+    <details class="q"><summary>Why does randomisation make a simple difference in means causal?</summary><div class="a"><p>It makes treatment independent of potential outcomes, so the two groups would have had the same average outcomes without treatment.</p></div></details>
+    <details class="q"><summary>A good "Z" must do two things. What?</summary><div class="a"><p>Move the treatment D, and affect Y only through D (no direct path, no link to hidden factors).</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li><strong>Mastering 'Metrics</strong> ch. 1 "Randomized Trials" (health insurance examples). The intro explains the "furious five" methods. This is the best match for this lecture.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l4" id="done-l4">I've got this</label><button class="btn" data-go="l5">Next: IV →</button></div>
+</section>
+
+<section class="page" id="l5" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 5 · Part B</div>
+    <h1>Instrumental variables</h1>
+    <p class="lede">When the treatment is tangled up with hidden factors, find an outside "knob" Z that pushes the treatment around at random. Then <mark>use only the part of the treatment that the knob moved</mark>.</p>
+    <div class="meta"><span>About 40 min in Full mode</span><span>About 12 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Covariance</dt><dd>Do two variables move together? Positive = up together, negative = opposite, 0 = no linear link.</dd>
+      <dt>Endogenous</dt><dd>Correlated with the error term (tangled with hidden stuff). Opposite: <em>exogenous</em>, as good as random.</dd>
+      <dt>Bias</dt><dd>Your estimator is off on average, in a systematic direction, even with lots of data.</dd>
+      <dt>Fitted value (D̂)</dt><dd>The value a regression predicts for each observation.</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>A valid instrument is relevant (moves D), as good as random, and excluded (affects Y only through D).</mark> Only relevance can be tested.</li>
+      <li><mark>IV = reduced form ÷ first stage</mark> = (effect of Z on Y) / (effect of Z on D). In practice it's run as two-stage least squares (2SLS).</li>
+      <li><mark>With effects that differ between people, IV gives a LATE</mark>: the effect for <em>compliers</em>, people whose treatment was changed by the instrument.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>The problem: endogeneity</h2>
+    <figure>
+      <svg viewBox="0 0 400 170" role="img" aria-label="Causal graph: Z points to D, D to Y, hidden U points to D and Y">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--chart-a)"/></marker>
+        <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--chart-b)"/></marker></defs>
+        <line x1="78" y1="125" x2="172" y2="125" stroke="var(--chart-a)" stroke-width="2.5" marker-end="url(#arr)"/>
+        <line x1="218" y1="125" x2="312" y2="125" stroke="var(--chart-a)" stroke-width="2.5" marker-end="url(#arr)"/>
+        <line x1="250" y1="52" x2="208" y2="104" stroke="var(--chart-b)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr2)"/>
+        <line x1="282" y1="52" x2="322" y2="104" stroke="var(--chart-b)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr2)"/>
+        <path d="M70 145 Q195 185 320 145" fill="none" stroke="var(--chart-mute)" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <text x="190" y="166" text-anchor="middle">✕ no direct Z → Y (exclusion)</text>
+        <circle cx="55" cy="125" r="21" fill="var(--surface)" stroke="var(--chart-a)" stroke-width="2.5"/>
+        <circle cx="195" cy="125" r="21" fill="var(--surface)" stroke="var(--chart-a)" stroke-width="2.5"/>
+        <circle cx="335" cy="125" r="21" fill="var(--surface)" stroke="var(--chart-a)" stroke-width="2.5"/>
+        <circle cx="266" cy="35" r="21" fill="var(--surface)" stroke="var(--chart-b)" stroke-width="2" stroke-dasharray="4 3"/>
+        <text x="55" y="131" text-anchor="middle" class="ink" style="font-size:17px;font-weight:700">Z</text>
+        <text x="195" y="131" text-anchor="middle" class="ink" style="font-size:17px;font-weight:700">D</text>
+        <text x="335" y="131" text-anchor="middle" class="ink" style="font-size:17px;font-weight:700">Y</text>
+        <text x="266" y="41" text-anchor="middle" class="ink" style="font-size:17px;font-weight:700">U</text>
+        <text x="55" y="92" text-anchor="middle">instrument</text><text x="195" y="92" text-anchor="middle">treatment</text><text x="335" y="92" text-anchor="middle">outcome</text>
+        <text x="300" y="20">hidden factor</text>
+      </svg>
+      <figcaption>U (say, ability) affects both D and Y, so a plain regression of Y on D is biased. Z only touches D, so the variation it creates in D is clean.</figcaption>
+    </figure>
+    <p>D is <strong>endogenous</strong> (correlated with the error) when there is:</p>
+    <ul><li>an omitted variable U,</li><li>reverse causality (Y also affects D),</li><li>or measurement error in D.</li></ul>
+    <p>Then the OLS condition <code>E[D·η] = 0</code> fails and OLS is biased.</p>
+    <div class="analogy"><div class="label">Think of it like</div>
+      <p>Z is a clean knob that turns D up and down without touching the noise in Y. The first stage finds how much D moved because of the knob. The second stage asks how much Y moved along with that clean movement.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>The three (four) conditions</h2>
+    <div class="tbl"><table>
+      <tr><th>Condition</th><th>Plain meaning</th><th>Testable?</th></tr>
+      <tr><td><strong>Relevance</strong></td><td>Z actually moves D: Cov(Z, D) ≠ 0</td><td>Yes: look at the first stage</td></tr>
+      <tr><td><strong>Independence</strong></td><td>Z is as good as random, unrelated to U</td><td>No (argue it)</td></tr>
+      <tr><td><strong>Exclusion</strong></td><td>Z affects Y only through D</td><td>No (argue it)</td></tr>
+      <tr><td><strong>Monotonicity</strong> (for LATE)</td><td>Z pushes everyone in the same direction. No "defiers".</td><td>No</td></tr>
+    </table></div>
+    <p>Independence + exclusion together = <strong>validity</strong>: <code>E[Z·η] = 0</code>.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>The formulas</h2>
+    <div class="formula">
+      <div class="eq">δ̂_OLS = Cov(D, Y) / Var(D)       δ̂_IV = Cov(Z, Y) / Cov(Z, D)</div>
+      <p class="say" style="padding-top:.75rem">Same shape. OLS uses D's own variation (contaminated). IV uses only the variation that comes through Z.</p>
+    </div>
+    <div class="formula">
+      <div class="eq">δ̂_Wald = (Ȳ<sub>Z=1</sub> − Ȳ<sub>Z=0</sub>) / (D̄<sub>Z=1</sub> − D̄<sub>Z=0</sub>)</div>
+      <dl>
+        <dt>top</dt><dd><strong>reduced form</strong>: how much Y differs between Z groups</dd>
+        <dt>bottom</dt><dd><strong>first stage</strong>: how much D differs between Z groups</dd>
+      </dl>
+      <p class="say">The version for a 0/1 instrument (like a lottery). This is the one to use in exam calculations.</p>
+    </div>
+    <p class="deep"><span class="sub">Where the formulas come from: method of moments</span><span class="deep-tag">deeper</span><br>Write down conditions that hold at the true value, then solve their sample versions. For a mean: E[Y − μ] = 0 ⇒ μ̂ = Ȳ. For OLS: residuals average zero and are orthogonal to D, giving Cov(D,Y)/Var(D). For IV: keep "residuals average zero", but replace the second condition with <em>residuals orthogonal to Z</em>, <code>Σ Zᵢ(Yᵢ − α − δDᵢ) = 0</code>. Demean and solve: δ̂ = Cov(Z,Y)/Cov(Z,D). We weight by Z because E[Zη] = 0 is believable, while E[Dη] = 0 is exactly what fails.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Two-stage least squares (2SLS)</h2>
+    <ol>
+      <li><strong>First stage:</strong> regress D on Z (and controls X). Save the fitted values D̂.</li>
+      <li><strong>Second stage:</strong> regress Y on D̂ (and the same X, but <em>not</em> Z).</li>
+    </ol>
+    <p>The slope on D̂ equals the IV ratio exactly.</p>
+    <div class="trap"><div class="label">Trap</div><p>If you run the two stages by hand, δ̂ is right but the <strong>standard errors are wrong</strong>: the second-stage residual uses D̂ instead of the real D. Always use an IV command (<code>ivreg</code> in R, <code>ivregress 2sls</code> in Stata).</p></div>
+    <p class="deep"><span class="sub">Controls</span><span class="deep-tag">deeper</span><br>If X affects both Z and Y, Z is only valid <em>given X</em>, so X goes in <strong>both</strong> stages. Equivalent trick (Frisch–Waugh–Lovell): regress Y, D and Z each on X, keep the residuals, then apply the simple formula Cov(Z⊥, Y⊥)/Cov(Z⊥, D⊥). "Controlling for X" = removing X from everything, then using what's left.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Weak instruments</h2>
+    <p>Rewrite: <code>δ̂_IV − δ = Cov(Z, η) / Cov(Z, D)</code>. If Z barely moves D, the bottom is near zero, so tiny noise on top gets <mark>blown up</mark>. The estimate becomes erratic and biased towards OLS.</p>
+    <p class="result">Rule of thumb: first-stage F-statistic of at least 10.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>LATE: who does IV tell us about?</h2>
+    <p>In real experiments people don't always follow their assignment (<strong>imperfect compliance</strong>). Comparing by assignment gives the <strong>ITT</strong> (intention-to-treat): the effect of being <em>offered</em> treatment.</p>
+    <div class="tbl"><table>
+      <tr><th>Type</th><th>Treated if Z = 1?</th><th>Treated if Z = 0?</th></tr>
+      <tr><td><strong>Compliers</strong></td><td>yes</td><td>no</td></tr>
+      <tr><td>Always-takers</td><td>yes</td><td>yes</td></tr>
+      <tr><td>Never-takers</td><td>no</td><td>no</td></tr>
+      <tr><td>Defiers (assumed none)</td><td>no</td><td>yes</td></tr>
+    </table></div>
+    <p>Always- and never-takers do the same thing whatever Z is, so they add nothing to the reduced form. All of it comes from compliers. So <mark>reduced form ÷ first stage = average effect for compliers</mark>, the LATE.</p>
+    <div class="example"><div class="label">Worked example: KIPP charter schools (lottery)</div>
+      <ol>
+        <li>Attendance: 78.7 % of winners and 4.6 % of losers attended KIPP. <strong>First stage φ = 0.787 − 0.046 = 0.741.</strong></li>
+        <li>Math scores (in standard deviations): winners −0.003, losers −0.358. <strong>Reduced form ρ = 0.355</strong>. This is the ITT.</li>
+        <li><strong>LATE = ρ/φ = 0.355 / 0.741 = 0.479.</strong></li>
+        <li>Shares: compliers 0.741, always-takers 0.046 (losers who attended anyway), never-takers 1 − 0.787 = 0.213.</li>
+      </ol>
+      <p class="result">Attending KIPP raised math scores by about 0.48 SD for children who attended only because they won the lottery.</p>
+    </div>
+    <p>Two words for non-compliance: <strong>treatment migration</strong> (controls get treated anyway) and <strong>treatment dilution</strong> (assigned people don't take it).</p>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Case study: kids and mothers' work <span class="deep-tag">deeper</span></h2>
+    <p>Angrist &amp; Evans (1998). Does a third child reduce mothers' labour supply?</p>
+    <ul>
+      <li><strong>Instrument:</strong> first two kids are the same sex. Parents like a mix, so they're more likely to try for a third. Sex is as good as random.</li>
+      <li><strong>First stage:</strong> 43.2 % of same-sex families had another child vs 37.2 % of mixed: +6.0 points.</li>
+      <li><strong>Result (worked for pay):</strong> OLS −0.176, 2SLS −0.120. A third child lowers compliers' chance of working by 12 points. OLS overstated it.</li>
+      <li>Compliers are only about 6 % of families. Says nothing about always-takers. A different instrument (e.g. twins) has different compliers, so a different LATE.</li>
+      <li>Husbands: effect ≈ 0.</li>
+    </ul>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Case study: institutions and growth <span class="deep-tag">deeper</span></h2>
+    <p>Acemoglu, Johnson &amp; Robinson (2001). Do good institutions make countries rich?</p>
+    <ul>
+      <li><strong>Problem:</strong> rich countries can afford good institutions (reverse causality), plus omitted factors.</li>
+      <li><strong>Instrument:</strong> settler mortality. Where Europeans died a lot, they set up extractive states. Where they could live, they built settler institutions. Institutions persisted.</li>
+      <li><strong>Story:</strong> mortality → settlements → early institutions → today's institutions → today's income.</li>
+      <li><strong>Results:</strong> OLS 0.52 vs IV 0.94. Nigeria vs Chile: OLS explains a 2-fold income gap, IV a 7-fold gap (the real gap is 11-fold).</li>
+      <li>Robust to latitude, dropping Neo-Europes or Africa, continent dummies, colonial origin, religion, climate, malaria.</li>
+    </ul>
+  </div>
+
+  <div class="chunk deep">
+    <h2>More instruments than you need <span class="deep-tag">deeper</span></h2>
+    <p>With 2 instruments for 1 treatment, each gives its own estimate. If both are valid, those should be similar. The <strong>overidentification test</strong> (Sargan / J-test) checks this: J ~ χ²<sub>q</sub> with q = (number of instruments) − (number of endogenous variables). Caveat: it can only check instruments against each other, never prove they're valid.</p>
+    <p>Other classic instruments: Vietnam draft lottery, distance to college (Card), distance to hospital (heart attacks), rainfall (civil conflict), weather (fish demand).</p>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>Which IV condition can you test, and how?</summary><div class="a"><p>Relevance. Look at the first-stage regression of D on Z; F ≥ 10 is the rule of thumb.</p></div></details>
+    <details class="q"><summary>Lottery winners: 60 % attend, losers 10 %. Scores differ by 0.2. LATE?</summary><div class="a"><p>First stage = 0.6 − 0.1 = 0.5. LATE = 0.2/0.5 = 0.4.</p></div></details>
+    <details class="q"><summary>Why are always-takers left out of LATE?</summary><div class="a"><p>Their treatment doesn't change with Z, so (by exclusion) their outcomes don't differ between Z groups. They add nothing to the reduced form.</p></div></details>
+    <details class="q"><summary>What goes wrong with a weak instrument?</summary><div class="a"><p>You divide by a near-zero first stage, so the estimate becomes unstable, has huge variance, and is biased towards OLS.</p></div></details>
+    <details class="q"><summary>Why not just run the second stage by hand?</summary><div class="a"><p>The coefficient is right but the standard errors are wrong. Use an IV command.</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li><strong>Mastering 'Metrics</strong> ch. 3 "Instrumental Variables". §3.1 "The Charter Conundrum" is literally the KIPP example, and §3.3 "The Population Bomb" covers kids and labour supply. Read this first.</li>
+      <li>Mastering 'Metrics ch. 6.3 covers quarter-of-birth instruments for schooling.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l5" id="done-l5">I've got this</label><button class="btn" data-go="l6">Next: RDD →</button></div>
+</section>
+
+<section class="page" id="l6" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 6 · Part B</div>
+    <h1>Regression discontinuity</h1>
+    <p class="lede">Rules often switch a policy on at a sharp cut-off. People just below and just above are basically the same, so <mark>the jump in the outcome right at the cut-off is the effect</mark>.</p>
+    <div class="meta"><span>About 30 min in Full mode</span><span>About 10 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Cut-off (threshold)</dt><dd>The exact value where a rule switches, e.g. "born on or after 1 July 1990".</dd>
+      <dt>Density</dt><dd>How many observations sit at each value of a variable (a smoothed histogram).</dd>
+      <dt>Bias–variance trade-off</dt><dd>Using more data lowers noise (variance) but can add systematic error (bias), and the other way round.</dd>
+      <dt>Placebo test</dt><dd>Run the analysis where there should be no effect. If you find one, something's off.</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>Treatment depends on a running variable X crossing a cut-off c.</mark> Compare outcomes just below and just above c.</li>
+      <li><mark>Key assumption: nothing else jumps at c</mark>, and people can't precisely sort themselves to one side. Check with a density test, covariate balance and placebo cut-offs.</li>
+      <li><mark>Use local linear regression near c, not high-order polynomials over all the data.</mark> The effect is <em>local</em>: it's the effect for people at the cut-off.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>The picture is the method</h2>
+    <figure>
+      <svg viewBox="0 0 400 210" role="img" aria-label="Outcome against running variable, with a jump at the cut-off">
+        <line x1="30" y1="185" x2="390" y2="185" stroke="var(--line)" stroke-width="1.5"/>
+        <line x1="210" y1="15" x2="210" y2="185" stroke="var(--chart-mute)" stroke-dasharray="4 4"/>
+        <g fill="var(--chart-mute)">
+          <circle cx="40" cy="166" r="3.5"/><circle cx="58" cy="152" r="3.5"/><circle cx="75" cy="160" r="3.5"/><circle cx="92" cy="148" r="3.5"/><circle cx="110" cy="156" r="3.5"/>
+          <circle cx="128" cy="141" r="3.5"/><circle cx="146" cy="150" r="3.5"/><circle cx="164" cy="137" r="3.5"/><circle cx="182" cy="144" r="3.5"/><circle cx="200" cy="131" r="3.5"/>
+          <circle cx="220" cy="92" r="3.5"/><circle cx="238" cy="80" r="3.5"/><circle cx="256" cy="90" r="3.5"/><circle cx="274" cy="76" r="3.5"/><circle cx="292" cy="84" r="3.5"/>
+          <circle cx="310" cy="70" r="3.5"/><circle cx="328" cy="79" r="3.5"/><circle cx="346" cy="64" r="3.5"/><circle cx="364" cy="72" r="3.5"/><circle cx="382" cy="60" r="3.5"/>
+        </g>
+        <line x1="35" y1="162" x2="210" y2="134" stroke="var(--chart-a)" stroke-width="3"/>
+        <line x1="210" y1="88" x2="385" y2="60" stroke="var(--chart-b)" stroke-width="3"/>
+        <line x1="210" y1="134" x2="210" y2="88" stroke="var(--ink)" stroke-width="2.5"/>
+        <text x="218" y="116" class="ink" style="font-weight:700">τ = jump</text>
+        <text x="40" y="200">not treated (X &lt; c)</text><text x="290" y="200">treated (X ≥ c)</text>
+        <text x="214" y="28">cut-off c</text>
+        <text x="36" y="28">outcome Y</text>
+      </svg>
+      <figcaption>A separate line on each side. The gap between the two lines at c is the treatment effect τ.</figcaption>
+    </figure>
+    <p>Imbens &amp; Lemieux: if the basic plot shows no jump, fancy regressions are unlikely to find a credible one. <mark>Always start with the plot.</mark></p>
+  </div>
+
+  <div class="chunk">
+    <h2>Sharp RD</h2>
+    <div class="formula">
+      <div class="eq">Dᵢ = 1{Xᵢ ≥ c}</div>
+      <dl>
+        <dt>Xᵢ</dt><dd><strong>running variable</strong> (or forcing variable): score, age, date of birth</dd>
+        <dt>c</dt><dd>cut-off</dd>
+        <dt>1{…}</dt><dd>equals 1 if true, 0 if false</dd>
+      </dl>
+      <p class="say">Knowing X tells you D exactly. That's what "sharp" means.</p>
+    </div>
+    <p><strong>Identifying assumption, continuity:</strong> the average potential outcomes E[Y(0)|X] and E[Y(1)|X] change smoothly through c. Without treatment, there would be no jump. So:</p>
+    <div class="formula">
+      <div class="eq">τ = lim<sub>x↓c</sub> E[Y|X=x] − lim<sub>x↑c</sub> E[Y|X=x] = E[Y(1) − Y(0) | X = c]</div>
+      <p class="say" style="padding-top:.75rem">Average just above minus average just below = average effect <em>at</em> the cut-off. Away from c the effect could be different, and the data can't tell you by how much.</p>
+    </div>
+    <div class="analogy"><div class="label">Think of it like</div>
+      <p>A student who scored 79 and one who scored 80 are almost the same student. If only the 80 gets a scholarship, comparing them is close to a coin flip. Near the cut-off, RD works like a local randomised experiment (Lee 2008).</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Threats: when people game the cut-off</h2>
+    <div class="tbl"><table>
+      <tr><th>Threat</th><th>What it looks like</th><th>What to do</th></tr>
+      <tr><td><strong>Bunching / manipulation</strong></td><td>Too many people just above c, too few just below (e.g. births shifted after Australia's baby bonus)</td><td>Density test (McCrary; now <code>rddensity</code>)</td></tr>
+      <tr><td><strong>Donut hole</strong></td><td>People avoid being right at c</td><td>"Donut RD": drop points closest to c, check the estimate stays stable</td></tr>
+      <tr><td><strong>Heaping</strong></td><td>X is rounded or piles up at round numbers</td><td>Careful: units at heaps may differ; you can't get arbitrarily close to c</td></tr>
+      <tr><td><strong>Mass point at c</strong></td><td>Many units exactly at c (a default or target)</td><td>Count them; re-estimate without them</td></tr>
+    </table></div>
+    <div class="example"><div class="label">Validity checklist</div>
+      <ol>
+        <li>Density of X: no jump at c.</li>
+        <li>Covariate balance: things decided before treatment (age, past earnings) don't jump at c.</li>
+        <li>Placebo cut-offs: no jumps at fake cut-offs.</li>
+        <li>Donut RD: estimate doesn't change much without the closest points.</li>
+        <li>Bandwidth sensitivity: estimate stable across reasonable bandwidths.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Estimating it</h2>
+    <div class="formula">
+      <div class="eq">Yᵢ = α + τDᵢ + β(Xᵢ − c) + γDᵢ(Xᵢ − c) + εᵢ</div>
+      <dl>
+        <dt>τ</dt><dd>the jump at the cut-off: <strong>your effect</strong></dd>
+        <dt>β</dt><dd>slope on the left side</dd>
+        <dt>β + γ</dt><dd>slope on the right side (the interaction lets slopes differ)</dd>
+        <dt>Xᵢ − c</dt><dd>centred running variable, so τ is measured exactly at c</dd>
+      </dl>
+    </div>
+    <ul>
+      <li><strong>Global polynomials</strong> (fit the whole range with x, x², x³…): <mark>avoid high orders.</mark> Far-away points get big, erratic weight. In the slide's simulation (true τ = 1), estimates ranged from 0.55 to 2.2 depending on the polynomial order (Gelman &amp; Imbens 2019).</li>
+      <li><strong>Local linear (recommended):</strong> use only points with |X − c| ≤ h (the <strong>bandwidth</strong>), fit a line on each side, and weight closer points more (triangular kernel).</li>
+    </ul>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Bandwidth and inference <span class="deep-tag">deeper</span></h2>
+    <ul>
+      <li><strong>Small h:</strong> less bias (only very similar people) but more variance (fewer points).</li>
+      <li><strong>Large h:</strong> more data, less variance, but more bias.</li>
+      <li><strong>MSE = bias² + variance.</strong> Data-driven selectors pick the h that minimises it (in the slides' simulation h* ≈ 0.78). Report results at 0.5×h and 1.5×h too.</li>
+      <li><strong>Kernel</strong> matters much less than bandwidth. Triangular is standard; uniform = plain OLS inside the window.</li>
+      <li><strong>Robust bias-corrected CIs</strong> (Calonico, Cattaneo &amp; Titiunik 2014). At the MSE-optimal h, ordinary CIs are too narrow. Software: <code>rdrobust</code>.</li>
+      <li>Report τ̂, its SE, h, the kernel and the polynomial order. Cluster where treatment is assigned.</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>Fuzzy RD = IV at the cut-off</h2>
+    <p>Sometimes crossing c only <em>raises the chance</em> of treatment. E.g. students scoring below 80 are <em>eligible</em> for free tutoring, but some don't go and some above 80 find a way in.</p>
+    <div class="formula">
+      <div class="eq">τ_FRD = (jump in Y at c) / (jump in P(D = 1) at c)</div>
+      <p class="say" style="padding-top:.75rem">The Wald ratio from lecture 5: reduced form ÷ first stage. Eligibility Z = 1{X &lt; 80} is the instrument. You get a <mark>LATE for compliers at the cut-off</mark>. Estimate with 2SLS in the same window.</p>
+    </div>
+    <p>Assumptions: relevance (eligibility shifts take-up, testable), exclusion (crossing 80 matters only through tutoring; it fails if being labelled "below 80" discourages students), monotonicity.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Case study: Austrian parental leave</h2>
+    <p>Lalive &amp; Zweimüller (2009). From <strong>1 July 1990</strong>, parental leave was extended from 1 to 2 years. Running variable = child's date of birth. Compare June 1990 mothers (control) with July 1990 mothers (treated).</p>
+    <div class="example"><div class="label">Results</div>
+      <ul>
+        <li>Year-2 leave taken: +9.3 months. The treatment really changed.</li>
+        <li>Another child within 36 months: <strong>+4.5 percentage points</strong> (13–16 % above the mean of 0.345).</li>
+        <li>Returned to work within 36 months: −10.9 points. After 10 years: −3 points.</li>
+        <li>Earnings in years 0–3: about −€2.7 per day. Years 4–10: no significant difference.</li>
+      </ul>
+      <p><strong>Checks:</strong> no spike in births on 1 July; dropping births within a week of the cut-off gives 0.056; placebo with June/July 1987 gives 0.008 (≈ 0). Balance table: only one of many characteristics differs.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>What's the difference between sharp and fuzzy RD?</summary><div class="a"><p>Sharp: treatment jumps from 0 to 1 at c. Fuzzy: only the probability of treatment jumps, so you divide by the jump in take-up (IV).</p></div></details>
+    <details class="q"><summary>Why worry if lots of people sit just above the cut-off?</summary><div class="a"><p>It suggests manipulation. People who sort themselves across c are probably different, so above-vs-below is no longer like random.</p></div></details>
+    <details class="q"><summary>Why not fit a 5th-order polynomial to all the data?</summary><div class="a"><p>Far-away points get large erratic weights, so the estimate at c is sensitive to the polynomial order and can overfit. Use local linear near c.</p></div></details>
+    <details class="q"><summary>Effect at the cut-off is +5. Can you say the policy raises outcomes by 5 for everyone?</summary><div class="a"><p>No. RD identifies the effect at X = c. Extending it further needs extra assumptions.</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li><strong>Mastering 'Metrics</strong> ch. 4 "Regression Discontinuity Designs": §4.1 minimum drinking age and deaths (sharp RD), §4.2 Boston exam schools (fuzzy RD).</li>
+      <li>Further: Lee &amp; Lemieux (2010), Cattaneo, Idrobo &amp; Titiunik (2020) practical intro.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l6" id="done-l6">I've got this</label><button class="btn" data-go="l7">Next: DiD →</button></div>
+</section>
+
+<section class="page" id="l7" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 7 · Part B</div>
+    <h1>Difference-in-differences</h1>
+    <p class="lede">Don't just compare before and after: other things change over time too. Compare the treated group's change with a control group's change. <mark>The difference between the two changes is the effect.</mark></p>
+    <div class="meta"><span>About 40 min in Full mode</span><span>About 12 min in Gist mode</span></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Panel data</dt><dd>The same units (people, stores, states) observed at several points in time.</dd>
+      <dt>Fixed effect</dt><dd>A separate intercept for each unit (or each period) that soaks up everything constant about it.</dd>
+      <dt>Counterfactual</dt><dd>What would have happened without the treatment. Never observed; it has to be estimated.</dd>
+      <dt>Percentage point (pp)</dt><dd>Plain difference between two percentages: 40 % → 45 % is +5 pp (but +12.5 %).</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>DiD = (treated after − treated before) − (control after − control before).</mark></li>
+      <li><mark>Key assumption: parallel trends.</mark> Without treatment, both groups would have changed by the same amount. Levels can differ; trends can't. It can't be tested directly; pre-trends in an event study are a partial check.</li>
+      <li><mark>With staggered timing and changing effects, plain two-way fixed effects (TWFE) can be badly wrong</mark>, because it uses already-treated units as controls. Use Callaway &amp; Sant'Anna-style estimators.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>John Snow and the cholera "Grand Experiment"</h2>
+    <p>London, 1850s. In 1852 the Lambeth water company moved its intake upriver, above the sewage. Southwark &amp; Vauxhall (S&amp;V) kept taking dirty water. Both companies' pipes ran down the <em>same streets</em>, so neighbours breathed the same air but drank different water.</p>
+    <div class="tbl"><table>
+      <tr><th>Cholera deaths per 10,000 households</th><th class="num">1849</th><th class="num">1854</th><th class="num">Change</th></tr>
+      <tr><td>Lambeth (treated: clean water)</td><td class="num">62</td><td class="num">14</td><td class="num">−48</td></tr>
+      <tr><td>S&amp;V (control: dirty water)</td><td class="num">565</td><td class="num">614</td><td class="num">+49</td></tr>
+    </table></div>
+    <div class="example"><div class="label">Worked example</div>
+      <ol>
+        <li>Treated change: 14 − 62 = −48.</li>
+        <li>Control change: 614 − 565 = +49. The epidemic got worse overall.</li>
+        <li>DiD = (−48) − (+49) = <strong>−97</strong>.</li>
+      </ol>
+      <p class="result">Clean water cut cholera deaths by about 97 per 10,000 households. Just looking at Lambeth before/after (−48) would have understated it.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>The picture</h2>
+    <figure>
+      <svg viewBox="0 0 400 200" role="img" aria-label="Treated and control lines before and after, with dashed counterfactual">
+        <line x1="40" y1="175" x2="390" y2="175" stroke="var(--line)" stroke-width="1.5"/>
+        <line x1="200" y1="15" x2="200" y2="175" stroke="var(--chart-mute)" stroke-dasharray="4 4"/>
+        <text x="204" y="28">policy starts</text>
+        <line x1="80" y1="140" x2="320" y2="110" stroke="var(--chart-a)" stroke-width="3"/>
+        <line x1="80" y1="100" x2="320" y2="30" stroke="var(--chart-b)" stroke-width="3"/>
+        <line x1="80" y1="100" x2="320" y2="70" stroke="var(--chart-b)" stroke-width="2" stroke-dasharray="6 5"/>
+        <g fill="var(--surface)" stroke-width="2.5"><circle cx="80" cy="140" r="5" stroke="var(--chart-a)"/><circle cx="320" cy="110" r="5" stroke="var(--chart-a)"/><circle cx="80" cy="100" r="5" stroke="var(--chart-b)"/><circle cx="320" cy="30" r="5" stroke="var(--chart-b)"/><circle cx="320" cy="70" r="5" stroke="var(--chart-b)" stroke-dasharray="2 2"/></g>
+        <line x1="335" y1="32" x2="335" y2="68" stroke="var(--ink)" stroke-width="2"/>
+        <text x="342" y="54" class="ink" style="font-weight:700">effect</text>
+        <text x="86" y="160">control</text><text x="86" y="92">treated</text>
+        <text x="215" y="88">if no treatment</text><text x="215" y="102">(parallel to control)</text>
+        <text x="80" y="192" text-anchor="middle">before</text><text x="320" y="192" text-anchor="middle">after</text>
+      </svg>
+      <figcaption>The dashed line copies the control group's change onto the treated group. The gap between what happened and the dashed line is the effect.</figcaption>
+    </figure>
+  </div>
+
+  <div class="chunk">
+    <h2>The 2 × 2 setup and its assumptions</h2>
+    <div class="formula">
+      <div class="eq">DiD = (μ₁,₁ − μ₁,₀) − (μ₀,₁ − μ₀,₀)</div>
+      <dl><dt>μ<sub>g,t</sub></dt><dd>average outcome for group g (1 = treated, 0 = control) in period t (1 = after, 0 = before)</dd></dl>
+    </div>
+    <div class="formula">
+      <div class="eq">Yᵢₜ = α + βGᵢ + γPostₜ + δ(Gᵢ × Postₜ) + εᵢₜ</div>
+      <dl>
+        <dt>β</dt><dd>baseline gap between groups</dd>
+        <dt>γ</dt><dd>common time change</dd>
+        <dt>δ</dt><dd><strong>the DiD effect</strong> (extra change for the treated after)</dd>
+      </dl>
+      <p class="say">The same number as the four-means formula, just written as a regression.</p>
+    </div>
+    <p>The target is the <strong>ATT</strong>: average effect on the treated group after treatment. It's identified under three assumptions:</p>
+    <ul>
+      <li><strong>Consistency / SUTVA:</strong> observed outcome = potential outcome under the treatment received. Treatment is well defined, and there are no spillovers onto the control group.</li>
+      <li><strong>No anticipation:</strong> the treated don't react before treatment starts (e.g. to an announced policy).</li>
+      <li><strong>Parallel trends:</strong> <code>E[Y₁(0) − Y₀(0) | treated] = E[Y₁(0) − Y₀(0) | control]</code>. The only assumption about the unseen counterfactual.</li>
+    </ul>
+    <p class="deep"><span class="sub">The derivation in three steps</span><span class="deep-tag">deeper</span><br>(1) Add and subtract the treated group's "before" outcome, so ATT = (actual change of treated) − (untreated change of treated, unknown). (2) Parallel trends replaces that unknown change with the control group's change. (3) Consistency + no anticipation turn every potential-outcome term into an observed mean. Result: ATT = (μ₁,₁ − μ₁,₀) − (μ₀,₁ − μ₀,₀).</p>
+    <div class="trap"><div class="label">Trap</div><p>Parallel trends does <strong>not</strong> require equal levels. Lambeth and S&amp;V had wildly different levels (62 vs 565). Only the <em>changes</em> need to match without treatment.</p></div>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Adding covariates <span class="deep-tag">deeper</span></h2>
+    <p><strong>Conditional parallel trends:</strong> trends are parallel <em>within</em> groups with the same X. Compute DiD in each X-cell, then average using the treated group's mix.</p>
+    <div class="example"><div class="label">Slide example</div>
+      <p>Cell X=0: DiD = 1. Cell X=1: DiD = 2. Treated are 20 % / 80 % in these cells, so ATT = 0.2·1 + 0.8·2 = <strong>1.8</strong>. Ignoring X gives 3.0, a bias of 1.2, because most treated units are in the fast-trend cell.</p>
+    </div>
+    <p>In a regression, covariates must be allowed to shift the trend: add <code>Xᵢ × Postₜ</code>. Adding Xᵢ alone does nothing (DiD removes level differences anyway). Better tools: regression adjustment, inverse probability weighting, or doubly robust DiD (Sant'Anna &amp; Zhao 2020).</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Event studies: checking pre-trends</h2>
+    <p>Replace the single "treated × after" dummy with one dummy per period relative to treatment, k = t − (adoption time). Leave out k = −1 as the reference.</p>
+    <ul>
+      <li><strong>Leads</strong> (k &lt; 0): should be near zero. If not, trends weren't parallel before.</li>
+      <li><strong>Lags</strong> (k ≥ 0): how the effect evolves. The slides' fracture example shows income dropping by over €500/month at month 2 and slowly recovering. One average number would hide that.</li>
+    </ul>
+    <div class="trap"><div class="label">Trap</div><p>Flat leads don't <em>prove</em> parallel trends. The assumption is about the post-period, and pre-trend tests often have low power (Roth 2022).</p></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Staggered adoption: why TWFE breaks</h2>
+    <p>Many groups, treated at different times. The usual regression is <strong>two-way fixed effects</strong>: <code>Yᵢₜ = αᵢ + λₜ + β·Dᵢₜ + uᵢₜ</code> (unit FE + time FE).</p>
+    <p>Goodman-Bacon (2021): β_TWFE is a weighted average of every possible 2×2 DiD in the data:</p>
+    <ol>
+      <li>early-treated vs never-treated ✓</li>
+      <li>late-treated vs never-treated ✓</li>
+      <li>early vs late (late still untreated) ✓</li>
+      <li><strong>late vs early, using the already-treated early group as control ✗</strong></li>
+    </ol>
+    <p>If effects grow over time, the early group keeps changing after treatment. Using it as a "control" subtracts that growth. <mark>The estimate can even flip sign.</mark></p>
+    <div class="example"><div class="label">Slide example</div>
+      <div class="tbl"><table>
+        <tr><th>Comparison</th><th class="num">Weight</th><th class="num">2×2 estimate</th></tr>
+        <tr><td>Earlier T vs later C</td><td class="num">0.191</td><td class="num">60.4</td></tr>
+        <tr><td>Later T vs earlier C</td><td class="num">0.284</td><td class="num">−98.4</td></tr>
+        <tr><td>T vs never treated</td><td class="num">0.525</td><td class="num">6.5</td></tr>
+        <tr><td><strong>TWFE (weighted sum)</strong></td><td class="num"></td><td class="num"><strong>−13.0</strong></td></tr>
+      </table></div>
+      <p class="result">Modern methods on the same data: +68.1. TWFE got the wrong sign.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>The fix: Callaway &amp; Sant'Anna</h2>
+    <p>Rule: <mark>never use already-treated units as controls.</mark> For each cohort g (first treated in period g) and each later period t, compute a clean 2×2 DiD called ATT(g, t):</p>
+    <ul>
+      <li>Treated change: cohort g from s = g − 1 (last pre-period) to t.</li>
+      <li>Control change: units <em>not yet treated at t</em> (or never treated), over the same s → t.</li>
+    </ul>
+    <div class="tbl"><table>
+      <tr><th>Mean Y</th><th class="num">t=1</th><th class="num">t=2</th><th class="num">t=3</th><th class="num">t=4</th></tr>
+      <tr><td>A (treated from t=2)</td><td class="num">10</td><td class="num">16</td><td class="num">21</td><td class="num">24</td></tr>
+      <tr><td>B (treated from t=3)</td><td class="num">20</td><td class="num">22</td><td class="num">27</td><td class="num">29</td></tr>
+      <tr><td>N (never treated)</td><td class="num">30</td><td class="num">32</td><td class="num">35</td><td class="num">36</td></tr>
+    </table></div>
+    <div class="example"><div class="label">Worked example: ATT(2, 3)</div>
+      <ol>
+        <li>Cohort A, base period s = 1, target t = 3.</li>
+        <li>Treated change: 21 − 10 = +11.</li>
+        <li>Controls at t = 3: only N (B is treated by then). Change: 35 − 30 = +5.</li>
+        <li class="result">ATT(2,3) = 11 − 5 = 6.</li>
+      </ol>
+      <p>All cells: A gets 4, 6, 8; B gets 2, 3. TWFE would also use "B vs already-treated A" from t=2 to 3: (27−22) − (21−16) = 0 instead of 2, because A's own effect grew from 4 to 6.</p>
+    </div>
+    <p class="deep"><span class="deep-tag">deeper</span> Then aggregate: by event time (dynamic profile), by calendar time, or overall (average within each cohort first, then across cohorts weighted by size; a plain average over cells overweights early cohorts). Related estimators: Sun &amp; Abraham (2021), de Chaisemartin &amp; D'Haultfœuille (2020, who show TWFE can put negative weights on some ATT(g,t)). Overview: Roth et al. (2023).</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Standard errors</h2>
+    <p>Outcomes of the same unit are correlated over time, so ordinary SEs are far too small (Bertrand, Duflo &amp; Mullainathan 2004). <mark>Cluster at the level where treatment is assigned</mark> (e.g. state). With very few treated clusters (one state!), even clustered SEs are unreliable.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Case study: minimum wage (Card &amp; Krueger 1994)</h2>
+    <ul>
+      <li>April 1992: New Jersey raised the minimum wage from $4.25 to $5.05. Pennsylvania didn't.</li>
+      <li>410 fast-food restaurants surveyed before (Feb–Mar) and after (Nov–Dec).</li>
+      <li><strong>Result:</strong> NJ employment rose by <strong>2.33 full-time-equivalent workers per store</strong> relative to PA. Theory predicted a fall.</li>
+      <li>Alternative: use each NJ store's "wage gap" (how much it had to raise wages). Coefficient 15.65 × average gap 0.11 ≈ +1.7 FTE.</li>
+      <li>Prices of a meal rose about 3.3 % relative to PA. More full-time workers (+7.3 pp). No clear changes in opening hours.</li>
+      <li><strong>Debate:</strong> Neumark &amp; Wascher (2000) used payroll data and found negative effects. Card &amp; Krueger (2000) used administrative data and found none. The original paper showed no parallel-trends evidence, and one treated vs one control state limits inference.</li>
+    </ul>
+  </div>
+
+  <div class="quiz">
+    <h2>Self-check</h2>
+    <details class="q"><summary>Treated: 50 → 70. Control: 40 → 50. DiD?</summary><div class="a"><p>(70 − 50) − (50 − 40) = 20 − 10 = 10.</p></div></details>
+    <details class="q"><summary>Do treated and control need the same level of Y before the policy?</summary><div class="a"><p>No. Only the same trend without treatment (parallel trends).</p></div></details>
+    <details class="q"><summary>In an event study, what should the leads look like, and what do they prove?</summary><div class="a"><p>Close to zero. They support parallel trends but can't prove it; the assumption is about the post-period.</p></div></details>
+    <details class="q"><summary>Which TWFE comparison causes trouble, and why?</summary><div class="a"><p>Late-treated vs already-treated early units. If the early group's effect keeps changing, that change gets subtracted.</p></div></details>
+    <details class="q"><summary>At what level should you cluster standard errors?</summary><div class="a"><p>At the level where treatment is assigned (e.g. state for a state law).</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li><strong>Mastering 'Metrics</strong> ch. 5 "Differences-in-Differences": §5.1 Mississippi bank failures (a great 2×2 example), §5.2 drinking age with many states (regression DiD, parallel-trends pictures). Figure 5.7 is John Snow's DD recipe.</li>
+      <li>Modern staggered DiD: Roth et al. (2023) overview, or Cunningham's <em>Causal Inference: The Mixtape</em> (free online).</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l7" id="done-l7">I've got this</label><button class="btn" data-go="cheat">Next: Cheat sheet →</button></div>
+</section>
+
+<section class="page" id="cheat" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Revision</div>
+    <h1>Cheat sheet</h1>
+    <p class="lede">Everything side by side for the night before the exam.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>Which causal method?</h2>
+    <ol class="flow">
+      <li><strong>Can you randomise?</strong> Run an experiment and compare means. Done.</li>
+      <li><strong>Is there something random that pushes the treatment</strong> (lottery, weather, birth timing) but doesn't touch Y directly? Use <strong>IV</strong>.</li>
+      <li><strong>Does a rule switch treatment on at a cut-off</strong> of some score, age or date? Use <strong>RDD</strong> (fuzzy RDD if the cut-off only changes the odds).</li>
+      <li><strong>Did a policy hit some groups and not others, with data before and after?</strong> Use <strong>DiD</strong> (Callaway &amp; Sant'Anna if timing is staggered).</li>
+      <li><strong>None of these?</strong> Regression with controls, but be honest that it shows association unless you've controlled for everything that matters.</li>
+    </ol>
+  </div>
+
+  <div class="chunk">
+    <h2>The three methods compared</h2>
+    <div class="tbl"><table>
+      <tr><th></th><th>IV</th><th>RDD</th><th>DiD</th></tr>
+      <tr><td><strong>Source of randomness</strong></td><td>An instrument Z</td><td>A cut-off c in a running variable</td><td>A policy hitting one group at one time</td></tr>
+      <tr><td><strong>Key formula</strong></td><td>reduced form ÷ first stage</td><td>jump in Y at c (fuzzy: ÷ jump in D)</td><td>(ΔY treated) − (ΔY control)</td></tr>
+      <tr><td><strong>Key assumption</strong></td><td>Relevance, independence, exclusion (+ monotonicity)</td><td>Continuity: nothing else jumps at c; no sorting</td><td>Parallel trends; no anticipation; no spillovers</td></tr>
+      <tr><td><strong>What you get</strong></td><td>LATE for compliers</td><td>Effect at the cut-off</td><td>ATT, effect on the treated</td></tr>
+      <tr><td><strong>Checks</strong></td><td>First-stage F ≥ 10; overid test</td><td>Density test, covariate balance, placebo cut-offs, donut, bandwidths</td><td>Event study pre-trends; Bacon decomposition</td></tr>
+      <tr><td><strong>Classic example</strong></td><td>KIPP lottery: 0.355/0.741 = 0.48 SD</td><td>Austrian leave, 1 July 1990: +4.5 pp births</td><td>Snow's cholera: −48 − 49 = −97</td></tr>
+      <tr><td><strong>Mastering 'Metrics</strong></td><td>ch. 3</td><td>ch. 4</td><td>ch. 5</td></tr>
+    </table></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Toolbox lectures in one line each</h2>
+    <div class="tbl"><table>
+      <tr><th>Tool</th><th>Core idea</th><th>Key formula</th></tr>
+      <tr><td>OLS</td><td>Minimise squared residuals</td><td><code>β̂ = (XᵀX)⁻¹Xᵀy</code>; one x: Cov/Var</td></tr>
+      <tr><td>Omitted variable bias</td><td>Left-out factor linked to x and y biases β̂</td><td><code>β₁ = β₁* + β₃*·γ₁</code></td></tr>
+      <tr><td>t-test</td><td>Is a coefficient zero?</td><td><code>t = β̂ / se(β̂)</code></td></tr>
+      <tr><td>MLE</td><td>Parameter that makes the data most probable</td><td><code>θ̂ = argmax Σ log f(Xᵢ|θ)</code>; Var ≈ 1/(nJ)</td></tr>
+      <tr><td>Bootstrap</td><td>Resample your data with replacement to see estimate spread</td><td>SE = SD of B bootstrap estimates</td></tr>
+      <tr><td>Potential outcomes</td><td>Only one of Y(1), Y(0) is seen</td><td>Randomisation: <code>Y(1),Y(0) ⫫ D</code></td></tr>
+    </table></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Log interpretation table</h2>
+    <div class="tbl"><table>
+      <tr><th>Model</th><th>Meaning of β₁</th></tr>
+      <tr><td>level–level</td><td>+1 unit x → +β₁ units y</td></tr>
+      <tr><td>log y, level x</td><td>+1 unit x → ≈ +100·β₁ % y</td></tr>
+      <tr><td>level y, log x</td><td>+1 % x → ≈ +β₁/100 units y</td></tr>
+      <tr><td>log–log</td><td>+1 % x → ≈ +β₁ % y (elasticity)</td></tr>
+    </table></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Standard errors: which ones?</h2>
+    <ul>
+      <li>Error variance changes with x: <strong>heteroskedasticity-robust</strong> (HC) SEs.</li>
+      <li>Treatment assigned to groups, or panel data: <strong>cluster</strong> at the level of treatment assignment.</li>
+      <li>IV: use an <strong>IV command</strong>, never the manual second stage.</li>
+      <li>RDD: <strong>robust bias-corrected</strong> intervals (<code>rdrobust</code>).</li>
+      <li>Weird estimator, small sample: <strong>bootstrap</strong>.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+  var KEY='econ-guide-v1';
+  var state={done:{},mode:'full'};
+  try{var s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&typeof s==='object'){state.done=s.done||{};state.mode=s.mode||'full';}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  var pages=[].slice.call(document.querySelectorAll('[data-page]'));
+  var ids=pages.map(function(p){return p.id;});
+
+  function show(id,scroll){
+    if(ids.indexOf(id)<0) id='start';
+    pages.forEach(function(p){p.hidden=(p.id!==id);});
+    tabs.forEach(function(t){var on=t.dataset.t===id;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;if(on&&t.scrollIntoView){try{t.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}}});
+    try{history.replaceState(null,'','#'+id);}catch(e){}
+    if(scroll!==false) window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t);});});
+  document.addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g){show(g.dataset.go);}});
+  document.querySelector('.tabs').addEventListener('keydown',function(e){
+    var i=tabs.findIndex(function(t){return t.getAttribute('aria-selected')==='true';});
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();var n=(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;show(tabs[n].dataset.t,false);tabs[n].focus();}
+  });
+
+  // progress
+  var boxes=[].slice.call(document.querySelectorAll('[data-done]'));
+  function renderDone(){
+    var n=0;
+    boxes.forEach(function(b){var k=b.dataset.done;b.checked=!!state.done[k];if(state.done[k])n++;});
+    tabs.forEach(function(t){t.classList.toggle('done',!!state.done[t.dataset.t]);});
+    document.getElementById('progress').textContent=n+' of 7 lectures done';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',function(){state.done[b.dataset.done]=b.checked;save();renderDone();});});
+  renderDone();
+
+  // mode
+  var mf=document.getElementById('m-full'),mg=document.getElementById('m-gist');
+  function setMode(m){state.mode=m;document.body.classList.toggle('gist',m==='gist');mf.setAttribute('aria-pressed',m==='full');mg.setAttribute('aria-pressed',m==='gist');save();}
+  mf.addEventListener('click',function(){setMode('full');});mg.addEventListener('click',function(){setMode('gist');});
+  setMode(state.mode);
+
+  // glossary search
+  var gi=document.getElementById('g-search');
+  if(gi){
+    var groups=[].slice.call(document.querySelectorAll('.gloss-group'));
+    var none=document.getElementById('g-none'),cnt=document.getElementById('g-count');
+    function filter(){
+      var q=gi.value.trim().toLowerCase(),total=0;
+      groups.forEach(function(g){
+        var vis=0;
+        [].slice.call(g.querySelectorAll('dt')).forEach(function(dt){
+          var dd=dt.nextElementSibling;var hit=!q||(dt.textContent+' '+dd.textContent).toLowerCase().indexOf(q)>=0;
+          dt.hidden=!hit;dd.hidden=!hit;if(hit)vis++;
+        });
+        g.hidden=vis===0;total+=vis;
+      });
+      none.hidden=total>0;cnt.textContent=q?(total+' match'+(total===1?'':'es')):'';
+    }
+    gi.addEventListener('input',filter);
+  }
+
+  // bootstrap demo
+  var data=[2.07,5.06,6.51,1.75,13.95,2.55,18.03,1.92,1.03];
+  var n=data.length,means=[];
+  function mean(a){return a.reduce(function(s,x){return s+x;},0)/a.length;}
+  var orig=document.getElementById('b-orig');
+  orig.innerHTML=data.map(function(x){return '<span>'+x.toFixed(2)+'</span>';}).join('');
+  document.getElementById('b-origmean').textContent='Original mean = '+mean(data).toFixed(2)+' days';
+  function draw(){var r=[];for(var i=0;i<n;i++)r.push(data[Math.floor(Math.random()*n)]);return r;}
+  function pct(a,p){var s=a.slice().sort(function(x,y){return x-y;});var i=(s.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return s[lo]+(s[hi]-s[lo])*(i-lo);}
+  var NS='http://www.w3.org/2000/svg',hist=document.getElementById('b-hist');
+  function el(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function render(last){
+    if(last){
+      var counts={};last.forEach(function(x){counts[x]=(counts[x]||0)+1;});
+      document.getElementById('b-last').innerHTML=last.slice().sort(function(a,b){return a-b;}).map(function(x){return '<span'+(counts[x]>1?' class="rep"':'')+'>'+x.toFixed(2)+'</span>';}).join('')+' <span style="border:0;background:none">mean = '+mean(last).toFixed(2)+'</span>';
+    }
+    while(hist.firstChild)hist.removeChild(hist.firstChild);
+    var lo=1,hi=13,bins=24,w=(hi-lo)/bins,c=new Array(bins).fill(0);
+    means.forEach(function(m){var b=Math.min(bins-1,Math.max(0,Math.floor((m-lo)/w)));c[b]++;});
+    var mx=Math.max.apply(null,c.concat([1]));
+    var X=function(v){return 30+(v-lo)/(hi-lo)*350;};
+    hist.appendChild(el('line',{x1:30,y1:140,x2:380,y2:140,stroke:'var(--line)','stroke-width':1.5}));
+    c.forEach(function(k,i){if(!k)return;var h=k/mx*115;hist.appendChild(el('rect',{x:X(lo+i*w)+1,y:140-h,width:350/bins-2,height:h,fill:'var(--chart-a)',rx:1.5}));});
+    [1,3,5,7,9,11,13].forEach(function(v){var t=el('text',{x:X(v),y:157,'text-anchor':'middle'});t.textContent=v;hist.appendChild(t);});
+    var om=mean(data);hist.appendChild(el('line',{x1:X(om),y1:18,x2:X(om),y2:140,stroke:'var(--chart-b)','stroke-width':2,'stroke-dasharray':'4 3'}));
+    var lab=el('text',{x:X(om)+5,y:16});lab.textContent='original mean';hist.appendChild(lab);
+    var cap=el('text',{x:30,y:16});cap.textContent=means.length?'':'bootstrap means will pile up here';hist.appendChild(cap);
+    var sum=document.getElementById('b-sum');
+    if(means.length<2){sum.textContent=means.length+' resample'+(means.length===1?'':'s')+' so far';return;}
+    var m=mean(means),sd=Math.sqrt(means.reduce(function(s,x){return s+(x-m)*(x-m);},0)/(means.length-1));
+    sum.textContent=means.length.toLocaleString()+' resamples · bootstrap SE = '+sd.toFixed(2)+' · 95% CI ≈ ['+pct(means,.025).toFixed(2)+', '+pct(means,.975).toFixed(2)+']';
+  }
+  document.getElementById('b-one').addEventListener('click',function(){var r=draw();means.push(mean(r));render(r);});
+  document.getElementById('b-many').addEventListener('click',function(){var r;for(var i=0;i<1000;i++){r=draw();means.push(mean(r));}render(r);});
+  document.getElementById('b-reset').addEventListener('click',function(){means=[];document.getElementById('b-last').innerHTML='<span>press a button</span>';render();});
+  render();
+
+  var h=(location.hash||'').replace('#','');
+  show(h||'start',false);
+})();
+</script>
+
+</body>
+</html>
