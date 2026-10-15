@@ -324,7 +324,7 @@ body.gist .gist-note{display:block}
     <h2>The two big theorems</h2>
     <dl class="gloss">
       <dt>Law of Large Numbers (LLN)</dt><dd>With more and more data, the sample mean gets closer and closer to the true mean.</dd>
-      <dt>Central Limit Theorem (CLT)</dt><dd>With enough data, the sample mean is approximately normally distributed, whatever the original distribution looks like. This is why normal-based tests work so often.</dd>
+      <dt>Central Limit Theorem (CLT)</dt><dd>With enough independent observations from a distribution with a finite variance, the sample mean is approximately normally distributed, even if the data themselves aren't. "Enough" depends on how skewed the data are. This is why normal-based tests work so often.</dd>
     </dl>
   </div>
 
@@ -466,6 +466,17 @@ body.gist .gist-note{display:block}
   </div>
 
   <div class="chunk">
+    <h2>What the line is aiming at: the conditional expectation</h2>
+    <p><code>E[Y | X = x]</code> is the average of Y among everyone with that value of x: the average wage of people with 12 years of school, of people with 13 years, and so on. Plot those averages and you get the <strong>conditional expectation function</strong> (CEF).</p>
+    <ul>
+      <li>If the CEF is a straight line, regression recovers it exactly (in large samples).</li>
+      <li>If it's curved, OLS gives the <mark>best straight-line approximation</mark> to it. That's still useful, but check with a plot.</li>
+      <li>The error ε is "Y minus its conditional average". The assumption <code>E[ε | X] = 0</code> says the line gets the averages right for every x.</li>
+    </ul>
+    <p>This is a statement about <em>averages among people who differ in X</em>. Whether changing someone's X would change their Y is a different, causal question (lecture 4).</p>
+  </div>
+
+  <div class="chunk">
     <h2>Least squares: how the line is chosen</h2>
     <figure>
       <svg viewBox="0 0 400 220" role="img" aria-label="Scatter of points with a fitted line and vertical residual lines">
@@ -496,7 +507,7 @@ body.gist .gist-note{display:block}
       <p class="say">With one x this collapses to the formula you can remember: <mark><code>β̂₁ = Cov(x, y) / Var(x)</code></mark>. You'll see this shape again in IV.</p>
     </div>
     <p class="deep"><span class="sub">Geometry</span><span class="deep-tag">deeper</span><br>Fitting OLS = dropping a perpendicular from y onto the space spanned by the columns of X. The fitted values ŷ = Py are the "shadow" of y (P is the <em>projection matrix</em>). The residuals ε̂ = My are what's left (M = I − P is the <em>residual maker</em>). Both P and M are symmetric and idempotent (doing them twice changes nothing), and <mark>ŷ is perpendicular to ε̂</mark>.</p>
-    <p><strong>Why OLS is a good choice:</strong> the <strong>Gauss–Markov theorem</strong> says that if errors average zero given X and have constant variance, OLS has the smallest variance of all linear unbiased estimators. Short name: <mark>BLUE</mark> (Best Linear Unbiased Estimator).</p>
+    <p><strong>Why OLS is a good choice:</strong> the <strong>Gauss–Markov theorem</strong> says that if the model is linear in β, X has full rank (no perfect collinearity), errors average zero given X (exogeneity), and errors have constant variance and are uncorrelated with each other, then OLS has the smallest variance of all <em>linear unbiased</em> estimators. Short name: <mark>BLUE</mark> (Best Linear Unbiased Estimator). Normal errors are <em>not</em> needed for BLUE; they're only needed for exact small-sample t and F tests.</p>
   </div>
 
   <div class="chunk">
@@ -516,8 +527,9 @@ body.gist .gist-note{display:block}
         <dt>RSS</dt><dd>residual sum of squares: total squared mistakes left over</dd>
         <dt>TSS</dt><dd>total sum of squares: how spread out y is around its mean</dd>
       </dl>
-      <p class="say">R² goes from 0 (line explains nothing) to 1 (perfect fit). It also equals the squared correlation between ŷ and y.</p>
+      <p class="say">For ordinary OLS <strong>with an intercept</strong>, measured on the data used to fit it, R² lies between 0 (line explains nothing) and 1 (perfect fit), and it equals the squared correlation between ŷ and y.</p>
     </div>
+    <div class="trap"><div class="label">Careful: when R² can be negative</div><p>The 0-to-1 range is not a law of nature. Without an intercept, or when a model is judged on <em>new</em> data (out of sample), RSS can exceed TSS and the formula gives a negative R². That simply means the model predicts worse than the plain mean ȳ. Some software also reports a different "uncentred" R² for models without an intercept, so the number isn't comparable.</p></div>
     <div class="trap"><div class="label">Trap</div><p>Very different datasets can have the same R² (Faraway shows four with R² = 0.65). <strong>Always plot your data.</strong> For explanation, a low R² is not automatically a problem.</p></div>
   </div>
 
@@ -554,7 +566,8 @@ body.gist .gist-note{display:block}
     <p><strong>F-test</strong> compares a big model Ω with a smaller one ω that drops some variables: <code>F = [(RSS<sub>ω</sub> − RSS<sub>Ω</sub>)/q] / [RSS<sub>Ω</sub>/(n−p)]</code>, where q is the number of dropped variables. "Do these variables together add anything?"</p>
     <p><strong>Confidence interval:</strong> <code>β̂ᵢ ± t · se(β̂ᵢ)</code>. The parameter is fixed. <mark>The interval is the random thing.</mark></p>
     <p><strong>Predicting a new point x₀:</strong> the interval for the <em>average</em> y at x₀ uses <code>√(x₀ᵀ(XᵀX)⁻¹x₀)</code>. The interval for <em>one future</em> y uses <code>√(1 + x₀ᵀ(XᵀX)⁻¹x₀)</code>. The extra "1+" is the new person's own error ε₀, so prediction intervals are always wider.</p>
-    <p><strong>t-test = regression.</strong> Regressing y on two group dummies makes exactly the same assumptions as a two-sample t-test (equal variances, normal). Same answer.</p>
+    <p><strong>t-test = regression, if you code it right.</strong> Regress y on an intercept and <em>one</em> dummy (1 = group B, 0 = group A). The intercept is group A's mean, the dummy's coefficient is the difference in means, and its ordinary t-statistic is exactly the <strong>pooled-variance</strong> (equal-variance) two-sample t-test. (Two dummies <em>and</em> an intercept would be perfectly collinear; two dummies without an intercept just give the two group means.)</p>
+    <p>If the two groups have different spreads, the matching test is <strong>Welch's t-test</strong>. The regression version is the same dummy regression with heteroskedasticity-robust standard errors (HC2 gives Welch's standard error exactly; the degrees of freedom differ slightly).</p>
   </div>
 
   <div class="chunk">
@@ -580,7 +593,8 @@ body.gist .gist-note{display:block}
     </ul>
 
     <p class="sub">3 · Heteroskedasticity</p>
-    <p>"Hetero" = different, "skedastic" = spread. The errors are bigger for some x's than others (e.g. <code>y = 1 + 3x + x·ε</code>: bigger x, bigger noise). OLS assumed constant spread σ².</p>
+    <p>"Hetero" = different, "skedastic" = spread. The errors are bigger for some x's than others (e.g. <code>y = 1 + 3x + x·ε</code>: bigger x, bigger noise). The usual standard-error formula assumed constant spread σ².</p>
+    <p><mark>Heteroskedasticity does not bias β̂</mark> (as long as errors still average zero given X). What breaks is the <em>conventional standard errors</em>, and with them t-tests and confidence intervals.</p>
     <ul>
       <li><strong>Fix A, weighted least squares:</strong> give noisy points less weight, wᵢ = 1/var(yᵢ). Example: if yᵢ is an average over nᵢ people, use wᵢ = nᵢ.</li>
       <li><strong>Fix B, robust standard errors</strong> (HC0–HC3): keep OLS β̂, fix only the standard errors. Angrist &amp; Pischke prefer this one.</li>
@@ -595,7 +609,8 @@ body.gist .gist-note{display:block}
     <ul>
       <li><strong>Occam's razor:</strong> among similar models, prefer the simpler one (especially for explanation). For prediction, a bigger model can be fine.</li>
       <li><strong>Automatic selection by p-values is risky.</strong> After many tests the p-values are no longer valid and results look better than reality. Freedman (1983): with p = 50 variables and n = 100, you find "patterns" in pure noise.</li>
-      <li><strong>Information criteria</strong> = fit minus a penalty for complexity. AIC = −2·logL + 2p. BIC uses a bigger penalty (p·log n in most textbooks; your slide writes it as 2p·log n), so BIC prefers smaller models. <mark>Lower is better.</mark></li>
+      <li><strong>Information criteria</strong> = fit minus a penalty for complexity. <code>AIC = −2·logL + 2p</code> and <code>BIC = −2·logL + p·log n</code>, where p is the number of parameters. Because log n &gt; 2 once n ≥ 8, BIC punishes extra parameters harder and prefers smaller models. <mark>Lower is better.</mark></li>
+      <li><strong>Note on the slides:</strong> one slide writes the BIC penalty as 2p·log n. That is not the standard definition; treat it as a typo or a non-standard scaling, and use <code>p·log n</code> unless your lecturer says otherwise. Model rankings between AIC and BIC can differ either way.</li>
       <li>If models that fit equally well give very different answers, the honest conclusion may be that the data can't answer the question.</li>
     </ul>
   </div>
@@ -748,7 +763,8 @@ body.gist .gist-note{display:block}
     <div class="tbl"><table>
       <tr><th>Term</th><th>Formula</th><th>Plain meaning</th></tr>
       <tr><td>Score</td><td><code>Sₙ(θ) = ∂ℓₙ/∂θ</code></td><td>Slope of the log-likelihood. Zero at the top.</td></tr>
-      <tr><td>Hessian</td><td><code>Hₙ(θ) = −∂²ℓₙ/∂θ∂θᵀ</code></td><td>How curved the hill is. Sharper hill, more information.</td></tr>
+      <tr><td>Hessian</td><td><code>∂²ℓₙ/∂θ∂θᵀ</code></td><td>Second derivative: how curved the hill is. At a maximum it is <strong>negative</strong> (the hill curves down).</td></tr>
+      <tr><td>Observed information</td><td><code>Hₙ(θ) = −∂²ℓₙ/∂θ∂θᵀ</code></td><td>Minus the Hessian, so it's positive. Sharper hill, more information, smaller SE ≈ 1/√Hₙ(θ̂). (The slides call this Hₙ.)</td></tr>
       <tr><td>Efficient score</td><td><code>S = ∂ log f(X|θ₀)/∂θ</code></td><td>Score of one observation at the true θ. Its average is 0.</td></tr>
       <tr><td>Fisher information</td><td><code>J = E[SSᵀ]</code></td><td>Variance of the score: how much one observation tells you about θ.</td></tr>
       <tr><td>Expected Hessian</td><td><code>H = −E[∂² log f/∂θ∂θᵀ]</code></td><td>Average curvature for one observation.</td></tr>
@@ -837,7 +853,7 @@ body.gist .gist-note{display:block}
       <svg id="b-hist" viewBox="0 0 400 170" role="img" aria-label="Histogram of bootstrap means"></svg>
       <div class="stat" id="b-sum">0 resamples so far</div>
     </div>
-    <p>Notice: the histogram of means is much narrower than the data itself, and it's lopsided because two big values (13.95, 18.03) drag some resamples up. A normal approximation would miss that lopsidedness.</p>
+    <p>Notice: the histogram of means is much narrower than the data itself, and it's lopsided because two big values (13.95, 18.03) drag some resamples up. A normal approximation would miss that lopsidedness. But with only 9 values, the whole picture rests on those 9 numbers: the bootstrap can't tell you about values you never observed.</p>
   </div>
 
   <div class="chunk">
@@ -857,11 +873,12 @@ body.gist .gist-note{display:block}
   <div class="chunk">
     <h2>When to reach for it</h2>
     <ul>
-      <li><strong>Small sample</strong>, so "large n" formulas aren't trustworthy (e.g. n = 15 in a regression).</li>
+      <li><strong>Moderately small samples</strong> where "large n" formulas are shaky (e.g. n = 30–50 with skewed data), <em>provided</em> the sample still represents the population reasonably well.</li>
       <li><strong>Complicated estimator</strong> with no known formula for its variance (e.g. the output of a numerical optimisation).</li>
       <li><strong>Formula depends on unknowns.</strong> The sample median's variance is 1/(4n·f(m)²), which needs the unknown density f at the median.</li>
       <li><strong>Dubious assumptions</strong>, e.g. stock returns with fat tails, where normality is wrong.</li>
     </ul>
+    <div class="trap"><div class="label">Careful: the bootstrap is not a small-sample cure</div><p>It resamples the data you have; it can't create information that isn't there. With very few observations (like the 9 in the demo above), the sample is a crude stand-in for the population, the bootstrap distribution is lumpy, and 95 % intervals often cover the truth less than 95 % of the time. Its guarantees are themselves <em>large-sample</em> results. A small sample stays a small sample.</p></div>
   </div>
 
   <div class="chunk deep">
@@ -960,16 +977,96 @@ body.gist .gist-note{display:block}
       <tr><td>Ema</td><td class="num">3</td><td class="num">4</td><td class="num">−1</td></tr>
       <tr><td>Filip</td><td class="num">1</td><td class="num">3</td><td class="num">−2</td></tr>
     </table></div>
-    <p>In reality, half the cells are missing. Adam got treated, so we see his 4 and never his 6. Cyril didn't, so we see his 6 and never his 8. <mark>Individual effects are never observed.</mark></p>
-    <div class="example"><div class="label">Worked example (from the slides)</div>
-      <p>With the full class, the true average effect is about <strong>−1.6</strong>. After random assignment we only see one column per person. Treated mean = 4.5, untreated mean = 6.0.</p>
-      <p class="result">Estimated effect = 4.5 − 6.0 = −1.5. Very close to the truth, because assignment was random.</p>
+    <p>In reality, half the cells are missing. If Adam is treated, we see his 4 and never his 6. If Cyril isn't, we see his 6 and never his 8. <mark>Individual effects are never observed.</mark></p>
+    <div class="example"><div class="label">Worked example: randomising this class of six</div>
+      <p>The six effects are −2, −2, +2, −4, −1, −2. They sum to −9, so the true average effect (ATE) is <strong>−9 / 6 = −1.5</strong>.</p>
+      <ol>
+        <li>A coin puts Adam, Boris and Ema in the treated group. We see their Y(1): (4 + 5 + 3)/3 = 4.0.</li>
+        <li>We see the others' Y(0): Cyril, Diana, Filip = (6 + 7 + 3)/3 = 5.33.</li>
+        <li>Estimate = 4.0 − 5.33 = <strong>−1.33</strong>. A different coin (Cyril, Diana, Filip treated) gives 4.0 − 5.67 = <strong>−1.67</strong>.</li>
+      </ol>
+      <p class="result">Neither single draw hits −1.5 exactly, but averaged over all 20 ways to split six people into three and three, the estimate is exactly −1.5. Randomisation makes the estimate right on average (unbiased), not right every time.</p>
+      <p>(An earlier version of this guide said the truth was "about −1.6". The table's own numbers give exactly −1.5.)</p>
     </div>
     <div class="formula">
       <div class="eq">Y(1), Y(0) ⫫ D</div>
       <dl><dt>⫫</dt><dd>"is independent of"</dd><dt>D</dt><dd>treatment indicator (1 = treated, 0 = not)</dd></dl>
       <p class="say">Who gets treated has nothing to do with how they would do either way. That's what a coin flip guarantees.</p>
     </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Why a naive comparison misleads: selection bias</h2>
+    <p>Without randomisation, comparing the treated with the untreated mixes two things:</p>
+    <div class="formula">
+      <div class="eq">E[Y|D=1] − E[Y|D=0]  =  ATT  +  (E[Y(0)|D=1] − E[Y(0)|D=0])</div>
+      <dl>
+        <dt>ATT</dt><dd>average treatment effect on the treated: E[Y(1) − Y(0) | D = 1]</dd>
+        <dt>second term</dt><dd><strong>selection bias</strong>: how different the treated would have been <em>even without</em> treatment</dd>
+      </dl>
+      <p class="say">Step by step: subtract and add E[Y(0)|D=1]. The first pair is the ATT; the second pair compares the two groups' untreated outcomes. Randomisation makes that second pair zero.</p>
+    </div>
+    <div class="example"><div class="label">Worked example (from the R lab below)</div>
+      <p>People with high Y(0) were more likely to choose treatment. The naive difference was <strong>16.78</strong>. Split it: ATT = 5.18, selection bias = 11.60. Check: 5.18 + 11.60 = 16.78. Two-thirds of the "effect" was just who chose to be treated.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Statistical vs causal inference</h2>
+    <div class="tbl"><table>
+      <tr><th></th><th>Statistical inference</th><th>Causal inference</th></tr>
+      <tr><td><strong>Question</strong></td><td>How sure are we about this number, given sampling noise?</td><td>Is this number the effect of changing D?</td></tr>
+      <tr><td><strong>Tools</strong></td><td>Standard errors, confidence intervals, p-values (lectures 1–3)</td><td>Randomisation, IV, RDD, DiD (lectures 4–7)</td></tr>
+      <tr><td><strong>More data helps?</strong></td><td>Yes: SEs shrink</td><td><mark>No</mark>: a biased comparison stays biased with a million rows</td></tr>
+    </table></div>
+    <p>A very precise estimate (tiny SE) can still be the wrong <em>kind</em> of number. Precision and credibility are separate questions; always answer both.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>What to control for: confounders, mediators, colliders</h2>
+    <p>"Add more controls" is not always safer. It depends on where a variable sits in the causal picture (a <strong>DAG</strong>, directed acyclic graph: arrows mean "causes").</p>
+    <figure>
+      <svg viewBox="0 0 420 150" role="img" aria-label="Three small causal graphs: a confounder C points to both D and Y; a mediator M sits on the path from D to Y; a collider K receives arrows from both D and Y">
+        <defs><marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--chart-a)"/></marker></defs>
+        <g stroke="var(--chart-a)" stroke-width="2" marker-end="url(#arr3)">
+          <line x1="66" y1="44" x2="38" y2="96"/><line x1="76" y1="44" x2="104" y2="96"/><line x1="40" y1="112" x2="98" y2="112"/>
+          <line x1="164" y1="112" x2="196" y2="112"/><line x1="224" y1="112" x2="258" y2="112"/>
+          <line x1="300" y1="100" x2="334" y2="50"/><line x1="388" y1="100" x2="356" y2="50"/><line x1="312" y1="112" x2="372" y2="112"/>
+        </g>
+        <g fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5">
+          <circle cx="71" cy="32" r="13"/><circle cx="28" cy="112" r="13"/><circle cx="112" cy="112" r="13"/>
+          <circle cx="152" cy="112" r="13"/><circle cx="210" cy="112" r="13"/><circle cx="272" cy="112" r="13"/>
+          <circle cx="345" cy="36" r="13"/><circle cx="298" cy="112" r="13" style="display:none"/><circle cx="300" cy="112" r="13"/><circle cx="386" cy="112" r="13"/>
+        </g>
+        <g class="ink" text-anchor="middle" style="font-weight:700">
+          <text x="71" y="37">C</text><text x="28" y="117">D</text><text x="112" y="117">Y</text>
+          <text x="152" y="117">D</text><text x="210" y="117">M</text><text x="272" y="117">Y</text>
+          <text x="345" y="41">K</text><text x="300" y="117">D</text><text x="386" y="117">Y</text>
+        </g>
+        <g text-anchor="middle"><text x="71" y="145">confounder: control</text><text x="210" y="145">mediator: don't</text><text x="345" y="145">collider: don't</text></g>
+      </svg>
+      <figcaption>Left: C causes both D and Y. Middle: D works through M. Right: D and Y both cause K.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th>Variable</th><th>Example</th><th>Control for it?</th></tr>
+      <tr><td><strong>Confounder</strong> (causes D and Y)</td><td>Ability, when D = education, Y = wage</td><td><strong>Yes.</strong> Leaving it out causes omitted variable bias.</td></tr>
+      <tr><td><strong>Mediator</strong> (on the path D → M → Y)</td><td>Occupation, if education raises wages partly by getting you a better job</td><td><strong>No</strong>, if you want the total effect. Controlling for it removes part of the effect you're measuring.</td></tr>
+      <tr><td><strong>Collider</strong> (caused by D and Y)</td><td>Admission to a selective university, caused by both test scores and motivation</td><td><strong>No.</strong> Conditioning on it creates a fake link between D and Y.</td></tr>
+    </table></div>
+    <div class="example"><div class="label">Collider in action</div>
+      <p>Among admitted students only, high test scores and high motivation look <em>negatively</em> related: anyone admitted with low scores must have had high motivation, and vice versa. In the whole population there may be no link at all. Studying only the admitted (selecting on a collider) invents the correlation.</p>
+    </div>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Randomisation inference <span class="deep-tag">deeper</span></h2>
+    <p>In an experiment you can get a p-value without any normal approximation. Take the <strong>sharp null</strong>: treatment has no effect on anyone, so Y(1) = Y(0) for every person and all outcomes are known.</p>
+    <ol>
+      <li>Compute your observed difference in means.</li>
+      <li>Re-run the random assignment many times on paper (all splits, or a few thousand), keeping outcomes fixed, and recompute the difference each time.</li>
+      <li>The p-value is the share of re-assignments with a difference at least as extreme as the one you observed.</li>
+    </ol>
+    <p>The uncertainty here comes from <em>which units were assigned to treatment</em>, not from sampling from a population. It's exact in small experiments and is the logic behind permutation tests (Faraway §3.3). Same "simulate the world under H₀" idea as the bootstrap, with a different source of randomness.</p>
   </div>
 
   <div class="chunk">
@@ -1139,8 +1236,9 @@ body.gist .gist-note{display:block}
 
   <div class="chunk">
     <h2>Weak instruments</h2>
-    <p>Rewrite: <code>δ̂_IV − δ = Cov(Z, η) / Cov(Z, D)</code>. If Z barely moves D, the bottom is near zero, so tiny noise on top gets <mark>blown up</mark>. The estimate becomes erratic and biased towards OLS.</p>
-    <p class="result">Rule of thumb: first-stage F-statistic of at least 10.</p>
+    <p>Rewrite: <code>δ̂_IV − δ = Cov(Z, η) / Cov(Z, D)</code>. If Z barely moves D, the bottom is near zero, so tiny noise on top gets <mark>blown up</mark>. The estimate becomes erratic, and conventional standard errors and t-tests stop being trustworthy.</p>
+    <p><strong>Which way does it go wrong?</strong> In the textbook setting (one endogenous D, conventional 2SLS, Z truly valid), the finite-sample distribution of 2SLS tends to be centred <em>towards the OLS estimate</em>, because with little clean variation the estimate is dominated by the same contaminated variation that biases OLS. This is a common pattern, not a universal law: with many instruments it gets worse, with just-identified IV the estimator may not even have a finite mean, and if Z is also slightly invalid, a weak first stage magnifies that bias in any direction.</p>
+    <p class="result">Old rule of thumb: first-stage F-statistic of at least 10. Newer work (Lee, McCrary, Moreira &amp; Porter 2022) shows the usual ±1.96 t-test needs F around 104 to be reliable. With a weaker first stage, use weak-instrument-robust inference such as Anderson–Rubin confidence intervals.</p>
   </div>
 
   <div class="chunk">
@@ -1198,10 +1296,10 @@ body.gist .gist-note{display:block}
 
   <div class="quiz">
     <h2>Self-check</h2>
-    <details class="q"><summary>Which IV condition can you test, and how?</summary><div class="a"><p>Relevance. Look at the first-stage regression of D on Z; F ≥ 10 is the rule of thumb.</p></div></details>
+    <details class="q"><summary>Which IV condition can you test, and how?</summary><div class="a"><p>Relevance. Look at the first-stage regression of D on Z. F ≥ 10 is the classic rule of thumb; for reliable conventional t-tests, F well above that (around 104) is needed, otherwise use weak-IV-robust intervals.</p></div></details>
     <details class="q"><summary>Lottery winners: 60 % attend, losers 10 %. Scores differ by 0.2. LATE?</summary><div class="a"><p>First stage = 0.6 − 0.1 = 0.5. LATE = 0.2/0.5 = 0.4.</p></div></details>
     <details class="q"><summary>Why are always-takers left out of LATE?</summary><div class="a"><p>Their treatment doesn't change with Z, so (by exclusion) their outcomes don't differ between Z groups. They add nothing to the reduced form.</p></div></details>
-    <details class="q"><summary>What goes wrong with a weak instrument?</summary><div class="a"><p>You divide by a near-zero first stage, so the estimate becomes unstable, has huge variance, and is biased towards OLS.</p></div></details>
+    <details class="q"><summary>What goes wrong with a weak instrument?</summary><div class="a"><p>You divide by a near-zero first stage, so the estimate becomes unstable and conventional SEs are unreliable. In the usual 2SLS setting its distribution also tends to drift towards the OLS estimate.</p></div></details>
     <details class="q"><summary>Why not just run the second stage by hand?</summary><div class="a"><p>The coefficient is right but the standard errors are wrong. Use an IV command.</p></div></details>
   </div>
 
@@ -1219,7 +1317,7 @@ body.gist .gist-note{display:block}
   <div class="page-head">
     <div class="eyebrow">Lecture 6 · Part B</div>
     <h1>Regression discontinuity</h1>
-    <p class="lede">Rules often switch a policy on at a sharp cut-off. People just below and just above are basically the same, so <mark>the jump in the outcome right at the cut-off is the effect</mark>.</p>
+    <p class="lede">Rules often switch a policy on at a sharp cut-off. <em>If</em> nothing else changes at the cut-off and people can't precisely place themselves on one side, then <mark>the jump in the outcome right at the cut-off is the effect</mark>.</p>
     <div class="meta"><span>About 30 min in Full mode</span><span>About 10 min in Gist mode</span></div>
   </div>
   <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
@@ -1285,8 +1383,9 @@ body.gist .gist-note{display:block}
       <p class="say" style="padding-top:.75rem">Average just above minus average just below = average effect <em>at</em> the cut-off. Away from c the effect could be different, and the data can't tell you by how much.</p>
     </div>
     <div class="analogy"><div class="label">Think of it like</div>
-      <p>A student who scored 79 and one who scored 80 are almost the same student. If only the 80 gets a scholarship, comparing them is close to a coin flip. Near the cut-off, RD works like a local randomised experiment (Lee 2008).</p>
+      <p>A student who scored 79 and one who scored 80 may be almost the same student. If only the 80 gets a scholarship, comparing them can be close to a coin flip.</p>
     </div>
+    <div class="trap"><div class="label">Careful: closeness is not the assumption, continuity is</div><p>Being near the cut-off does not automatically make people comparable. The comparison is valid only <em>if</em> (1) the average potential outcomes change smoothly through c, so <strong>nothing else jumps at c</strong> (no other policy, benefit or label uses the same cut-off), and (2) people <strong>can't precisely control</strong> which side they land on. Lee (2008) shows that under (2), RD behaves like a local randomised experiment. Both are assumptions to argue and check (density test, covariate balance, placebo cut-offs), never facts that follow from proximity.</p></div>
   </div>
 
   <div class="chunk">
@@ -1488,7 +1587,14 @@ body.gist .gist-note{display:block}
       <li><strong>Leads</strong> (k &lt; 0): should be near zero. If not, trends weren't parallel before.</li>
       <li><strong>Lags</strong> (k ≥ 0): how the effect evolves. The slides' fracture example shows income dropping by over €500/month at month 2 and slowly recovering. One average number would hide that.</li>
     </ul>
-    <div class="trap"><div class="label">Trap</div><p>Flat leads don't <em>prove</em> parallel trends. The assumption is about the post-period, and pre-trend tests often have low power (Roth 2022).</p></div>
+    <div class="trap"><div class="label">Trap: flat leads are evidence, not proof</div>
+      <ul>
+        <li>Parallel trends is a claim about the <em>post</em>-treatment counterfactual, which is never observed. Leads only show the groups moved together <em>before</em>.</li>
+        <li>Pre-trend tests often have <strong>low power</strong>: with noisy data, a real pre-trend big enough to bias your estimate can easily be "insignificant" (Roth 2022).</li>
+        <li>Picking a specification <em>because</em> it passes the pre-trend test distorts the final estimate and its confidence interval.</li>
+        <li>Better practice: show the event-study plot, report how big a violation would have to be to change your conclusion (sensitivity analysis, Rambachan &amp; Roth 2023), and argue why trends would stay parallel.</li>
+      </ul>
+    </div>
   </div>
 
   <div class="chunk">
@@ -1560,7 +1666,7 @@ body.gist .gist-note{display:block}
     <h2>Self-check</h2>
     <details class="q"><summary>Treated: 50 → 70. Control: 40 → 50. DiD?</summary><div class="a"><p>(70 − 50) − (50 − 40) = 20 − 10 = 10.</p></div></details>
     <details class="q"><summary>Do treated and control need the same level of Y before the policy?</summary><div class="a"><p>No. Only the same trend without treatment (parallel trends).</p></div></details>
-    <details class="q"><summary>In an event study, what should the leads look like, and what do they prove?</summary><div class="a"><p>Close to zero. They support parallel trends but can't prove it; the assumption is about the post-period.</p></div></details>
+    <details class="q"><summary>In an event study, what should the leads look like, and what do they prove?</summary><div class="a"><p>Close to zero. They make parallel trends more plausible but can't prove it: the assumption is about the post-period, and pre-trend tests often lack the power to detect a harmful trend.</p></div></details>
     <details class="q"><summary>Which TWFE comparison causes trouble, and why?</summary><div class="a"><p>Late-treated vs already-treated early units. If the early group's effect keeps changing, that change gets subtracted.</p></div></details>
     <details class="q"><summary>At what level should you cluster standard errors?</summary><div class="a"><p>At the level where treatment is assigned (e.g. state for a state law).</p></div></details>
   </div>
@@ -1601,7 +1707,7 @@ body.gist .gist-note{display:block}
       <tr><td><strong>Key formula</strong></td><td>reduced form ÷ first stage</td><td>jump in Y at c (fuzzy: ÷ jump in D)</td><td>(ΔY treated) − (ΔY control)</td></tr>
       <tr><td><strong>Key assumption</strong></td><td>Relevance, independence, exclusion (+ monotonicity)</td><td>Continuity: nothing else jumps at c; no sorting</td><td>Parallel trends; no anticipation; no spillovers</td></tr>
       <tr><td><strong>What you get</strong></td><td>LATE for compliers</td><td>Effect at the cut-off</td><td>ATT, effect on the treated</td></tr>
-      <tr><td><strong>Checks</strong></td><td>First-stage F ≥ 10; overid test</td><td>Density test, covariate balance, placebo cut-offs, donut, bandwidths</td><td>Event study pre-trends; Bacon decomposition</td></tr>
+      <tr><td><strong>Checks</strong></td><td>First-stage F (≥ 10 classic; ~104 for plain t-tests); overid test</td><td>Density test, covariate balance, placebo cut-offs, donut, bandwidths</td><td>Event-study pre-trends (evidence, not proof); Bacon decomposition</td></tr>
       <tr><td><strong>Classic example</strong></td><td>KIPP lottery: 0.355/0.741 = 0.48 SD</td><td>Austrian leave, 1 July 1990: +4.5 pp births</td><td>Snow's cholera: −48 − 49 = −97</td></tr>
       <tr><td><strong>Mastering 'Metrics</strong></td><td>ch. 3</td><td>ch. 4</td><td>ch. 5</td></tr>
     </table></div>
