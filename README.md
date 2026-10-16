@@ -20,6 +20,7 @@ formulas translated into words, and a learning path in every lecture.
 | 7 | Difference-in-differences | Parallel trends and what happens when they fail |
 | Cheat sheet | Methods side by side, how they connect, "choose the design" scenarios | |
 | Exam mode | Mixed, optionally timed questions with results by topic | |
+| Final test | 30 new questions on everything, graded at the end, with a personal study plan | |
 
 Every lecture follows the same five steps: **Understand → See it → Apply → Challenge → Review**.
 It also has learning objectives marked Foundational / Intermediate / Advanced, a "method in five
@@ -28,7 +29,11 @@ explanations of tricky concepts, scored practice with feedback on each wrong ans
 "Try it in R" lab with the exact output to expect.
 
 Progress has three stages per lecture: **studied** (ticked), **practised** (every practice question
-answered) and **mastered** (at least 80 % right in exam mode). It is saved in the browser only.
+answered) and **mastered** (at least 80 % right in exam mode, or on that lecture's part of the final test).
+
+The **final test** is meant for the end: 30 questions not used anywhere else, answers can be changed until
+submitting, and the result shows a score per lecture, feedback on every answer and a study plan that links
+back to the exact sections to reread, weakest lecture first. It is saved in the browser only.
 
 Other features: whole-guide search (press `/`), "Just the gist" mode, light and dark themes,
 a phone-friendly layout, keyboard navigation and a printable cheat sheet.
@@ -38,7 +43,7 @@ a phone-friendly layout, keyboard navigation and a printable cheat sheet.
 - `index.html`: the whole site (no build step).
 - `r/`: one R script per lab (simulated data with fixed seeds, so the output matches the guide).
 - `data/`: the simulated data from each lab as CSV, for use in other software.
-- `Econometrics-Learnbook.pdf`: the printable learnbook (third edition, with two practice exam papers).
+- `Econometrics-Learnbook-for-Dummies.pdf`: the printable Econometrics Learnbook for Dummies (third edition, with two practice exam papers).
 - `tests/check.cjs`: automated checks, run on every push by GitHub Actions
   (`.github/workflows/check.yml`).
 

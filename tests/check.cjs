@@ -29,7 +29,7 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
 
   console.log('1. Pages');
   const pages = await page.evaluate(() => [...document.querySelectorAll('[data-page]')].map(p => p.id));
-  ok(pages.length === 11, 'eleven pages (start, basics, 7 lectures, cheat sheet, exam): ' + pages.join(', '));
+  ok(pages.length === 12, 'twelve pages (start, basics, 7 lectures, cheat sheet, exam, final test): ' + pages.join(', '));
   for (const id of pages) {
     await page.evaluate(id => { location.hash = '#' + id; }, id);
     await page.waitForTimeout(60);
@@ -111,6 +111,41 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
     await page.locator('#ex-next').click();
   }
   ok(/Results by topic/.test(await page.locator('#ex-results').innerText()), 'exam shows results by topic');
+  console.log('5b. Final test');
+  const ft = await page.evaluate(() => FT);
+  ok(ft.length === 30, 'final test has 30 questions');
+  const FN = { f1: 0.45 * 4, f6: 3.2, f7: 1 / Math.sqrt(400), f10: 0.8, f13: 3 + (-2), f16: -400 / (0.35 - 0.15), f22: 55.5 - 52.0, f25: (9.5 - 8.0) - (8.5 - 6.0) };
+  for (const q of ft) {
+    ok(q.type !== 'mc' || q.options.filter(o => o.ok).length === 1, q.id + ' has one correct option');
+    if (q.type === 'num') ok(FN[q.id] !== undefined && near(FN[q.id], q.answer, q.tol), q.id + ' numeric answer recomputed');
+    if (q.type === 'num') ok((q.wrong || []).every(w => Math.abs(w.v - q.answer) > q.tol), q.id + ' wrong answers never overlap the right one');
+    const target = await page.evaluate(id => !!document.getElementById(id), q.see[1]);
+    ok(target, q.id + ' study-plan link points to an existing section (' + q.see[1] + ')');
+    ok(!qb.some(x => x.q === q.q), q.id + ' is not a copy of a practice question');
+  }
+  await page.evaluate(() => { location.hash = '#final'; });
+  // answer all but one wrong-ish: first half correct, rest first wrong option or a wrong number
+  for (const [i, q] of ft.entries()) {
+    const fs = page.locator('#ftq-' + q.id);
+    if (q.type === 'mc') { const want = q.options.findIndex(o => i < 15 ? o.ok : !o.ok); await fs.locator(`input[value="${want}"]`).check(); }
+    else await fs.locator('input').fill(i < 15 ? String(q.answer) : '999');
+  }
+  await page.reload(); await page.evaluate(() => { location.hash = '#final'; }); await page.waitForTimeout(150);
+  ok(/30 of 30 answered/.test(await page.locator('#ft-count').innerText()), 'final-test answers survive a page reload');
+  await page.locator('#ft-submit').click();
+  const score = await page.locator('#ft-results .big').innerText();
+  ok(score.trim() === '15 / 30', 'final test scores 15 / 30 for 15 right answers: ' + score);
+  const planLinks = await page.locator('#ft-results .plan [data-anchor]').count();
+  ok(planLinks >= 15, 'study plan links back to sections (' + planLinks + ' links)');
+  await page.locator('#ft-results .plan [data-anchor]').first().click(); await page.waitForTimeout(200);
+  ok(await page.evaluate(() => !document.getElementById('final').hidden) === false, 'a study-plan link opens the lecture');
+  await page.evaluate(() => { location.hash = '#final'; }); await page.waitForTimeout(100);
+  ok(await page.locator('#ft-results').isVisible(), 'results are still there when coming back');
+  await page.locator('#ft-retake').click();
+  for (const q of ft) { const fs = page.locator('#ftq-' + q.id); if (q.type === 'mc') await fs.locator(`input[value="${q.options.findIndex(o => o.ok)}"]`).check(); else await fs.locator('input').fill(String(q.answer)); }
+  await page.locator('#ft-submit').click();
+  ok((await page.locator('#ft-results .big').innerText()).trim() === '30 / 30', 'all right answers score 30 / 30');
+  ok(/Nothing to fix/.test(await page.locator('#ft-results').innerText()), 'a perfect score gives no study-plan items');
   await page.locator('#search-btn').click(); await page.locator('#s-input').fill('bandwidth');
   ok((await page.locator('.s-hit').count()) >= 3, 'search finds "bandwidth" in several places');
   await page.keyboard.press('Escape');

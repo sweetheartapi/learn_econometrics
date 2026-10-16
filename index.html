@@ -379,6 +379,36 @@ body.noscroll{overflow:hidden}
   .page{padding-top:0;gap:1.2rem}
   details.q:not([open]) .a{display:block}
 }
+
+/* final test */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#ft-form{display:flex;flex-direction:column;gap:.9rem}
+fieldset.ftq{margin:0;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:.6rem;padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+fieldset.ftq.done{border-left-color:var(--accent)}
+fieldset.ftq legend{float:left;width:100%;padding:0;margin-bottom:.2rem}
+fieldset.ftq legend + *{clear:both}
+.ftopts{display:flex;flex-direction:column;gap:.4rem}
+.ftopt{display:grid;grid-template-columns:1.3rem 1.6rem 1fr;gap:.4rem;align-items:baseline;background:var(--paper);border:1.5px solid var(--line);border-radius:.5rem;padding:.5rem .7rem;cursor:pointer}
+.ftopt:hover{border-color:var(--accent)}
+.ftopt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.ftopt input{accent-color:var(--accent);width:1rem;height:1rem;margin:0;align-self:center}
+.ftopt input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ftopt .key{font-family:var(--f-mono);font-weight:600;color:var(--muted)}
+.ft-bar{position:sticky;bottom:calc(.5rem + env(safe-area-inset-bottom,0px));z-index:3;display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:.6rem;padding:.7rem 1rem;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+#ft-count{font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+#ft-warn{background:var(--warn-soft);border-radius:.6rem;padding:.8rem 1rem;display:flex;flex-direction:column;gap:.5rem}
+#ft-results{display:flex;flex-direction:column;gap:1rem}
+.plan{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.7rem}
+.plan-item{background:var(--surface);border:1px solid var(--line);border-radius:.6rem;padding:.8rem 1rem}
+.plan-head{display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;margin-bottom:.4rem}
+.plan-head .step{font-family:var(--f-mono);font-weight:600;color:var(--surface);background:var(--accent);border-radius:999px;width:1.5rem;height:1.5rem;display:inline-grid;place-items:center;font-size:.8rem}
+.plan-item ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.3rem;font-size:.95rem}
+.chip.st-good{color:var(--good);border-color:var(--good);background:var(--good-soft)}
+.chip.st-mid{color:var(--accent);border-color:var(--accent)}
+.chip.st-low{color:var(--warn);border-color:var(--warn);background:var(--warn-soft)}
+.meter.good i{background:var(--good)}.meter.low i{background:var(--warn)}
+@media (max-width:40rem){.ft-bar{padding:.45rem .7rem;gap:.4rem}.ft-bar .btn{font-size:.85rem;padding:.4rem .8rem}#ft-count{font-size:.8rem}}
+.ft-bar[hidden]{display:none!important}
 .orient{display:flex;flex-direction:column;gap:.75rem}
 </style>
 
@@ -409,6 +439,7 @@ body.noscroll{overflow:hidden}
       <button class="tab" role="tab" data-t="l7"><b>7</b>DiD<span class="dot"></span></button>
       <button class="tab" role="tab" data-t="cheat">Cheat sheet</button>
       <button class="tab exam-tab" role="tab" data-t="exam">Exam mode</button>
+      <button class="tab exam-tab" role="tab" data-t="final">Final test</button>
     </nav>
   </div>
 </header>
@@ -430,6 +461,7 @@ body.noscroll{overflow:hidden}
       <li><strong>Explain buttons.</strong> Tricky ideas have <em>Simple / Intuitive / Technical</em> switches, so you can change the depth of one concept without changing the whole page.</li>
       <li><strong>Play with the demos.</strong> Each lecture has an interactive simulation: move a slider and see why a result changes.</li>
       <li><strong>Practise, don't just read.</strong> "Apply" and "Challenge" questions give feedback on the exact answer you picked. <strong>Exam mode</strong> mixes questions from all lectures, with a timer if you want one.</li>
+      <li><strong>Final test</strong> when everything is studied: thirty new questions, graded together, then a score per lecture and a study plan that links to the exact sections to revisit.</li>
       <li><strong>Search</strong> (top right, or press <kbd>/</kbd>) looks through everything: definitions, explanations, questions and R code.</li>
       <li><strong>Optional R labs</strong> show each method on real-looking data, with the exact output you should get and downloadable scripts.</li>
       <li>Your progress stays in this browser only.</li>
@@ -449,7 +481,7 @@ body.noscroll{overflow:hidden}
 
   <div class="chunk">
     <h2>Your progress</h2>
-    <p class="small muted"><strong>Studied</strong> = you ticked it. <strong>Practised</strong> = you answered every Apply and Challenge question. <strong>Mastered</strong> = at least 80 % right in exam mode, on most of that lecture's questions. Mastered lectures show "review due" after a week, because recalling something a few days later is what makes it stick.</p>
+    <p class="small muted"><strong>Studied</strong> = you ticked it. <strong>Practised</strong> = you answered every Apply and Challenge question. <strong>Mastered</strong> = at least 80 % right in exam mode on most of that lecture's questions, or at least 80 % on that lecture's part of the final test. Mastered lectures show "review due" after a week, because recalling something a few days later is what makes it stick.</p>
     <div id="start-progress"></div>
   </div>
 
@@ -466,7 +498,8 @@ body.noscroll{overflow:hidden}
       <div class="card"><div class="label">Any time</div><h3>Basics refresher</h3><p>Plain definitions of the simple stuff: mean, variance, SE, log, derivative, Greek letters.</p><button class="go" data-go="basics">Open basics</button></div>
       <div class="card"><div class="label">Revision</div><h3>Cheat sheet</h3><p>All methods side by side, how they connect, and "choose the design" practice.</p><button class="go" data-go="cheat">Open cheat sheet</button></div>
       <div class="card"><div class="label">Test yourself</div><h3>Exam mode</h3><p>Mixed questions from any lectures, timed or untimed, with results by topic.</p><button class="go" data-go="exam">Open exam mode</button></div>
-      <div class="card"><div class="label">Offline</div><h3>Printable learnbook</h3><p>The full learnbook (third edition) as a PDF: worked derivations, R labs, exercises, two practice exam papers and answers.</p><a class="go" href="Econometrics-Learnbook.pdf" download>Download the PDF</a></div>
+      <div class="card"><div class="label">At the end</div><h3>Final test</h3><p>Thirty new questions from everything, graded at the end, with a study plan that links back to what to revisit.</p><button class="go" data-go="final">Open the final test</button></div>
+      <div class="card"><div class="label">Offline</div><h3>Econometrics Learnbook for Dummies</h3><p>The printable learnbook (third edition, PDF): worked derivations, R labs, exercises, two practice exam papers and answers.</p><a class="go" href="Econometrics-Learnbook-for-Dummies.pdf" download>Download the PDF</a></div>
     </div>
   </div>
 
@@ -2791,6 +2824,7 @@ feols(sales ~ cityA:post | shop + post, data = shops, cluster = ~shop)   # 2x2 w
     </ul>
   </div>
   <div class="finish"><label><input type="checkbox" data-done="l7" id="done-l7">I've studied this</label><button class="btn" data-go="cheat">Next: Cheat sheet →</button></div>
+  <p class="small">Studied all seven? <button type="button" class="linkish" data-go="final">Take the final test →</button></p>
 </section>
 
 <section class="page" id="cheat" data-page hidden>
@@ -2939,11 +2973,25 @@ feols(sales ~ cityA:post | shop + post, data = shops, cluster = ~shop)   # 2x2 w
   <div class="chunk">
     <h2>How "mastered" works</h2>
     <ul>
-      <li>A lecture is <strong>mastered</strong> when you have answered at least 60 % of its questions in exam mode and got at least 80 % of those right (your latest exam answer to each question counts).</li>
+      <li>A lecture is <strong>mastered</strong> when you have answered at least 60 % of its questions in exam mode and got at least 80 % of those right (your latest exam answer to each question counts), or when you get at least 80 % of its questions right in the <button type="button" class="linkish" data-go="final">final test</button>.</li>
       <li>Wrong answers go on a "missed" list. Each lecture header shows a <em>Retry missed</em> button, and the option above runs only those.</li>
       <li>After a week, mastered lectures show <strong>review due</strong>. A short mixed exam a few days later does more for memory than rereading.</li>
     </ul>
   </div>
+</section>
+
+<section class="page" id="final" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Final test</div>
+    <h1>Everything, one last time</h1>
+    <p class="lede">Thirty new questions from all seven lectures and from choosing a research design. Answer them all, then submit: you get a score for each lecture, feedback on every answer, and <mark>a study plan that sends you back to exactly what to revisit</mark>.</p>
+    <div class="meta"><span>About 40 minutes</span><span>New questions, not the practice ones</span></div>
+  </div>
+  <div id="ft-intro" class="chunk"></div>
+  <form id="ft-form" novalidate aria-label="Final test questions"></form>
+  <div class="ft-bar"><span id="ft-count" aria-live="polite">0 of 30 answered</span><button type="button" class="btn" id="ft-submit">Submit and see my results</button></div>
+  <div id="ft-warn" hidden role="alert"><p><strong><span id="ft-warn-n"></span> question(s) still unanswered.</strong> Unanswered questions count as "not yet known" in the study plan.</p><div class="boot-row"><button type="button" class="btn ghost" id="ft-back">Go to the first unanswered</button><button type="button" class="btn" id="ft-anyway">Submit anyway</button></div></div>
+  <div id="ft-results" hidden aria-live="polite"></div>
 </section>
 </main>
 
@@ -3352,6 +3400,227 @@ var QB = [
  explain:'Estimand: the conditional association (causal only under "no unmeasured confounders"). Look for a design: e.g. course capacity limits, distance to training centres, or a rollout over time.'}
 ];
 
+/* Final test: 30 new questions across the course, graded together at the end.
+   see: [page, section id, label] is where the study plan sends you if you miss it. */
+var FT = [
+/* Lecture 1 */
+{id:'f1', topic:'l1', concept:'Reading a slope in levels', see:['l1','l1-reading-the-coefficients-the-log-table','Reading the coefficients'], type:'num',
+ q:'A regression of hourly wage (€) on years of experience gives a slope of 0.45. Two workers differ by 4 years of experience and are identical in everything else in the model. What is the predicted difference in their hourly wage (€)?',
+ answer:1.8, tol:0.005, wrong:[{v:0.45, fb:'0.45 is the difference for one year. Multiply by the 4-year gap.'},{v:0.1125, tol:0.001, fb:'You divided by 4. A level–level slope is per unit, so multiply.'}],
+ explain:'Level–level: each extra year adds 0.45 €, so 4 × 0.45 = <strong>1.80 €</strong>, holding the other regressors fixed.'},
+{id:'f2', topic:'l1', concept:'Log–log coefficients (elasticities)', see:['l1','l1-reading-the-coefficients-the-log-table','Reading the coefficients (the log table)'], type:'mc',
+ q:'<code>log(sales) = 5.1 − 1.3·log(price)</code>. What does −1.3 mean?',
+ options:[
+  {t:'A 1 % higher price is associated with about 1.3 % lower sales.', ok:true},
+  {t:'A €1 higher price is associated with 1.3 fewer units sold.', fb:'That is the level–level reading. Both variables are in logs, so the coefficient is an elasticity.'},
+  {t:'A 1 % higher price is associated with sales 1.3 percentage points lower.', fb:'Percent and percentage points are different things; here the change in sales is in percent.'},
+  {t:'Doubling the price lowers sales by 130 %.', fb:'Sales can\'t fall by more than 100 %. The elasticity applies to small (around 1 %) changes.'}],
+ explain:'log–log: β is an elasticity, the % change in y for a 1 % change in x.'},
+{id:'f3', topic:'l1', concept:'Sign of omitted variable bias', see:['l1','l1-wrong','What can go wrong: omitted variable bias'], type:'mc',
+ q:'You regress test scores on class size. Parental income is omitted. Income raises scores, and richer families tend to be in <em>smaller</em> classes. How is the class-size coefficient biased?',
+ options:[
+  {t:'Upwards (towards zero or positive): small classes look worse than they are.', fb:'Check the signs: β₃* (income → score) is positive, γ₁ (income ↔ class size) is negative, so the bias β₃*·γ₁ is negative.'},
+  {t:'Downwards (more negative): small classes look better than they really are.', ok:true},
+  {t:'No bias, because income is not the variable of interest.', fb:'Omitted variables bias the coefficient of interest whenever they affect y <em>and</em> move with x.'},
+  {t:'It can\'t be signed without the data.', fb:'The OVB formula gives the sign from two directions you can argue: income → score (+) and income ↔ class size (−).'}],
+ explain:'Bias = β₃* · γ₁ = (+) × (−) < 0. Part of the income advantage of small classes gets credited to class size.'},
+{id:'f4', topic:'l1', concept:'What robust standard errors change', see:['l1','l1-wrong','What can go wrong: heteroskedasticity'], type:'mc',
+ q:'You switch from the usual to heteroskedasticity-robust standard errors. What changes?',
+ options:[
+  {t:'The coefficients and the standard errors.', fb:'Robust SEs keep the OLS coefficients exactly as they are; only the uncertainty is recomputed.'},
+  {t:'Only the standard errors, and with them t-values, p-values and confidence intervals.', ok:true},
+  {t:'The R² and the coefficients.', fb:'R² and the coefficients come from the same OLS fit either way.'},
+  {t:'Nothing, unless the sample is small.', fb:'With heteroskedasticity the robust SEs differ in any sample size; the usual ones are simply wrong then.'}],
+ explain:'Heteroskedasticity doesn\'t bias β̂; it breaks the usual SE formula. Robust SEs fix only that part.'},
+{id:'f5', topic:'l1', concept:'Interpreting a confidence interval', see:['l1','l1-what-p-values-and-cis-actually-mean','What p-values and CIs actually mean'], type:'mc',
+ q:'A 95 % confidence interval for β is [0.02, 0.10]. Which statement is correct?',
+ options:[
+  {t:'There is a 95 % probability that β lies between 0.02 and 0.10.', fb:'β is fixed; this one interval either contains it or not. The 95 % describes the method.'},
+  {t:'95 % of the observations have slopes between 0.02 and 0.10.', fb:'The interval is about one parameter, not about individual observations.'},
+  {t:'Intervals built this way contain the true β in about 95 % of repeated samples (if the model is right).', ok:true},
+  {t:'β is 0.06 with 95 % certainty.', fb:'0.06 is the centre (the estimate); the interval expresses uncertainty around it.'}],
+ explain:'Confidence is a property of the procedure across samples, not a probability for this single interval.'},
+/* Lecture 2 */
+{id:'f6', topic:'l2', concept:'Finding an MLE', see:['l2','l2-waiting-time-example-exponential','Waiting-time example (exponential)'], type:'num',
+ q:'Ten independent waiting times have a sample mean of 3.2 minutes. Modelled as exponential with mean λ, what is the maximum likelihood estimate of λ?',
+ answer:3.2, tol:0.001, wrong:[{v:0.3125, tol:0.001, fb:'That is 1/3.2, the MLE of the <em>rate</em>. The question asks for the mean λ.'},{v:32, fb:'32 is the sum of the waiting times. The MLE is the average.'}],
+ explain:'Setting the score −n/λ + nX̄/λ² to zero gives λ̂ = X̄ = <strong>3.2</strong>.'},
+{id:'f7', topic:'l2', concept:'Standard error from curvature', see:['l2','l2-the-vocabulary-of-the-hill','The vocabulary of the hill'], type:'num',
+ q:'At the maximum, the second derivative of the log-likelihood is −400. What is the approximate standard error of θ̂?',
+ answer:0.05, tol:0.0005, wrong:[{v:0.0025, tol:0.0001, fb:'1/400 is the variance. The SE is its square root.'},{v:20, fb:'√400 = 20 is the square root of the information; the SE is one over it.'},{v:400, fb:'400 is the observed information (minus the second derivative). SE ≈ 1/√information.'}],
+ explain:'Observed information = −ℓ″(θ̂) = 400, so SE ≈ 1/√400 = <strong>0.05</strong>. A sharper peak means more information and a smaller SE.'},
+{id:'f8', topic:'l2', concept:'Why we use the log-likelihood', see:['l2','l2-the-recipe','The recipe'], type:'mc',
+ q:'Why do we maximise the log-likelihood instead of the likelihood itself?',
+ options:[
+  {t:'It gives a different, more accurate estimate.', fb:'Log is increasing, so both peak at the same θ.'},
+  {t:'The maximiser is the same, and a sum of logs is easier to differentiate and numerically stable.', ok:true},
+  {t:'Taking logs turns the likelihood into a probability for θ.', fb:'Logs don\'t change what the likelihood is: a function of θ with the data fixed.'},
+  {t:'It is only needed when the data are normal.', fb:'Logs help for any distribution: they turn a product over observations into a sum.'}],
+ explain:'Same argmax; products of many small numbers become sums, which avoids numerical underflow.'},
+/* Lecture 3 */
+{id:'f9', topic:'l3', concept:'When the bootstrap helps', see:['l3','l3-when-to-reach-for-it','When to reach for it'], type:'mc',
+ q:'Which is <em>not</em> a good reason to use the bootstrap?',
+ options:[
+  {t:'You need a standard error for a sample median.', fb:'Good reason: the median\'s SE formula needs the unknown density at the median.'},
+  {t:'Your estimator comes out of a numerical optimisation with no variance formula.', fb:'Good reason: this is exactly where the bootstrap shines.'},
+  {t:'You have 10 observations and want reliable large-sample-quality intervals.', ok:true},
+  {t:'Your data are skewed and n is moderate (say 60).', fb:'Reasonable: percentile or BCa intervals follow the skewness.'}],
+ explain:'The bootstrap resamples the data you have; it can\'t create information that 10 observations don\'t contain.'},
+{id:'f10', topic:'l3', concept:'Bootstrap standard error', see:['l3','l3-the-algorithm','The algorithm'], type:'num',
+ q:'You computed your statistic on B = 1,000 bootstrap samples. Those 1,000 values have a standard deviation of 0.8. What is the bootstrap standard error?',
+ answer:0.8, tol:0.001, wrong:[{v:0.0253, tol:0.001, fb:'Don\'t divide by √B. The spread of the bootstrap estimates <em>is</em> the SE; B only controls simulation noise.'},{v:0.64, tol:0.001, fb:'0.64 is the variance. The SE is the standard deviation.'}],
+ explain:'Bootstrap SE = standard deviation of the B bootstrap estimates = <strong>0.8</strong>.'},
+{id:'f11', topic:'l3', concept:'When the bootstrap fails', see:['l3','l3-when-the-bootstrap-fails','When the bootstrap fails'], type:'mc',
+ q:'For which statistic does the ordinary bootstrap give the wrong answer even in large samples?',
+ options:[
+  {t:'The sample mean of i.i.d. data.', fb:'The bootstrap works well for smooth statistics like the mean.'},
+  {t:'A regression slope with independent observations.', fb:'Pairs bootstrap of a regression slope works with independent observations.'},
+  {t:'The sample maximum of uniform data.', ok:true},
+  {t:'The sample median with n = 500.', fb:'The median is less smooth, but the bootstrap is consistent for it.'}],
+ explain:'About 63 % of bootstrap maxima equal the sample maximum, a spike the true sampling distribution doesn\'t have. Subsampling works instead.'},
+/* Lecture 4 */
+{id:'f12', topic:'l4', concept:'Selection bias', see:['l4','l4-why-a-naive-comparison-misleads-selectio','Why a naive comparison misleads: selection bias'], type:'mc',
+ q:'In observational data, smokers who quit have higher mortality over the next year than those who keep smoking. What is the most plausible explanation?',
+ options:[
+  {t:'Quitting is harmful in the short run.', fb:'Possible in principle, but the comparison can\'t show it: quitters differ from continuers before quitting.'},
+  {t:'Many people quit because they are already ill, so quitters would have had higher mortality anyway.', ok:true},
+  {t:'The sample is too small.', fb:'More data would make the biased comparison more precise, not correct.'},
+  {t:'Mortality is a collider.', fb:'Mortality is the outcome here. The problem is who selects into quitting.'}],
+ explain:'Naive difference = effect + selection bias. Here E[Y(0) | quit] > E[Y(0) | kept smoking]: the "sick quitter" effect.'},
+{id:'f13', topic:'l4', concept:'Naive difference = ATT + selection bias', see:['l4','l4-why-a-naive-comparison-misleads-selectio','Why a naive comparison misleads'], type:'num',
+ q:'The ATT of a programme is 3. The treated would have done 2 points <em>worse</em> than the untreated even without it (selection bias = −2). What naive difference in means will you observe?',
+ answer:1, tol:0.001, wrong:[{v:5, fb:'Selection bias is −2 here, so it reduces the naive difference: 3 + (−2).'},{v:3, fb:'3 is the ATT. The naive comparison adds the selection bias on top.'},{v:-1, fb:'Check the order: naive = ATT + selection bias = 3 − 2.'}],
+ explain:'Naive difference = ATT + selection bias = 3 + (−2) = <strong>1</strong>. Negative selection hides part of a real effect.'},
+{id:'f14', topic:'l4', concept:'Mediators: what not to control for', see:['l4','l4-controls','What to control for'], type:'mc',
+ q:'You want the total effect of a training programme on earnings. Should you control for hours worked <em>after</em> the programme?',
+ options:[
+  {t:'Yes, more controls always reduce bias.', fb:'Not for variables caused by the treatment: that removes part of the effect.'},
+  {t:'No: hours worked is likely a mediator (training → hours → earnings); controlling for it removes part of the effect.', ok:true},
+  {t:'Yes, because hours worked is a confounder.', fb:'A confounder is decided before treatment and affects both D and Y. Post-programme hours are an outcome of training.'},
+  {t:'It doesn\'t matter either way.', fb:'It changes what you estimate: the "direct" effect holding hours fixed, not the total effect.'}],
+ explain:'Control for pre-treatment confounders; leave out mediators and colliders.'},
+{id:'f15', topic:'l4', concept:'What randomisation identifies', see:['l4','l4-potential-outcomes','Potential outcomes'], type:'mc',
+ q:'In a randomised experiment where everyone takes the treatment they were assigned, what does the difference in mean outcomes estimate?',
+ options:[
+  {t:'The average treatment effect (ATE) in the experimental sample.', ok:true},
+  {t:'Only a LATE for compliers.', fb:'With full compliance everyone is a complier; LATE matters when compliance is incomplete.'},
+  {t:'Nothing causal unless you add control variables.', fb:'Randomisation makes treatment independent of potential outcomes; controls are optional (they can add precision).'},
+  {t:'Each person\'s individual effect.', fb:'Individual effects are never observed; randomisation gives an average.'}],
+ explain:'Random assignment ⇒ Y(1), Y(0) ⫫ D, so E[Y | D=1] − E[Y | D=0] = E[Y(1) − Y(0)].'},
+/* Lecture 5 */
+{id:'f16', topic:'l5', concept:'The Wald / IV estimate', see:['l5','l5-formulas','The formulas'], type:'num',
+ q:'Draft lottery: 35 % of men with low lottery numbers served in the army, 15 % of those with high numbers. Men with low numbers earn €400 less per year. What is the IV estimate of the effect of serving on annual earnings (€)?',
+ answer:-2000, tol:0.5, wrong:[{v:-400, fb:'−400 is the reduced form (ITT). Divide by the first stage, 0.35 − 0.15 = 0.20.'},{v:-1142.86, tol:1, fb:'You divided by 0.35. The first stage is the <em>difference</em> in service rates: 0.20.'},{v:2000, fb:'Check the sign: the low-number (more likely to serve) group earns less.'},{v:-2666.67, tol:1, fb:'You divided by 0.15. Use the difference 0.35 − 0.15.'}],
+ explain:'Wald = reduced form ÷ first stage = −400 / (0.35 − 0.15) = <strong>−€2,000</strong>, a LATE for men who served because of their lottery number.'},
+{id:'f17', topic:'l5', concept:'Which IV condition is testable', see:['l5','l5-the-three-four-conditions','The three (four) conditions'], type:'mc',
+ q:'Which instrument condition can you check directly in the data?',
+ options:[
+  {t:'Exclusion: Z affects Y only through D.', fb:'Exclusion involves an unobserved path; it must be argued.'},
+  {t:'Independence: Z is unrelated to unobserved factors.', fb:'You can check balance on observed covariates, but never on unobserved ones.'},
+  {t:'Relevance: Z moves D.', ok:true},
+  {t:'Monotonicity: there are no defiers.', fb:'Individual types are never observed, so this can\'t be tested directly.'}],
+ explain:'Relevance is visible in the first stage (and its F-statistic). Validity is an argument.'},
+{id:'f18', topic:'l5', concept:'Compliers and the first stage', see:['l5','l5-late-who-does-iv-tell-us-about','LATE: who does IV tell us about?'], type:'mc',
+ q:'In a randomised offer with imperfect take-up, the first stage (difference in take-up between offered and not offered) is 0.25. Assuming no defiers, what share of people are compliers?',
+ options:[
+  {t:'25 %', ok:true},
+  {t:'75 %', fb:'0.75 is everyone else: always-takers plus never-takers.'},
+  {t:'It can\'t be known without individual data.', fb:'You can\'t name the compliers, but under monotonicity their share equals the first stage.'},
+  {t:'50 %', fb:'There is no reason for 50 %. The first stage itself is the complier share.'}],
+ explain:'Under monotonicity, first stage = share of compliers. The LATE is the effect for that 25 %.'},
+{id:'f19', topic:'l5', concept:'Exclusion restriction', see:['l5','l5-the-three-four-conditions','The three (four) conditions'], type:'mc',
+ q:'To study whether intensive treatment after a heart attack improves survival, a study uses distance to a hospital that offers it as an instrument. What is the main worry?',
+ options:[
+  {t:'Distance probably doesn\'t affect which treatment patients get.', fb:'That would be a relevance problem, which the first stage would reveal; distance usually matters a lot.'},
+  {t:'Distance may affect survival directly, e.g. through time to any treatment, or because rural patients differ in health.', ok:true},
+  {t:'The sample will be too large.', fb:'Sample size isn\'t the issue; validity is.'},
+  {t:'IV can\'t be used with a binary treatment.', fb:'It can; the Wald estimator is built for a 0/1 treatment.'}],
+ explain:'A direct path Z → Y (time to care) breaks exclusion; Z linked to patient characteristics breaks independence.'},
+{id:'f20', topic:'l5', concept:'Why IV and OLS can differ', see:['l5','l5-late-who-does-iv-tell-us-about','LATE: who does IV tell us about?'], type:'mc',
+ q:'With a valid instrument, why can the IV estimate legitimately differ from OLS?',
+ options:[
+  {t:'Because IV is always more precise.', fb:'Usually the opposite: IV uses only part of the variation in D, so it is less precise.'},
+  {t:'OLS is biased by confounding, and IV estimates a LATE for compliers, which can differ from the average effect.', ok:true},
+  {t:'A difference proves the instrument is invalid.', fb:'A difference is expected when D is endogenous; it doesn\'t test validity.'},
+  {t:'OLS becomes unbiased in large samples, so the difference must be noise.', fb:'Omitted variable bias doesn\'t shrink with n.'}],
+ explain:'Two reasons: OLS bias, and a different target population (compliers).'},
+/* Lecture 6 */
+{id:'f21', topic:'l6', concept:'Sharp vs fuzzy RD', see:['l6','l6-fuzzy-rd-iv-at-the-cut-off','Fuzzy RD = IV at the cut-off'], type:'mc',
+ q:'Students scoring 60 or more are <em>invited</em> to an honours track. 70 % of invited students join; 5 % of students below 60 join after an appeal. Which design fits?',
+ options:[
+  {t:'Sharp RD', fb:'Sharp RD needs treatment to switch from 0 to 1 at the cut-off; here only the chance of joining jumps.'},
+  {t:'Fuzzy RD: jump in outcome ÷ jump in take-up (0.70 − 0.05)', ok:true},
+  {t:'Difference-in-differences', fb:'There is no before/after policy change in the description.'},
+  {t:'A simple comparison of honours vs other students', fb:'Students who join differ (motivation, ability): selection bias.'}],
+ explain:'Fuzzy RD = IV at the cut-off: being above 60 is the instrument for joining. The result is a LATE for compliers near 60.'},
+{id:'f22', topic:'l6', concept:'Sharp RD estimate', see:['l6','l6-sharp-rd','Sharp RD'], type:'num',
+ q:'In a sharp RD, the fitted line from the left predicts 52.0 at the cut-off and the line from the right predicts 55.5. What is the estimated effect?',
+ answer:3.5, tol:0.001, wrong:[{v:-3.5, fb:'Effect = right (treated) minus left (untreated) at the cut-off.'},{v:53.75, tol:0.01, fb:'That is the average of the two. The effect is the gap between them.'}],
+ explain:'τ̂ = 55.5 − 52.0 = <strong>3.5</strong>, the effect for units right at the cut-off.'},
+{id:'f23', topic:'l6', concept:'Manipulation and the density test', see:['l6','l6-threats-when-people-game-the-cut-off','Threats: when people game the cut-off'], type:'mc',
+ q:'A density test at the cut-off gives p = 0.001, with many more observations just above the cut-off than just below. What does this suggest?',
+ options:[
+  {t:'The treatment effect is significant.', fb:'The density test is about where units sit, not about the outcome.'},
+  {t:'People may be sorting themselves above the cut-off, so units on either side may not be comparable.', ok:true},
+  {t:'The bandwidth is too narrow.', fb:'The density test concerns the running variable itself, regardless of bandwidth.'},
+  {t:'Nothing: bunching is expected at any cut-off.', fb:'Without manipulation the density should be smooth through c.'}],
+ explain:'Sorting breaks the "as good as random near c" logic. Options: investigate how, try a donut RD, interpret with caution.'},
+{id:'f24', topic:'l6', concept:'Covariate balance at the cut-off', see:['l6','l6-threats-when-people-game-the-cut-off','Validity checklist'], type:'mc',
+ q:'Mothers\' age, fixed long before treatment, jumps at the cut-off. What does that mean for the RD?',
+ options:[
+  {t:'It is good news: older mothers make the effect larger.', fb:'Any jump in a pre-treatment characteristic means the two sides differ in more than treatment.'},
+  {t:'Something other than treatment changes at the cut-off (sorting or another rule), so the continuity assumption is in doubt.', ok:true},
+  {t:'It only matters if age is the outcome.', fb:'Balance checks use pre-treatment covariates precisely because they can\'t be affected by treatment.'},
+  {t:'Use a 5th-order polynomial to remove it.', fb:'High-order polynomials don\'t fix a real discontinuity in who is on each side.'}],
+ explain:'Covariates decided before treatment should not jump at c. If they do, the outcome jump may not be the treatment effect.'},
+/* Lecture 7 */
+{id:'f25', topic:'l7', concept:'Computing a 2 × 2 DiD', see:['l7','l7-the-2-2-setup-and-its-assumptions','The 2 × 2 setup'], type:'num',
+ q:'Unemployment (%): treated region 8.0 before, 9.5 after; control region 6.0 before, 8.5 after. What is the DiD estimate (percentage points)?',
+ answer:-1, tol:0.001, wrong:[{v:1.5, fb:'1.5 is only the treated region\'s change. Subtract the control region\'s change (2.5).'},{v:1, fb:'Check the sign: the treated region rose by less than the control, so the estimate is negative.'},{v:2.5, fb:'2.5 is the control region\'s change.'}],
+ explain:'(9.5 − 8.0) − (8.5 − 6.0) = 1.5 − 2.5 = <strong>−1.0 pp</strong>: unemployment rose 1 point less than it would have under parallel trends.'},
+{id:'f26', topic:'l7', concept:'Parallel trends', see:['l7','l7-the-2-2-setup-and-its-assumptions','The 2 × 2 setup and its assumptions'], type:'mc',
+ q:'What does the parallel-trends assumption require?',
+ options:[
+  {t:'Treated and control groups have the same level of the outcome before the policy.', fb:'Levels can differ; DiD differences them out.'},
+  {t:'Without the policy, both groups would have changed by the same amount.', ok:true},
+  {t:'The policy was assigned at random.', fb:'Random assignment would be sufficient but is much stronger than needed.'},
+  {t:'Pre-period trends are statistically indistinguishable.', fb:'That is a diagnostic. The assumption itself concerns the unobserved post-period.'}],
+ explain:'Parallel trends is about the counterfactual change of the treated group, which is never observed.'},
+{id:'f27', topic:'l7', concept:'No anticipation', see:['l7','l7-the-2-2-setup-and-its-assumptions','The 2 × 2 setup and its assumptions'], type:'mc',
+ q:'A tax was announced a year in advance, and firms started adjusting immediately. You use the year right before the tax as the "before" period. What is the problem?',
+ options:[
+  {t:'No anticipation is violated: the "before" period is already affected, so DiD misses part of the effect.', ok:true},
+  {t:'Parallel trends is violated because the groups have different levels.', fb:'Level differences are fine. The issue is that the baseline already contains a reaction.'},
+  {t:'The standard errors must be clustered by year.', fb:'Clustering matters, but it doesn\'t fix a contaminated baseline. Cluster where treatment is assigned.'},
+  {t:'There is no problem as long as the tax itself started later.', fb:'Behaviour changed at the announcement, so the pre-period isn\'t untreated.'}],
+ explain:'Use a base period before the announcement, and check the leads in an event study.'},
+{id:'f28', topic:'l7', concept:'Spillovers (SUTVA)', see:['l7','l7-the-2-2-setup-and-its-assumptions','The 2 × 2 setup and its assumptions'], type:'mc',
+ q:'City A raises its minimum wage; neighbouring city B (the control) doesn\'t. But employers in B raise wages to keep workers who could commute to A. What goes wrong?',
+ options:[
+  {t:'Nothing: B is still untreated by law.', fb:'B is affected through the labour market, so it no longer shows what would have happened without the policy.'},
+  {t:'The control group is affected by the treatment (a spillover), so DiD is biased, here likely understating A\'s effect on wages.', ok:true},
+  {t:'Parallel trends is guaranteed because the cities are neighbours.', fb:'Closeness can make trends more similar, but here it creates spillovers.'},
+  {t:'It only affects the standard errors.', fb:'Spillovers bias the estimate itself.'}],
+ explain:'No-spillover (SUTVA) is part of the DiD assumptions. A more distant control, or modelling the spillover, helps.'},
+/* Research design */
+{id:'f29', topic:'design', concept:'Choosing a design: policy rolled out in some areas', see:['cheat','cheat-map','How the causal methods fit together'], type:'mc',
+ q:'Speed cameras were installed in some districts in 2024. You have monthly accident counts for all districts from 2020 to 2026. Which design fits best?',
+ options:[
+  {t:'Regression discontinuity', fb:'There is no running variable with a cut-off that decides who gets cameras.'},
+  {t:'Difference-in-differences (with an event study of the months around installation)', ok:true},
+  {t:'Instrumental variables', fb:'No instrument is described; the policy timing itself provides the comparison.'},
+  {t:'Compare accident counts in camera vs non-camera districts after 2024', fb:'Districts chosen for cameras were probably more dangerous to begin with: selection bias.'}],
+ explain:'Treated vs untreated districts, before vs after: DiD. Check pre-trends, and watch for drivers switching to other routes (spillovers). If districts adopted at different times, use clean comparisons rather than plain TWFE.'},
+{id:'f30', topic:'design', concept:'Choosing a design: eligibility by a score', see:['cheat','cheat-design','Choose your identification strategy'], type:'mc',
+ q:'A cash-transfer programme is open to households whose poverty score is below 30. You want its effect on school enrolment and have scores and enrolment for all households.',
+ options:[
+  {t:'Regression discontinuity at a score of 30 (fuzzy if not every eligible household takes it up)', ok:true},
+  {t:'Compare recipients with non-recipients across all scores', fb:'Poorer households differ in many ways; the comparison is confounded.'},
+  {t:'Difference-in-differences', fb:'No before/after data are described.'},
+  {t:'Instrumental variables with enrolment as the instrument', fb:'Enrolment is the outcome; it can\'t be its own instrument.'}],
+ explain:'Eligibility is set by a rule at a cut-off, so compare households just below and just above 30. The estimate applies to households near the cut-off; check for score manipulation.'}
+];
+
 (function(){
 'use strict';
 /* ================= helpers ================= */
@@ -3388,10 +3657,10 @@ function ols(x,y,w){
 
 /* ================= state ================= */
 var KEY='econ-guide-v2';
-var state={studied:{},mode:'full',ans:{},layer:0};
+var state={studied:{},mode:'full',ans:{},layer:0,ftDraft:null,ftLast:null,ftHist:[],ftRound:0};
 try{
   var s=JSON.parse(localStorage.getItem(KEY)||'null');
-  if(s&&typeof s==='object'){state.studied=s.studied||{};state.mode=s.mode||'full';state.ans=s.ans||{};state.layer=s.layer||0;}
+  if(s&&typeof s==='object'){state.studied=s.studied||{};state.mode=s.mode||'full';state.ans=s.ans||{};state.layer=s.layer||0;state.ftDraft=s.ftDraft||null;state.ftLast=s.ftLast||null;state.ftHist=s.ftHist||[];state.ftRound=s.ftRound||0;}
   else{var o=JSON.parse(localStorage.getItem('econ-guide-v1')||'null');if(o&&o.done){state.studied=o.done;state.mode=o.mode||'full';}}
 }catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
@@ -3409,7 +3678,8 @@ function record(q,correct,mode){
 }
 function practiced(t){var qs=qsFor(t);return qs.length>0&&qs.every(function(q){return state.ans[q.id];});}
 function mastery(t){var qs=qsFor(t),n=0,r=0,last=0;qs.forEach(function(q){var a=state.ans[q.id];if(a&&a.e!=null){n++;if(a.e)r++;last=Math.max(last,a.et||0);}});return{n:n,right:r,total:qs.length,last:last};}
-function mastered(t){var m=mastery(t);return m.n>=Math.ceil(m.total*0.6)&&m.n>0&&m.right/m.n>=0.8;}
+function finalStrong(t){var r=state.ftLast;if(!r||!r.by||!r.by[t]||!r.by[t][1])return false;return r.by[t][0]/r.by[t][1]>=0.8;}
+function mastered(t){var m=mastery(t);return (m.n>=Math.ceil(m.total*0.6)&&m.n>0&&m.right/m.n>=0.8)||finalStrong(t);}
 function mistakes(t){return QB.filter(function(q){return (!t||q.topic===t)&&lastCorrect(state.ans[q.id])===false;});}
 function reviewDue(t){var m=mastery(t);return mastered(t)&&Date.now()-m.last>7*864e5;}
 
@@ -3510,7 +3780,7 @@ function renderProgress(){
     var t=el.dataset.status,m=mastery(t),mis=mistakes(t).length,qs=qsFor(t).length,ans=qsFor(t).filter(function(q){return state.ans[q.id];}).length;
     var html='<span class="chip'+(state.studied[t]?' on':'')+'">'+(state.studied[t]?'✓ ':'')+'Studied</span>'+
       '<span class="chip'+(practiced(t)?' on':'')+'">'+(practiced(t)?'✓ ':'')+'Practised '+ans+'/'+qs+'</span>'+
-      '<span class="chip'+(mastered(t)?' on good':'')+'">'+(mastered(t)?'✓ ':'')+'Mastered'+(m.n?' ('+m.right+'/'+m.n+' in exams)':'')+'</span>';
+      '<span class="chip'+(mastered(t)?' on good':'')+'">'+(mastered(t)?'✓ ':'')+'Mastered'+(m.n?' ('+m.right+'/'+m.n+' in exams)':'')+(finalStrong(t)?' · final test ✓':'')+'</span>';
     if(reviewDue(t))html+='<span class="chip warn">Review due</span>';
     if(mis)html+='<button type="button" class="chip act" data-retry="'+t+'">Retry '+mis+' missed</button>';
     el.innerHTML=html;
@@ -3547,7 +3817,7 @@ $$('pre.code').forEach(function(pre){
 /* ================= questions ================= */
 var KIND={apply:'Apply',challenge:'Challenge',design:'Choose the design'};
 var POOL={concept:'concept',math:'calculation',applied:'applied'};
-function parseNum(s){s=String(s).trim().replace(/[−–]/g,'-').replace(/\s/g,'').replace(',','.').replace(/%$/,'');if(!/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s))return NaN;return parseFloat(s);}
+function parseNum(s){s=String(s).trim().replace(/[−–]/g,'-').replace(/\s/g,'').replace(/[€$%]/g,'');if(/^[-+]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s))s=s.replace(/,/g,'');else s=s.replace(',','.');if(!/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s))return NaN;return parseFloat(s);}
 /* render a question card. opts: {mode, feedback:'now'|'end', onAnswer(correct, detail), shuffleSeed} */
 function renderQ(q,opts){
   opts=opts||{};var mode=opts.mode||'practice',showNow=opts.feedback!=='end';
@@ -3706,7 +3976,7 @@ function buildIndex(){
   $$('.remember').forEach(function(c){add(c,'If you remember only 3 things','summary');});
   $$('.gloss dt, .refresh dt').forEach(function(dt){var dd=dt.nextElementSibling;add(dt,dt.textContent.trim(),dt.closest('.gloss')?'definition':'reminder');index[index.length-1].text=dt.textContent+' — '+(dd?dd.textContent:'');index[index.length-1].low=index[index.length-1].text.toLowerCase();});
   $$('.qcard').forEach(function(c){if(c.closest('#exam'))return;add(c,'Practice question','practice');});
-  $$('details.q').forEach(function(d){if(d.closest('#exam'))return;add(d,'Self-check: '+$('summary',d).textContent,'review');});
+  $$('details.q').forEach(function(d){if(d.closest('#exam')||d.closest('#final'))return;add(d,'Self-check: '+$('summary',d).textContent,'review');});
   $$('.rlab').forEach(function(d){add(d,'Try it in R','R');});
 }
 function snippet(text,terms){var low=text.toLowerCase(),i=-1;terms.forEach(function(t){var j=low.indexOf(t);if(j>=0&&(i<0||j<i))i=j;});if(i<0)i=0;var s=Math.max(0,i-60),e=Math.min(text.length,i+120);var out=(s>0?'…':'')+esc(text.slice(s,e))+(e<text.length?'…':'');terms.forEach(function(t){out=out.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');});return out;}
@@ -3967,6 +4237,95 @@ function niceTicks(lo,hi,n){var span=hi-lo,step=Math.pow(10,Math.floor(Math.log1
     svg.setAttribute('aria-label','Treated and control lines over six periods. DiD estimate '+f(did,2)+', true effect '+f(P.eff,2)+'.');
     out.innerHTML='DiD estimate (3 periods before vs 3 after) <b>'+f(did,2)+'</b> · true effect <b>'+f(P.eff,2)+'</b> · bias <b>'+f(bias,2)+'</b>'+(Math.abs(P.ex)>1e-9?' = 3 × the extra trend. In the pre-period the gap between the lines already changes by '+f(P.ex,2)+' per period: that is what event-study leads would pick up.':' · Trends are parallel, so the level gap of '+f(P.gap,1)+' doesn\'t matter.');
   });
+})();
+
+/* ================= final test ================= */
+(function(){
+var page=$('#final');if(!page)return;
+var form=$('#ft-form'),res=$('#ft-results'),cnt=$('#ft-count'),sub=$('#ft-submit'),warn=$('#ft-warn'),intro=$('#ft-intro');
+var LNAME={l1:'Lecture 1 · Regression',l2:'Lecture 2 · Maximum likelihood',l3:'Lecture 3 · Bootstrap',l4:'Lecture 4 · Causality',l5:'Lecture 5 · Instrumental variables',l6:'Lecture 6 · Regression discontinuity',l7:'Lecture 7 · Difference-in-differences',design:'Research design (choosing a method)'};
+var TOPICS=['l1','l2','l3','l4','l5','l6','l7','design'];
+function draft(){if(!state.ftDraft)state.ftDraft={start:0,ans:{},round:(state.ftRound||0)};return state.ftDraft;}
+function optOrder(q){return shuffle(q.options.map(function(_,i){return i;}),rng(hashStr(q.id+'#'+(draft().round||0))));}
+function render(){
+  clear(form);var d=draft();
+  FT.forEach(function(q,n){
+    var fs=h('fieldset',{class:'ftq',id:'ftq-'+q.id});
+    fs.appendChild(h('legend',null,'<span class="xn">'+(n+1)+'</span><span class="sr">Question '+(n+1)+' of '+FT.length+'</span>'));
+    fs.appendChild(h('div',{class:'qtext'},q.q));
+    if(q.type==='mc'){var box=h('div',{class:'ftopts'});
+      optOrder(q).forEach(function(i,k){var id='fto-'+q.id+'-'+i;var lab=h('label',{class:'ftopt',for:id});
+        var inp=h('input',{type:'radio',name:q.id,id:id,value:String(i)});if(String(d.ans[q.id])===String(i))inp.checked=true;
+        lab.appendChild(inp);lab.appendChild(h('span',{class:'key'},String.fromCharCode(65+k)));lab.appendChild(h('span',null,q.options[i].t));box.appendChild(lab);});
+      fs.appendChild(box);}
+    else{var row=h('div',{class:'numrow'});var inp2=h('input',{type:'text',inputmode:'decimal',name:q.id,autocomplete:'off','aria-label':'Your answer to question '+(n+1),placeholder:'your answer'});
+      if(d.ans[q.id]!=null)inp2.value=d.ans[q.id];row.appendChild(inp2);fs.appendChild(row);}
+    form.appendChild(fs);
+  });
+  count();
+}
+function answered(id){var v=draft().ans[id];return v!=null&&String(v).trim()!=='';}
+function count(){var n=FT.filter(function(q){return answered(q.id);}).length;cnt.textContent=n+' of '+FT.length+' answered';
+  $$('.ftq',form).forEach(function(fs){fs.classList.toggle('done',answered(fs.id.slice(4)));});return n;}
+form.addEventListener('input',function(e){var t=e.target;if(!t.name)return;var d=draft();if(!d.start)d.start=Date.now();d.ans[t.name]=t.value;warn.hidden=true;save();count();});
+form.addEventListener('submit',function(e){e.preventDefault();});
+function grade(q,v){if(v==null||String(v).trim()==='')return{ok:null};
+  if(q.type==='mc'){var o=q.options[+v];return{ok:!!(o&&o.ok),pick:o?o.t:'',fb:o&&!o.ok?o.fb:''};}
+  var x=parseNum(v);if(isNaN(x))return{ok:false,pick:String(v),fb:'That isn\'t a number the test could read.'};
+  var ok=Math.abs(x-q.answer)<=q.tol,w=null;(q.wrong||[]).forEach(function(z){if(Math.abs(x-z.v)<=(z.tol||q.tol))w=z;});
+  return{ok:ok,pick:String(v),fb:ok?'':(w?w.fb:'')};}
+function submit(force){
+  var n=count();
+  if(n<FT.length&&!force){warn.hidden=false;$('#ft-warn-n').textContent=FT.length-n;$('#ft-anyway').focus();return;}
+  var d=draft(),g={},by={};TOPICS.forEach(function(t){by[t]=[0,0];});
+  FT.forEach(function(q){g[q.id]=grade(q,d.ans[q.id]);by[q.topic][1]++;if(g[q.id].ok)by[q.topic][0]++;});
+  var score=FT.filter(function(q){return g[q.id].ok;}).length;
+  var result={at:Date.now(),start:d.start||Date.now(),score:score,n:FT.length,by:by,ans:d.ans};
+  state.ftHist=(state.ftHist||[]).concat([{at:result.at,score:score,n:FT.length,by:by}]).slice(-10);
+  state.ftLast=result;state.ftRound=(d.round||0)+1;state.ftDraft=null;save();
+  showResults(result);renderProgress();renderIntro();
+}
+sub.addEventListener('click',function(){submit(false);});
+$('#ft-anyway').addEventListener('click',function(){submit(true);});
+$('#ft-back').addEventListener('click',function(){warn.hidden=true;var first=FT.filter(function(q){return !answered(q.id);})[0];if(first){var fs=$('#ftq-'+first.id);fs.scrollIntoView({block:'start'});var i=$('input',fs);if(i)i.focus({preventScroll:true});}});
+function link(see,txt){return '<button type="button" class="linkish" data-go="'+see[0]+'" data-anchor="'+see[1]+'">'+esc(txt||see[2])+' →</button>';}
+function showResults(r){
+  form.hidden=true;$('.ft-bar',page).hidden=true;warn.hidden=true;res.hidden=false;
+  var g={};FT.forEach(function(q){g[q.id]=grade(q,r.ans[q.id]);});
+  var pctv=r.score/r.n,mins=Math.max(1,Math.round((r.at-r.start)/60000));
+  var band=pctv>=0.85?['Exam-ready','You know the course well. Keep it fresh with a short mixed exam in a week.']:pctv>=0.65?['Nearly there','A solid grasp with a few gaps. The study plan below lists exactly which sections to revisit.']:pctv>=0.4?['Good base, clear gaps','Several topics need another pass. Work through the study plan from the top: it starts with your weakest lecture.']:['Start with the foundations','That is useful information, not a verdict. Go through the study plan lecture by lecture, then retake the test.'];
+  var rows=TOPICS.map(function(t){var b=r.by[t];if(!b||!b[1])return '';var s=b[0]/b[1];var st=s>=0.8?['Strong','good']:s>=0.5?['Review','mid']:['Re-learn','low'];
+    return '<tr><td>'+LNAME[t]+'</td><td class="num">'+b[0]+' / '+b[1]+'</td><td><span class="meter '+st[1]+'" aria-hidden="true"><i style="width:'+Math.round(100*s)+'%"></i></span></td><td><span class="chip st-'+st[1]+'">'+st[0]+'</span></td></tr>';}).join('');
+  var weak=TOPICS.filter(function(t){var b=r.by[t];return b&&b[1]&&b[0]<b[1];}).sort(function(a,b){return r.by[a][0]/r.by[a][1]-r.by[b][0]/r.by[b][1];});
+  var strong=TOPICS.filter(function(t){var b=r.by[t];return b&&b[1]&&b[0]===b[1];});
+  var plan=weak.map(function(t,k){var b=r.by[t],s=b[0]/b[1];var miss=FT.filter(function(q){return q.topic===t&&!g[q.id].ok;});
+    var items=miss.map(function(q){return '<li><strong>'+esc(q.concept)+'.</strong> Reread: '+link(q.see)+'</li>';}).join('');
+    var then=t==='design'?'<li>Then: work through '+link(['cheat','cheat-design','the seven "choose the design" scenarios'])+' and '+link(['cheat','cheat-which-causal-method','"Which causal method?"'])+'</li>'
+      :'<li>Then: '+(s<0.5?'play with '+link([t,t+'-demo','the demo'])+', reread '+link([t,t+'-method','the method in five questions'])+', and ':'')+'redo '+link([t,t+'-apply','the Apply and Challenge questions'])+'</li>';
+    return '<li class="plan-item"><div class="plan-head"><span class="step">'+(k+1)+'</span><strong>'+LNAME[t]+'</strong> <span class="chip st-'+(s>=0.8?'good':s>=0.5?'mid':'low')+'">'+(s>=0.8?'Almost':s>=0.5?'Review':'Re-learn')+' · '+b[0]+'/'+b[1]+'</span></div><ul>'+items+then+'</ul></li>';}).join('');
+  var review=FT.map(function(q,n){var x=g[q.id];var st=x.ok==null?'<span class="tagx skip">not answered</span>':x.ok?'<span class="tagx ok">✓ right</span>':'<span class="tagx no">✗ wrong</span>';
+    var corr=q.type==='mc'?q.options.filter(function(o){return o.ok;})[0].t:(f(q.answer,decimals(q.answer)));
+    return '<details class="q rev"'+(x.ok?'':' open')+'><summary>'+st+' <span>'+(n+1)+'. '+esc(q.concept)+'</span></summary><div class="a"><div class="qtext">'+q.q+'</div>'+
+      (x.pick?'<p><strong>Your answer:</strong> '+(q.type==='mc'?x.pick:esc(x.pick))+'</p>':'')+'<p><strong>Correct:</strong> '+corr+'</p>'+(x.fb?'<p class="fbline">'+x.fb+'</p>':'')+'<p class="why">'+q.explain+'</p><p>Revisit: '+link(q.see)+'</p></div></details>';}).join('');
+  res.innerHTML='<div class="score"><div class="big">'+r.score+' / '+r.n+'</div><div><strong>'+band[0]+'</strong> · '+pct(pctv)+' · about '+mins+' min</div><p class="small" style="flex-basis:100%">'+band[1]+'</p></div>'+
+    '<h2 id="ft-plan">Your study plan</h2>'+(plan?'<p class="small muted">Weakest lecture first. Each line links to the exact section to reread; the button below the plan turns your weak lectures into an exam-mode practice round.</p><ol class="plan">'+plan+'</ol>':'<p>Nothing to fix: every answer was right. A short mixed exam in a week will keep it that way.</p>')+
+    (strong.length?'<p class="small"><strong>Strong:</strong> '+strong.map(function(t){return LNAME[t];}).join(', ')+'. A quick review in a week keeps these fresh.</p>':'')+
+    '<div class="boot-row">'+(weak.length?'<button type="button" class="btn" id="ft-drill">Practise my weak lectures in exam mode</button>':'')+'<button type="button" class="btn ghost" id="ft-retake">Retake the final test</button></div>'+
+    '<h2>Results by lecture</h2><div class="tbl"><table><tr><th>Topic</th><th class="num">Right</th><th>Share</th><th>Status</th></tr>'+rows+'</table></div>'+
+    '<h2>Every question, with feedback</h2><div class="quiz">'+review+'</div>';
+  var dr=$('#ft-drill');if(dr)dr.addEventListener('click',function(){startExam({topics:weak,count:'all',feedback:'now',minutes:0,onlyMistakes:false});});
+  $('#ft-retake').addEventListener('click',function(){state.ftDraft={start:0,ans:{},round:state.ftRound||0};save();res.hidden=true;form.hidden=false;$('.ft-bar',page).hidden=false;render();renderIntro();window.scrollTo(0,0);});
+  window.scrollTo(0,0);
+}
+function renderIntro(){
+  var st=LECTS.filter(function(t){return state.studied[t];}).length,h2=state.ftHist||[];
+  var msg=st<7?'<p>You have ticked <strong>'+st+' of 7</strong> lectures as studied. The test is most useful at the end, but it can be taken any time; unfinished lectures will simply show up in the study plan.</p>':'<p>All seven lectures are ticked as studied. Good moment for the final test.</p>';
+  msg+='<ul class="small"><li>Answer everything you can; a guess is fine, and a blank counts as not yet known.</li><li>Nothing is marked until you submit, and you can change answers until then. Your answers are kept if you leave this page.</li><li>Afterwards: a score per lecture, feedback on every answer, and a study plan that links to the exact sections to revisit.</li></ul>';
+  if(h2.length)msg+='<p class="small muted">Previous attempts: '+h2.slice(-5).map(function(a){return a.score+'/'+a.n+' ('+new Date(a.at).toLocaleDateString(undefined,{day:'numeric',month:'short'})+')';}).join(' · ')+'</p>';
+  intro.innerHTML=msg;
+}
+renderIntro();
+if(state.ftLast&&!state.ftDraft){showResults(state.ftLast);}else render();
 })();
 
 /* ================= go ================= */
