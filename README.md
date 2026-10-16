@@ -38,7 +38,7 @@ a phone-friendly layout, keyboard navigation and a printable cheat sheet.
 - `index.html`: the whole site (no build step).
 - `r/`: one R script per lab (simulated data with fixed seeds, so the output matches the guide).
 - `data/`: the simulated data from each lab as CSV, for use in other software.
-- `Econometrics-Learnbook.pdf`: the printable learnbook (second edition).
+- `Econometrics-Learnbook.pdf`: the printable learnbook (third edition, with two practice exam papers).
 - `tests/check.cjs`: automated checks, run on every push by GitHub Actions
   (`.github/workflows/check.yml`).
 
