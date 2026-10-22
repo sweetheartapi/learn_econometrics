@@ -46,6 +46,8 @@ a phone-friendly layout, keyboard navigation and a printable cheat sheet.
 - `index.html`: the whole site (no build step).
 - `r/`: one R script per lab (simulated data with fixed seeds, so the output matches the guide).
 - `data/`: the simulated data from each lab as CSV, for use in other software.
+- `r/course/` and `data/course/`: the R scripts and datasets from the lectures (IV, RDD, DiD and the Lecture 8 extras), tidied to run from this folder. Each is explained in the guide under "From the lecture: course R scripts" and in the book's appendix.
+- `img/course/`: figures produced by those scripts.
 - `Econometrics-Learnbook-for-Dummies.pdf`: the printable Econometrics Learnbook for Dummies (third edition, with two practice exam papers).
 - `tests/check.cjs`: automated checks, run on every push by GitHub Actions
   (`.github/workflows/check.yml`).

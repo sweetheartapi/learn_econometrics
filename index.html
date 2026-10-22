@@ -409,6 +409,11 @@ fieldset.ftq legend + *{clear:both}
 .meter.good i{background:var(--good)}.meter.low i{background:var(--warn)}
 @media (max-width:40rem){.ft-bar{padding:.45rem .7rem;gap:.4rem}.ft-bar .btn{font-size:.85rem;padding:.4rem .8rem}#ft-count{font-size:.8rem}}
 .ft-bar[hidden]{display:none!important}
+.course-wrap{margin-top:.5rem}
+.cfig{margin:.2rem 0;display:flex;flex-direction:column;gap:.3rem}
+.cfig img{width:100%;max-width:760px;height:auto;border:1px solid var(--line);border-radius:.4rem;background:#fff}
+.cfig figcaption{font-size:.85rem;color:var(--muted)}
+.rlab-body .note{margin:0;padding:.55rem .75rem;border-left:4px solid var(--warn);background:var(--warn-soft);border-radius:.3rem}
 .orient{display:flex;flex-direction:column;gap:.75rem}
 </style>
 
@@ -2143,6 +2148,35 @@ weak       1.08       0.70</pre>
       <div class="dl"><a href="r/lab5_iv.R" download>lab5_iv.R</a><a href="data/lab5_lottery.csv" download>lab5_lottery.csv</a></div>
     </div></details>
   </div>
+
+  <div class="rlab-wrap course-wrap" id="l5-course">
+    <h2>From the lecture: course R scripts <span class="deep-tag">optional</span></h2>
+    <p class="muted small">The R scripts and datasets from the lectures, tidied so they run from the downloaded repository folder (open R, <code>setwd()</code> to the folder, then <code>source()</code> the script). Output below is from R 4.3.</p>
+    <details class="rlab"><summary>IV.R · Wald = 2SLS, controls, and colonial origins <span>about 10 min · AER</span></summary><div class="rlab-body">
+      <p>Part 1 simulates data and shows that the Wald ratio, two-stage least squares done by hand and <code>AER::ivreg</code> give the same number, with and without control variables (the controls are partialled out first, Frisch-Waugh-Lovell style), and with a binary instrument. Part 2 replicates Acemoglu, Johnson &amp; Robinson (2001): does protection against expropriation (<code>risk</code>) raise GDP per head (<code>loggdp</code>)? Settler mortality (<code>logmort0</code>) is the instrument.</p>
+      <figure class="cfig"><img src="img/course/iv_ols_scatter.png" alt="Scatter of expropriation risk against log GDP per capita with a rising fitted line" loading="lazy" width="1200" height="750"><figcaption>Better institutions go with higher income. OLS cannot say which way the arrow points.</figcaption></figure>
+      <figure class="cfig"><img src="img/course/iv_first_stage.png" alt="Scatter of log settler mortality against expropriation risk with a falling fitted line" loading="lazy" width="1200" height="750"><figcaption>First stage: where settlers died more, institutions are worse today.</figcaption></figure>
+      <h4>Key output</h4>
+      <pre class="out">=== One Z, one X (simulation, true beta = 1.5) ===
+IV Wald (demeaned)  :   2.113
+2SLS (demeaned)     :   2.113
+IVreg 2SLS          :   2.113
+First-stage diagnostics: F = 687.37,  R^2 = 0.256
+
+=== Colonial origins (64 countries) ===
+OLS      loggdp ~ risk           risk      0.516  (HC1 s.e. 0.051)
+1st stage risk ~ logmort0        logmort0 -0.613  (HC1 s.e. 0.152)
+ivreg    loggdp ~ risk | logmort0  risk   0.929  (HC1 s.e. 0.173)
+  Weak instruments  F = 23.34,  p &lt; 0.001
+  Wu-Hausman             22.04, p &lt; 0.001
+ivreg with latitude + continent dummies:  risk 1.074  (HC1 s.e. 0.508)
+  Weak instruments  F = 3.71,  p = 0.059</pre>
+      <h4>How to read it</h4>
+      <ul><li>The three simulated estimates are identical: Wald, manual 2SLS and <code>ivreg</code> are the same estimator. They are 2.11, not 1.5, because one sample is noisy; the point is that they agree.</li><li><code>all.equal()</code> printing "names for current but not for target" means the numbers <em>are</em> equal; only the labels differ.</li><li>IV (0.93) is almost twice OLS (0.52). One extra point of institutions quality raises log GDP by about 0.93, i.e. income is roughly 2.5 times higher (e<sup>0.93</sup> ≈ 2.5). Measurement error in <code>risk</code> pulls OLS towards zero, which can explain IV &gt; OLS.</li><li>The manual second stage gives the right coefficient (0.929) but the wrong standard error (0.119 instead of 0.173). Always use <code>ivreg</code> for inference.</li><li>With continent dummies and latitude the first-stage F falls to 3.7: the instrument becomes weak and the estimate (1.07, s.e. 0.51) is much less reliable. This is the classic warning sign from the lecture.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> data path changed to <code>data/course/</code>; <code>install.packages()</code> commented out; <code>print(p)</code> added so the scatter appears.</p>
+      <div class="dl"><a href="r/course/IV.R" download>IV.R</a><a href="data/course/Colonial_origins.dta" download>Colonial_origins.dta</a></div>
+    </div></details>
+  </div>
   <div class="quiz">
     <h2>Review: quick recall</h2>
     <p class="muted small">Answer in your head first, then tap to check. Come back to these a few days later.</p>
@@ -2452,6 +2486,71 @@ summary(result)                      # jump, bandwidth, robust CI
 rdplot(y = data$outcome, x = data$score, c = 80)          # the picture first!
 summary(rddensity(X = data$score, c = 80))                # sorting check</code></pre>
       <div class="dl"><a href="r/lab6_rdd.R" download>lab6_rdd.R</a><a href="data/lab6_leave_births.csv" download>lab6_leave_births.csv</a></div>
+    </div></details>
+  </div>
+
+  <div class="rlab-wrap course-wrap" id="l6-course">
+    <h2>From the lecture: course R scripts <span class="deep-tag">optional</span></h2>
+    <p class="muted small">The R scripts and datasets from the lectures, tidied so they run from the downloaded repository folder (open R, <code>setwd()</code> to the folder, then <code>source()</code> the script). Output below is from R 4.3.</p>
+    <details class="rlab"><summary>RDD_bias_variance.R · how the bandwidth trades bias for noise <span>about 2 min · simulation</span></summary><div class="rlab-body">
+      <p>A Monte Carlo: 300 samples from a curved RD design, each estimated with local linear regression for many bandwidths <em>h</em>. It plots the bias, the variance and the mean squared error (MSE = bias² + variance) against <em>h</em>.</p>
+      <figure class="cfig"><img src="img/course/rdd_bias_variance.png" alt="Four panels: bias rising with h, variance falling with h, a U-shaped MSE with its minimum at h about 0.78, and the spread of estimates by bandwidth" loading="lazy" width="1200" height="750"><figcaption>Bias grows and variance shrinks as h grows; the MSE is U-shaped with its lowest point at h* ≈ 0.78.</figcaption></figure>
+      <figure class="cfig"><img src="img/course/rdd_bandwidths.png" alt="One simulated sample with local linear fits for h = 0.15, 0.875 and 1.6" loading="lazy" width="1200" height="750"><figcaption>One sample, three bandwidths: the narrow fit is wobbly, the wide fit is smooth but bent away from the true curve.</figcaption></figure>
+      <h4>How to read it</h4>
+      <ul><li>Small <em>h</em>: few observations, so the estimate jumps around (variance). Large <em>h</em>: a straight line has to fit a curved function far from the cut-off (bias).</li><li>The best bandwidth balances the two. <code>rdrobust</code> estimates this MSE-optimal <em>h</em> from the data, which is why you rarely pick it by hand.</li><li>In the bottom-right panel the grey lines are individual samples and the dashed line is the truth: the average drifts away from the truth as <em>h</em> grows.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> <code>ggsave()</code> lines commented out (they wrote to the lecturer's own folder).</p>
+      <div class="dl"><a href="r/course/RDD_bias_variance.R" download>RDD_bias_variance.R</a></div>
+    </div></details>
+    <details class="rlab"><summary>RDD_polynomials.R · why not high-order global polynomials <span>about 1 min · simulation</span></summary><div class="rlab-body">
+      <p>One wiggly sample with a true jump of 1. It fits global polynomials of order 1 to 4 on each side, and a local linear fit with <em>h</em> = 1, then compares the estimated jumps.</p>
+      <figure class="cfig"><img src="img/course/rdd_polynomials.png" alt="Binned scatter with five fitted curves; the global linear fit misses the curvature badly" loading="lazy" width="1200" height="750"><figcaption>Each curve's legend shows its estimated jump. Truth = 1.</figcaption></figure>
+      <h4>Key output</h4>
+      <pre class="out">Estimated jump at the cut-off (truth = 1.000)
+Global poly K=1      2.205
+Global poly K=2      0.958
+Global poly K=3      0.929
+Global poly K=4      0.551
+Local linear (h=1)   0.923</pre>
+      <h4>How to read it</h4>
+      <ul><li>A global straight line (K = 1) is far off because the true curve bends; it attributes curvature to the jump.</li><li>Higher orders are not automatically better: K = 4 is off in the other direction. High-order polynomials chase noise near the edges, which is exactly where the RD estimate is read off (Gelman &amp; Imbens 2019).</li><li>Local linear with a sensible bandwidth is close to the truth and is the default in practice.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> <code>print(polynomials)</code> added; <code>ggsave()</code> commented out.</p>
+      <div class="dl"><a href="r/course/RDD_polynomials.R" download>RDD_polynomials.R</a></div>
+    </div></details>
+    <details class="rlab"><summary>RDD_X_density.R · what manipulation of the running variable looks like <span>about 1 min · simulation</span></summary><div class="rlab-body">
+      <p>Five made-up running variables: smooth (valid), bunching just above the cut-off, a "donut" hole at the cut-off, heaping (values rounded to 0.1) and a mass point exactly at the cut-off. It draws histograms, densities, a spike plot and ECDFs.</p>
+      <figure class="cfig"><img src="img/course/rdd_density_scenarios.png" alt="Five density panels: smooth, a bump right of zero, a dip at zero, smooth for heaped data, and a peak at zero" loading="lazy" width="1200" height="750"><figcaption>Densities near the cut-off. Bunching, a donut and a mass point are visible; heaping is not.</figcaption></figure>
+      <figure class="cfig"><img src="img/course/rdd_heaping_spikes.png" alt="Spike plot of counts at each rounded value from -1.5 to 1.5" loading="lazy" width="1200" height="750"><figcaption>Counting exact values reveals the heaping that the smooth density hid.</figcaption></figure>
+      <h4>How to read it</h4>
+      <ul><li>Bunching to the right of the cut-off is the textbook sign of manipulation: people pushed themselves just over the line. The McCrary / <code>rddensity</code> test looks for this jump in the density.</li><li>A kernel density smooths heaping away (the two curves in the KDE plot look alike). Use histograms with bins matching the rounding grid, or count exact values.</li><li>A mass point exactly at <em>c</em> is a problem for RD estimation itself: <code>rdrobust</code> warns "Mass points detected".</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> one scenario label made consistent ("Heaping / rounding") so the second half of the script finds it (before, the heaping data were silently dropped from those plots); <code>ggsave()</code> commented out.</p>
+      <div class="dl"><a href="r/course/RDD_X_density.R" download>RDD_X_density.R</a></div>
+    </div></details>
+    <details class="rlab"><summary>RDD_continuity_violations.R · RD plots under those five scenarios <span>about 1 min · simulation</span></summary><div class="rlab-body">
+      <p>Uses the same five running variables, adds an outcome with a true jump of 1, and draws the standard RD plot (binned means plus local linear fits) for each, then for <em>h</em> = 0.3, 0.6 and 1.</p>
+      <figure class="cfig"><img src="img/course/rdd_scenarios.png" alt="Grid of five RD plots, one per running-variable scenario" loading="lazy" width="1200" height="750"><figcaption>Panels, left to right and down: continuous (valid), bunching, donut hole, heaping, mass point. The jump looks similar in all five, so the plot of Y alone cannot tell you the design is broken.</figcaption></figure>
+      <h4>How to read it</h4>
+      <ul><li>The outcome plots look fine in every scenario. That is the lesson: manipulation shows up in the density of X (previous script), not in the Y plot.</li><li>Heaping shows as vertical stripes of points; the binned means still line up.</li><li>Changing <em>h</em> in the last three plots changes how wobbly the fits are, not where the jump is.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> <code>plots_ordered</code> was used but never created, so the script stopped; it is now defined. The <code>ggsave()</code> loop is commented out.</p>
+      <div class="dl"><a href="r/course/RDD_continuity_violations.R" download>RDD_continuity_violations.R</a></div>
+    </div></details>
+    <details class="rlab"><summary>RDD_example.R · the 300-euro vaccination bonus at 60 <span>about 3 min · rdrobust, rddensity</span></summary><div class="rlab-body">
+      <p>Real data from Červený, Hellebrandt &amp; Kravec (2025): in Slovakia, people who were 60 or older by 31 Dec 2021 got a 300-euro bonus if vaccinated against Covid-19. The running variable is the distance (in days, rescaled to years) from turning 60 by the deadline; 140,411 people within two years of it. The script draws the RD plot, tests for manipulation, estimates the jump in vaccination, runs a placebo on 2021 health costs, and then uses eligibility as an instrument (fuzzy RD) for the effect of vaccination on death and health costs in 2022.</p>
+      <figure class="cfig"><img src="img/course/vacc_rdplot.png" alt="RD plot: vaccination rate jumps from about 0.69 to about 0.81 at the age-60 cut-off" loading="lazy" width="1200" height="750"><figcaption>Vaccination jumps at the cut-off: the bonus worked.</figcaption></figure>
+      <figure class="cfig"><img src="img/course/vacc_density.png" alt="Density of the running variable on both sides of the cut-off with confidence bands" loading="lazy" width="1200" height="750"><figcaption>Birthdates are not manipulable, and the density test agrees (jackknife p = 0.16).</figcaption></figure>
+      <figure class="cfig"><img src="img/course/vacc_placebo.png" alt="Scatter of 2021 health costs against distance to cut-off with no visible jump" loading="lazy" width="1200" height="750"><figcaption>Placebo: costs in 2021, before the programme, are smooth at the cut-off.</figcaption></figure>
+      <h4>Key output</h4>
+      <pre class="out">Sharp RD, eligibility -&gt; vaccinated (p = 2, h = 0.477 yrs)   0.087   robust 95% CI [0.049, 0.113]
+Same by OLS, |x| &lt;= 1 year, separate slopes:   treat       0.156  (s.e. 0.0065)
+Placebo, 2021 costs (p = 1)                    -122.1     robust 95% CI [-319.8, 59.1]
+Reduced form, died in 2022                      -0.003    robust 95% CI [-0.008, 0.001]
+Reduced form, log costs 2022                    -0.076    robust 95% CI [-0.192, 0.026]
+Fuzzy RD, first stage                            0.118    robust 95% CI [0.082, 0.128]
+Fuzzy RD, vaccination -&gt; died in 2022           -0.027    robust 95% CI [-0.076, 0.005]
+Fuzzy RD, vaccination -&gt; log costs 2022         -0.571    robust 95% CI [-1.677, 0.411]</pre>
+      <h4>How to read it</h4>
+      <ul><li>The bonus raised vaccination by about 9 to 12 percentage points at age 60, depending on the polynomial order and bandwidth. That is the first stage.</li><li>The OLS check (0.156) is bigger because a 1-year window with straight lines is wider and cruder than <code>rdrobust</code>'s choice; treat it as a sanity check, not the estimate.</li><li>Placebo and density checks pass: nothing jumps that should not. (The variable <code>costs_2021</code> is in euros, although the plot label says "log".)</li><li>Fuzzy RD = reduced form ÷ first stage, a local Wald estimate. Vaccination induced by the bonus is estimated to lower the chance of dying in 2022 by 2.7 points, but the interval includes zero. The effect is for compliers aged about 60.</li><li>"Mass points detected" warnings appear because many people share the same birthday-distance. With daily data over two years this is harmless, but it is why <code>rdrobust</code> reports unique values.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> data path; <code>install.packages()</code> commented out; <code>dat_subset</code> was used but never created (now: people within 1 year of the cut-off); the bandwidth list <code>c(0.1, 0.5, 0,8)</code> had a comma for a decimal point and is now <code>c(0.1, 0.5, 0.8)</code>.</p>
+      <div class="dl"><a href="r/course/RDD_example.R" download>RDD_example.R</a><a href="data/course/Vaccination.csv" download>Vaccination.csv (7.9 MB)</a></div>
     </div></details>
   </div>
   <div class="quiz">
@@ -2806,6 +2905,57 @@ aggte(cs, type = "dynamic")                          # event-study profile
 library(fixest)
 feols(sales ~ cityA:post | shop + post, data = shops, cluster = ~shop)   # 2x2 with fixed effects</code></pre>
       <div class="dl"><a href="r/lab7_did.R" download>lab7_did.R</a><a href="data/lab7_sugar_tax.csv" download>lab7_sugar_tax.csv</a><a href="data/lab7_event_study.csv" download>lab7_event_study.csv</a><a href="data/lab7_staggered.csv" download>lab7_staggered.csv</a></div>
+    </div></details>
+  </div>
+
+  <div class="rlab-wrap course-wrap" id="l7-course">
+    <h2>From the lecture: course R scripts <span class="deep-tag">optional</span></h2>
+    <p class="muted small">The R scripts and datasets from the lectures, tidied so they run from the downloaded repository folder (open R, <code>setwd()</code> to the folder, then <code>source()</code> the script). Output below is from R 4.3.</p>
+    <details class="rlab"><summary>DiD_callaway_santanna.R · TWFE vs Callaway &amp; Sant'Anna on a tiny panel <span>about 2 min · fixest, bacondecomp, did</span></summary><div class="rlab-body">
+      <p>Three units over ten periods: one adopts in period 5, one in period 8, one never. The script estimates the TWFE coefficient, decomposes it with Goodman-Bacon, and then builds every group-time effect ATT(g,t) by hand, printing the four means behind each one, and compares with <code>did::att_gt</code>.</p>
+      <p class="note small"><strong>Run on your computer for the full output.</strong> The packages <code>fixest</code>, <code>did</code> and <code>bacondecomp</code> could not be installed where these pages were built, so the output shown comes from the same steps written in base R (<code>lm()</code> with dummies and clustered standard errors from <code>sandwich</code>). Point estimates match; clustered standard errors can differ in the last digits.</p>
+      <h4>Key output</h4>
+      <pre class="out">TWFE   Y ~ D | id + time                 D = 2.325  (s.e. 0.97)
+
+Manual ATT(g,t), last pre-period as base, not-yet-treated as controls
+ g   t   E[Y|g,t] - E[Y|g,s]   E[Y|NY,t] - E[Y|NY,s]   ATT(g,t)
+ 5   5      2.00 - 0.00            0.55 - 0.45           1.90
+ 5   6      2.00 - 0.00            0.85 - 0.45           1.60
+ 5   7      2.00 - 0.00            0.80 - 0.45           1.65
+ 5   8      2.00 - 0.00            1.10 - 0.90           1.80
+ 5   9      2.00 - 0.00            1.25 - 0.90           1.65
+ 5  10      2.00 - 0.00            1.00 - 0.90           1.90
+ 8   8      4.00 - 0.30            1.10 - 1.30           3.90
+ 8   9      4.00 - 0.30            1.25 - 1.30           3.75
+ 8  10      4.00 - 0.30            1.00 - 1.30           4.00
+
+Overall ATT (simple average of the 9 cells)   2.461</pre>
+      <h4>How to read it</h4>
+      <ul><li>Each ATT(g,t) is a plain 2×2 DiD: the change for cohort <em>g</em> since its last untreated period <em>s</em>, minus the change for units not yet treated at <em>t</em>.</li><li>From period 8 on, the period-5 cohort has only the never-treated unit as a control (the period-8 unit is now treated), which is why its control means change.</li><li>TWFE (2.33) is below the average of the clean comparisons (2.46). The Bacon decomposition in the full script shows why: part of TWFE compares the late adopter with the early adopter <em>after</em> the early one is treated, a "forbidden" comparison when effects differ over time.</li><li>On your computer, <code>did::att_gt</code> should reproduce the manual table exactly (the script prints the largest difference).</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> data path; the install line lists every package used.</p>
+      <div class="dl"><a href="r/course/DiD_callaway_santanna.R" download>DiD_callaway_santanna.R</a><a href="data/course/DiD.csv" download>DiD.csv</a></div>
+    </div></details>
+    <details class="rlab"><summary>DiD_divorce_event_study.R · no-fault divorce and female suicide <span>about 2 min · fixest</span></summary><div class="rlab-body">
+      <p>Stevenson &amp; Wolfers (2006): US states introduced unilateral ("no-fault") divorce in different years. The panel covers states over 1964 to 1996, with the female suicide rate (<code>asmrs</code>) as outcome and <code>_nfd</code> as the year of the reform (missing = never). The script runs a TWFE DiD with state and year fixed effects, then an event study with dummies for 15 years before to 14 years after the reform (year −1 as reference), clustered by state. Originally named <code>Castle.r</code>.</p>
+      <p class="note small"><strong>Run on your computer for the full output.</strong> The package <code>fixest</code> could not be installed where these pages were built, so the output shown comes from the same steps written in base R (<code>lm()</code> with dummies and clustered standard errors from <code>sandwich</code>). Point estimates match; clustered standard errors can differ in the last digits.</p>
+      <figure class="cfig"><img src="img/course/divorce_event_study.png" alt="Event-study plot: coefficients near zero before the reform and drifting down to about minus 9 a decade after" loading="lazy" width="1200" height="750"><figcaption>Event study: flat before the reform, declining afterwards.</figcaption></figure>
+      <h4>Key output</h4>
+      <pre class="out">TWFE   asmrs ~ post | stfips + year, cluster = state
+        post = -3.08   (s.e. 2.49, p = 0.22)
+
+Event study (ref = -1), selected years
+   k    est    s.e.
+ -10  -0.52   4.74
+  -5  -2.14   2.59
+  -2  -0.26   2.44
+   0  -0.15   2.66
+   5  -2.12   2.80
+  10  -8.80   3.66
+  14  -9.36   4.15</pre>
+      <h4>How to read it</h4>
+      <ul><li>Leads (k &lt; 0) close to zero with wide intervals: no clear pre-trend, which supports parallel trends.</li><li>The effect builds up over time: near zero at adoption, about −9 suicides per million women after 10 years. The single TWFE number (−3.1, not significant) averages this dynamic path and, with staggered timing, can be biased (see the previous script).</li><li>Standard errors are clustered by state because outcomes within a state are correlated over years.</li><li>On your computer, <code>fixest::coefplot</code> draws the same picture as the base-R version shown here.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> data path; one typo in a comment.</p>
+      <div class="dl"><a href="r/course/DiD_divorce_event_study.R" download>DiD_divorce_event_study.R</a><a href="data/course/Divorce.dta" download>Divorce.dta</a></div>
     </div></details>
   </div>
   <div class="quiz">
@@ -3209,6 +3359,32 @@ library(DRDID)
 drdid(yname = "y", tname = "t", idname = "id", dname = "g",
       xformla = ~ x, data = panel)            # panel with two periods</code></pre>
       <div class="dl"><a href="r/lab8_extras.R" download>lab8_extras.R</a><a href="data/lab8_compliers.csv" download>lab8_compliers.csv</a><a href="data/lab8_kink.csv" download>lab8_kink.csv</a><a href="data/lab8_drdid.csv" download>lab8_drdid.csv</a></div>
+    </div></details>
+  </div>
+
+  <div class="rlab-wrap course-wrap" id="l8-course">
+    <h2>From the lecture: course R scripts <span class="deep-tag">optional</span></h2>
+    <p class="muted small">The R scripts and datasets from the lectures, tidied so they run from the downloaded repository folder (open R, <code>setwd()</code> to the folder, then <code>source()</code> the script). Output below is from R 4.3.</p>
+    <details class="rlab"><summary>RKD_kink.R · a sharp and a fuzzy kink with lm() <span>about 1 min · simulation</span></summary><div class="rlab-body">
+      <p>A policy whose schedule rises with slope 1.2 left of the cut-off and falls with slope −1 to its right (a "triangle"). The true effect of the policy on the outcome is 1.5. The script fits local linear regressions with a triangular kernel (<em>h</em> = 0.3) and an interaction <code>Xc:Right</code>, whose coefficient is the change in slope.</p>
+      <figure class="cfig"><img src="img/course/rkd_sharp.png" alt="Binned outcome forming a peak at zero with two local linear fits" loading="lazy" width="1200" height="750"><figcaption>Sharp kink: the outcome's slope changes at the cut-off.</figcaption></figure>
+      <figure class="cfig"><img src="img/course/rkd_fuzzy_first_stage.png" alt="Binned first stage forming a peak at zero with local fits" loading="lazy" width="1200" height="750"><figcaption>Fuzzy kink, first stage: the received policy also bends, but noisily.</figcaption></figure>
+      <h4>Key output</h4>
+      <pre class="out">True tau  1.500
+Sharp RKD:  ΔY&#x27; = -3.067, ΔT&#x27; (known) = -2.200  =&gt;  tau-hat = 1.394
+Fuzzy RKD:  ΔY&#x27; = -3.931, ΔT&#x27; (est.)  = -2.644  =&gt;  tau-hat = 1.487</pre>
+      <h4>How to read it</h4>
+      <ul><li>RKD estimate = change in the outcome's slope ÷ change in the policy's slope. In the sharp case the policy slope change is known from the rules (−1 − 1.2 = −2.2).</li><li>In the fuzzy case the policy actually received is noisy, so its slope change is estimated too (a first stage), exactly like fuzzy RD with slopes instead of levels.</li><li>Both land near 1.5, but notice how far 1.394 is from the truth with 5,000 points: slopes are much harder to estimate than jumps.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> none; it runs as given.</p>
+      <div class="dl"><a href="r/course/RKD_kink.R" download>RKD_kink.R</a></div>
+    </div></details>
+    <details class="rlab"><summary>DRDID_lalonde.R · doubly robust DiD by hand vs DRDID <span>about 1 min · DRDID</span></summary><div class="rlab-body">
+      <p>Uses the Lalonde job-training data shipped with the <code>DRDID</code> package. The "treated" group are the NSW experimental units in this sample and the comparison group is drawn from the CPS survey; earnings are observed in 1975 and 1978. The script computes the DR-DiD estimate by hand (a logit propensity score for the weights, a regression of the earnings change on covariates fitted on controls only) and compares it with <code>DRDID::drdid</code>.</p>
+      <p class="note small"><strong>Run on your computer.</strong> The DRDID package (which also contains the data) could not be installed where these pages were built, so no output is shown here.</p>
+      <h4>How to read it</h4>
+      <ul><li>The manual number and <code>drdid()</code> should agree closely; this is the formula from the lecture made concrete.</li><li>Read the code alongside the doubly robust DiD section of Lecture 8: <code>or_fit</code> is the trend model m̂₀(X), <code>ehat</code> the propensity score ê(X), and <code>w0</code> the weights ê/(1 − ê) for the controls.</li><li>The comment next to <code>estMethod = "trad"</code> says "improved"; <code>"trad"</code> is in fact the traditional DR estimator, and <code>"imp"</code> the improved one. Both are doubly robust.</li></ul>
+      <p class="muted small"><strong>Changed from the lecture file:</strong> none; it runs as given once DRDID is installed (the data come with the package).</p>
+      <div class="dl"><a href="r/course/DRDID_lalonde.R" download>DRDID_lalonde.R</a></div>
     </div></details>
   </div>
   <div class="quiz">
