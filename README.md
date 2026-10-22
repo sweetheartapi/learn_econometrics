@@ -4,6 +4,8 @@ An interactive, plain-language study guide for an introductory Econometrics cour
 It is written for low-overwhelm studying: one lecture per tab, the three key ideas first,
 formulas translated into words, and a learning path in every lecture.
 
+Kudos to my professors for allowing me to use their learning materials (doc. Lafférs, dr. Červený, doc. Němec)
+
 **Open it:** https://sweetheartapi.github.io/learn_econometrics/
 
 ## What's inside
