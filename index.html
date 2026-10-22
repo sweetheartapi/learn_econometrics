@@ -419,7 +419,7 @@ fieldset.ftq legend + *{clear:both}
     <div class="top-row">
       <div class="brand">Econometrics <span>· study guide</span></div>
       <div class="top-row" style="gap:.6rem">
-        <span class="progress" id="progress" aria-live="polite">Studied 0 · practised 0 · mastered 0 of 7</span>
+        <span class="progress" id="progress" aria-live="polite">Studied 0 · practised 0 · mastered 0 of 8</span>
         <button type="button" class="iconbtn" id="search-btn" aria-label="Search the whole guide" aria-keyshortcuts="/"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="10.6" y1="10.6" x2="14.5" y2="14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Search <kbd>/</kbd></button>
         <div class="mode" role="group" aria-label="Reading depth">
           <button type="button" id="m-full" aria-pressed="true">Full</button>
@@ -437,6 +437,7 @@ fieldset.ftq legend + *{clear:both}
       <button class="tab" role="tab" data-t="l5"><b>5</b>IV<span class="dot"></span></button>
       <button class="tab" role="tab" data-t="l6"><b>6</b>RDD<span class="dot"></span></button>
       <button class="tab" role="tab" data-t="l7"><b>7</b>DiD<span class="dot"></span></button>
+      <button class="tab" role="tab" data-t="l8"><b>8</b>Extras<span class="dot"></span></button>
       <button class="tab" role="tab" data-t="cheat">Cheat sheet</button>
       <button class="tab exam-tab" role="tab" data-t="exam">Exam mode</button>
       <button class="tab exam-tab" role="tab" data-t="final">Final test</button>
@@ -461,7 +462,7 @@ fieldset.ftq legend + *{clear:both}
       <li><strong>Explain buttons.</strong> Tricky ideas have <em>Simple / Intuitive / Technical</em> switches, so you can change the depth of one concept without changing the whole page.</li>
       <li><strong>Play with the demos.</strong> Each lecture has an interactive simulation: move a slider and see why a result changes.</li>
       <li><strong>Practise, don't just read.</strong> "Apply" and "Challenge" questions give feedback on the exact answer you picked. <strong>Exam mode</strong> mixes questions from all lectures, with a timer if you want one.</li>
-      <li><strong>Final test</strong> when everything is studied: thirty new questions, graded together, then a score per lecture and a study plan that links to the exact sections to revisit.</li>
+      <li><strong>Final test</strong> when everything is studied: thirty-three new questions, graded together, then a score per lecture and a study plan that links to the exact sections to revisit.</li>
       <li><strong>Search</strong> (top right, or press <kbd>/</kbd>) looks through everything: definitions, explanations, questions and R code.</li>
       <li><strong>Optional R labs</strong> show each method on real-looking data, with the exact output you should get and downloadable scripts.</li>
       <li>Your progress stays in this browser only.</li>
@@ -495,10 +496,11 @@ fieldset.ftq legend + *{clear:both}
       <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>5 · Instrumental variables</h3><p>Use an outside "knob" that nudges the treatment to get a clean effect.</p><button class="go" data-go="l5">Open lecture 5</button></div>
       <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>6 · Regression discontinuity</h3><p>Compare people just above and just below a cut-off.</p><button class="go" data-go="l6">Open lecture 6</button></div>
       <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>7 · Difference-in-differences</h3><p>Compare how much two groups changed, before vs after a policy.</p><button class="go" data-go="l7">Open lecture 7</button></div>
+      <div class="card"><div class="label">Part B · cause &amp; effect</div><h3>8 · IV, RDD &amp; DiD extras</h3><p>Who the compliers are, policies that bend, effects beyond the cut-off, and doubly robust DiD.</p><button class="go" data-go="l8">Open lecture 8</button></div>
       <div class="card"><div class="label">Any time</div><h3>Basics refresher</h3><p>Plain definitions of the simple stuff: mean, variance, SE, log, derivative, Greek letters.</p><button class="go" data-go="basics">Open basics</button></div>
       <div class="card"><div class="label">Revision</div><h3>Cheat sheet</h3><p>All methods side by side, how they connect, and "choose the design" practice.</p><button class="go" data-go="cheat">Open cheat sheet</button></div>
       <div class="card"><div class="label">Test yourself</div><h3>Exam mode</h3><p>Mixed questions from any lectures, timed or untimed, with results by topic.</p><button class="go" data-go="exam">Open exam mode</button></div>
-      <div class="card"><div class="label">At the end</div><h3>Final test</h3><p>Thirty new questions from everything, graded at the end, with a study plan that links back to what to revisit.</p><button class="go" data-go="final">Open the final test</button></div>
+      <div class="card"><div class="label">At the end</div><h3>Final test</h3><p>Thirty-three new questions from everything, graded at the end, with a study plan that links back to what to revisit.</p><button class="go" data-go="final">Open the final test</button></div>
       <div class="card"><div class="label">Offline</div><h3>Econometrics Learnbook for Dummies</h3><p>The printable learnbook (third edition, PDF): worked derivations, R labs, exercises, two practice exam papers and answers.</p><a class="go" href="Econometrics-Learnbook-for-Dummies.pdf" download>Download the PDF</a></div>
     </div>
   </div>
@@ -2823,8 +2825,413 @@ feols(sales ~ cityA:post | shop + post, data = shops, cluster = ~shop)   # 2x2 w
       <li>Modern staggered DiD: Roth et al. (2023) overview, or Cunningham's <em>Causal Inference: The Mixtape</em> (free online).</li>
     </ul>
   </div>
-  <div class="finish"><label><input type="checkbox" data-done="l7" id="done-l7">I've studied this</label><button class="btn" data-go="cheat">Next: Cheat sheet →</button></div>
-  <p class="small">Studied all seven? <button type="button" class="linkish" data-go="final">Take the final test →</button></p>
+  <div class="finish"><label><input type="checkbox" data-done="l7" id="done-l7">I've studied this</label><button class="btn" data-go="l8">Next: Extras →</button></div>
+</section>
+
+<section class="page" id="l8" data-page hidden>
+  <div class="page-head">
+    <div class="eyebrow">Lecture 8 · Part B</div>
+    <h1>IV, RDD &amp; DiD extras</h1>
+    <p class="lede">Four follow-up tools for lectures 5–7: <mark>whom the LATE is about, what to do when a policy bends instead of jumping, how far an RD effect travels, and how to adjust DiD with two safety nets</mark>.</p>
+    <div class="meta"><span>About 35 min in Full mode</span><span>About 10 min in Gist mode</span></div>
+    <div class="status" data-status="l8" aria-label="Your progress on this lecture"></div>
+  </div>
+  <p class="gist-note">Gist mode is on: deeper sections are hidden.</p>
+
+  <div class="refresh">
+    <div class="label">Quick reminders</div>
+    <dl>
+      <dt>Compliers</dt><dd>People who take the treatment only because of the instrument (lecture 5). IV's LATE is their average effect.</dd>
+      <dt>Always- / never-takers</dt><dd>People who take (or refuse) the treatment whatever the instrument says.</dd>
+      <dt>Slope</dt><dd>How much the outcome changes per unit of X. A <em>kink</em> is a place where the slope changes suddenly.</dd>
+      <dt>Propensity score</dt><dd>The probability of being treated, given your characteristics X.</dd>
+      <dt>Conditional parallel trends</dt><dd>Trends are parallel among units with the same X (lecture 7).</dd>
+    </dl>
+  </div>
+
+  <div class="remember">
+    <h3>If you remember only 3 things</h3>
+    <ol>
+      <li><mark>Everyone is a mix of compliers, always-takers and never-takers.</mark> The overall mean is a weighted average of the three groups, so the compliers' average characteristics can be backed out: that shows whom the LATE is about.</li>
+      <li><mark>When a policy bends, look for a bend in the outcome.</mark> Kink design: effect = change in the outcome's slope ÷ change in the policy's slope. In an ordinary RD, the same slope change (the TED) shows how fast the effect changes near the cut-off.</li>
+      <li><mark>Doubly robust DiD is right if at least one of its two models is right</mark>: a trend model for the controls, and propensity-score weights.</li>
+    </ol>
+  </div>
+
+  <div class="orient">
+    <div class="objectives"><h3>After this lecture you can…</h3><ul><li><span class="lvl f">Foundational</span><span>Say which cells of the offer × treatment table contain only always-takers or only never-takers, and why.</span></li><li><span class="lvl f">Foundational</span><span>Back out the compliers' average characteristic from the group shares and means.</span></li><li><span class="lvl i">Intermediate</span><span>Explain a regression kink design and compute effect = slope change of the outcome ÷ slope change of the policy.</span></li><li><span class="lvl i">Intermediate</span><span>Interpret the treatment effect derivative (TED) and use it to predict the effect of a nearby threshold, under local policy invariance.</span></li><li><span class="lvl i">Intermediate</span><span>Explain why doubly robust DiD is right if either the trend model or the propensity model is right.</span></li><li><span class="lvl a">Advanced</span><span>Read the formulas for the complier mean, the RKD estimand, the fuzzy TED and the DR-DiD estimator.</span></li></ul></div>
+    <ol class="path" aria-label="Learning path for this lecture"><li><button type="button" data-jump="l8-learn">Understand <span>read</span></button></li><li><button type="button" data-jump="l8-demo">See it <span>play with it</span></button></li><li><button type="button" data-jump="l8-apply">Apply <span>solve</span></button></li><li><button type="button" data-jump="l8-challenge">Challenge <span>spot the mistake</span></button></li><li><button type="button" data-jump="l8-review">Review <span>recall</span></button></li></ol>
+    <details class="toc"><summary>On this page</summary><div data-toc></div></details>
+  </div>
+
+
+  <div class="chunk">
+    <h2>Four extras, four questions</h2>
+    <div class="tbl"><table>
+      <tr><th>Tool</th><th>The question it answers</th><th>Builds on</th></tr>
+      <tr><td><strong>Complier profiles</strong></td><td>Who are the people behind the LATE?</td><td>IV (lecture 5)</td></tr>
+      <tr><td><strong>Regression kink design</strong></td><td>What if the policy bends at a threshold instead of jumping?</td><td>RDD (lecture 6)</td></tr>
+      <tr><td><strong>Treatment effect derivative (TED)</strong></td><td>Does the RD effect hold a little away from the cut-off? What if we moved the threshold?</td><td>RDD (lecture 6)</td></tr>
+      <tr><td><strong>Doubly robust DiD</strong></td><td>How do we adjust for many characteristics without betting on one model?</td><td>DiD (lecture 7)</td></tr>
+    </table></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Profiling IV: who are the compliers?</h2>
+    <p>IV estimates the effect only for <strong>compliers</strong>. Whether that matters for policy depends on who they are: young or old, rich or poor, healthy or sick. We can never point at one person and say "complier", because each person is seen with only one value of the instrument. But we <em>can</em> learn the compliers' <strong>average</strong> characteristics.</p>
+    <div class="tbl"><table>
+      <tr><th></th><th>Not offered (Z = 0)</th><th>Offered (Z = 1)</th></tr>
+      <tr><td><strong>Not treated (D = 0)</strong></td><td>compliers + never-takers</td><td><mark>never-takers only</mark> (refused even when offered)</td></tr>
+      <tr><td><strong>Treated (D = 1)</strong></td><td><mark>always-takers only</mark> (took it without the offer)</td><td>compliers + always-takers</td></tr>
+    </table></div>
+    <p>The two highlighted cells contain a single group, so always-takers and never-takers can be described directly. Compliers are always mixed with another group, so we need one more step. That step needs the instrument to be <strong>as good as random</strong> and <strong>no defiers</strong>. <mark>The exclusion restriction is not needed here.</mark></p>
+  </div>
+
+  <div class="chunk">
+    <h2>The trick: everyone is a mix of the three groups</h2>
+    <div class="example"><div class="label">Worked example</div>
+      <p>Everyone: mean age 50. Always-takers (50 % of people): mean age 55. Never-takers (30 %): mean age 40. Compliers are the rest: 20 %.</p>
+      <ol>
+        <li>The overall mean is a weighted average: 50 = 0.2 × ? + 0.5 × 55 + 0.3 × 40.</li>
+        <li>Solve: ? = (50 − 27.5 − 12) / 0.2 = <strong>52.5</strong>.</li>
+      </ol>
+      <p class="result">Compliers are on average 52.5 years old: older than the average person, younger than the always-takers.</p>
+    </div>
+    <p>Where the shares come from: <strong>always-takers</strong> = share treated among those <em>not</em> offered; <strong>never-takers</strong> = share untreated among those offered; <strong>compliers</strong> = the rest, 100 − 50 − 30 = 20 %. That is exactly the first stage.</p>
+    <div class="formula">
+      <div class="eq">μ<sub>co</sub> = (E[X] − π<sub>at</sub>·μ<sub>at</sub> − π<sub>nt</sub>·μ<sub>nt</sub>) / π<sub>co</sub></div>
+      <dl>
+        <dt>π<sub>at</sub></dt><dd>share of always-takers = Pr(D = 1 | Z = 0)</dd>
+        <dt>π<sub>nt</sub></dt><dd>share of never-takers = Pr(D = 0 | Z = 1)</dd>
+        <dt>π<sub>co</sub></dt><dd>share of compliers = 1 − π<sub>at</sub> − π<sub>nt</sub></dd>
+        <dt>μ<sub>at</sub>, μ<sub>nt</sub></dt><dd>mean of X in the two "pure" cells</dd>
+      </dl>
+    </div>
+    <div class="demo card" data-demo="cprof">
+      <div class="label">Try it: the complier calculator</div>
+      <div class="controls">
+        <label>Share of always-takers <output>0.50</output><input type="range" min="0" max="0.9" step="0.01" value="0.5" data-k="pat"></label>
+        <label>Share of never-takers <output>0.30</output><input type="range" min="0" max="0.9" step="0.01" value="0.3" data-k="pnt"></label>
+        <label>Mean for everyone <output>50.0</output><input type="range" min="20" max="80" step="0.5" value="50" data-k="mall"></label>
+        <label>Mean for always-takers <output>55.0</output><input type="range" min="20" max="80" step="0.5" value="55" data-k="mat"></label>
+        <label>Mean for never-takers <output>40.0</output><input type="range" min="20" max="80" step="0.5" value="40" data-k="mnt"></label>
+      </div>
+      <svg viewBox="0 0 400 95" role="img" aria-label="Complier calculator"></svg>
+      <div class="stat" data-out aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Example: who responds to a vaccination bonus?</h2>
+    <p>Slovakia, 2021–22: €300 for a COVID-19 booster, only for people aged 60+. The instrument is being 60 or older. Shares: 17 % compliers, 65 % always-takers, 18 % never-takers (Červený, Hellebrandt &amp; Kravec 2025).</p>
+    <ul>
+      <li>Always-takers have the highest income (€10,706), compliers the lowest (€8,713).</li>
+      <li>Never-takers use the most health care (€1,682).</li>
+      <li>The same weighted average as before: 0.17 × 8,713 + 0.65 × 10,706 + 0.18 × 9,437 ≈ 10,140, close to the whole-sample mean of 10,123 (the shares are rounded).</li>
+    </ul>
+    <p class="result">The bonus mainly moved lower-income people, so the LATE describes them, not the average 60-year-old.</p>
+  </div>
+
+  <div class="chunk">
+    <h2>How to use complier profiles</h2>
+    <ul>
+      <li><strong>Compare compliers with the whole sample.</strong> If they differ in characteristics that matter for the effect, the LATE may not apply to everyone.</li>
+      <li><strong>Different instruments move different people</strong>, so they give different LATEs. Profiles help explain why.</li>
+      <li><strong>Caveat:</strong> we only see <em>observed</em> characteristics. Compliers may still differ in things we don't observe.</li>
+      <li><strong>Software:</strong> <code>ivdesc</code> in R and Stata gives the shares, group means and their standard errors (Marbach &amp; Hangartner 2020).</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>Kink designs: when policies bend</h2>
+    <figure>
+      <svg viewBox="0 0 400 170" role="img" aria-label="Left: treatment jumps at the cut-off. Right: a subsidy that is flat and then falls, bending at the cut-off.">
+        <g stroke="var(--line)" stroke-width="1.5"><line x1="20" y1="140" x2="185" y2="140"/><line x1="20" y1="20" x2="20" y2="140"/><line x1="215" y1="140" x2="385" y2="140"/><line x1="215" y1="20" x2="215" y2="140"/></g>
+        <g stroke="var(--chart-mute)" stroke-dasharray="4 4"><line x1="102" y1="20" x2="102" y2="140"/><line x1="300" y1="20" x2="300" y2="140"/></g>
+        <g stroke="var(--chart-a)" stroke-width="3"><line x1="22" y1="110" x2="102" y2="110"/><line x1="102" y1="55" x2="183" y2="55"/><line x1="217" y1="50" x2="300" y2="50"/><line x1="300" y1="50" x2="383" y2="115"/></g>
+        <text x="102" y="14" text-anchor="middle" class="ink" style="font-weight:700">RD: the treatment jumps</text>
+        <text x="300" y="14" text-anchor="middle" class="ink" style="font-weight:700">Kink: the policy bends</text>
+        <text x="225" y="44">slope 0</text><text x="330" y="70">slope −0.20</text>
+        <text x="102" y="156" text-anchor="middle">c</text><text x="300" y="156" text-anchor="middle">c</text>
+      </svg>
+      <figcaption>RD looks for a jump in the outcome. A regression kink design (RKD) looks for a change in the outcome's slope, because the policy only changes its slope at c.</figcaption>
+    </figure>
+    <p>Typical policies that bend: benefits that rise with past earnings up to a cap, subsidies that phase out with income, tax brackets.</p>
+    <div class="formula">
+      <div class="eq">effect = (change in the slope of the outcome at c) / (change in the slope of the policy at c)</div>
+      <p class="say" style="padding-top:.75rem">The same idea as fuzzy RD and IV (jump in the outcome ÷ jump in the treatment), with slopes in place of jumps. <strong>Sharp RKD:</strong> the denominator comes from the law, so it is known exactly. <strong>Fuzzy RKD:</strong> what people actually receive differs from the formula, so the denominator is estimated too. The result: how much the outcome changes per extra euro of benefit, for people near the kink (Card et al. 2015).</p>
+    </div>
+    <div class="example"><div class="label">Worked example: a subsidy that phases out</div>
+      <ol>
+        <li>The law: €200 a month up to income c; above c it falls by 20 cents per extra euro. The slope changes by <strong>−0.20</strong>.</li>
+        <li>The data: the slope of hours worked increases by <strong>0.01</strong> at c.</li>
+        <li>Effect = 0.01 / (−0.20) = <strong>−0.05 hours per €1 of subsidy</strong>.</li>
+      </ol>
+      <p class="result">€100 more subsidy means 5 fewer hours worked a month.</p>
+    </div>
+    <p><button type="button" class="linkish" data-go="l6" data-anchor="l6-fuzzy-rd-iv-at-the-cut-off">Revisit fuzzy RD in lecture 6 →</button></p>
+  </div>
+
+  <div class="chunk" id="l8-demo">
+    <h2>See it: the kink simulator</h2>
+    <p>People around a subsidy that is flat at €200 and then falls by 0.20 per euro of income above the threshold. Hours worked depend smoothly on income, plus the subsidy's effect. There is <strong>no jump</strong>: look for the change in slope. The shaded window is the bandwidth.</p>
+    <div class="demo card" data-demo="kink">
+      <div class="controls">
+        <label>True effect (hours per €1 of subsidy) <output>−0.05</output><input type="range" min="-0.15" max="0.15" step="0.01" value="-0.05" data-k="tau"></label>
+        <label>Bandwidth (€ either side) <output>500</output><input type="range" min="100" max="1000" step="50" value="500" data-k="h"></label>
+        <label>Number of people<select data-k="n"><option value="2000">2,000</option><option value="10000" selected>10,000</option><option value="40000">40,000</option></select></label>
+      </div>
+      <svg viewBox="0 0 400 240" role="img" aria-label="Kink simulator"></svg>
+      <div class="stat" data-out aria-live="polite"></div>
+      <div class="boot-row"><button type="button" class="btn ghost" data-act="new">New sample</button></div>
+    </div>
+    <div class="example"><div class="label">Things to try</div>
+      <ol class="try">
+        <li><strong>Set the effect to 0:</strong> the line still bends a little at wide bandwidths, because hours curve gently with income. Curvature can look like a kink.</li>
+        <li><strong>Drop to 2,000 people:</strong> the confidence interval becomes huge. Slopes need far more data than jumps.</li>
+        <li><strong>Narrow the bandwidth:</strong> less bias from the curve, but noisier slopes. The same trade-off as in RD.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>A real kink, and when to trust one</h2>
+    <p><strong>Paid family leave in California</strong> (Bana, Bedard &amp; Rossin-Slater 2020): the weekly benefit rises with past earnings up to a cap (quarterly earnings of about $25,385), then stays flat. If leave-taking also changed its slope exactly there, the benefit amount would be the likely reason. Findings: a higher benefit did not make mothers take longer leave, did no harm to their later labour-market outcomes, and more mothers returned to their pre-leave employer.</p>
+    <div class="trap"><div class="label">When can we trust a kink design?</div>
+      <ul>
+        <li><strong>Nothing else bends at c:</strong> no other rule changes its slope at the same point.</li>
+        <li><strong>No precise sorting:</strong> the histogram of X has no jump <em>and no kink</em> at c (people shouldn't cluster just below a cap).</li>
+        <li><strong>Pre-determined characteristics</strong> (age, education, past earnings) don't bend at c either.</li>
+        <li>The RD checks, but stricter: we need smooth <em>slopes</em>, not just no jumps.</li>
+      </ul>
+    </div>
+    <div class="formula">
+      <div class="eq">Yᵢ = α + δWᵢ + γ₀(Xᵢ − c) + γ₁Wᵢ(Xᵢ − c) + εᵢ,   Wᵢ = 1{Xᵢ ≥ c}</div>
+      <dl>
+        <dt>δ</dt><dd>the jump at c: the effect in an RD</dd>
+        <dt>γ₁</dt><dd>the change in slope at c: the coefficient of interest in a kink design</dd>
+      </dl>
+      <p class="say">Sharp RKD: effect = γ₁ / (slope change in the law), e.g. γ₁/(−0.20). Fuzzy RKD: run the same regression with the benefit actually received as the outcome and divide the two slope changes. In R: <code>rdrobust(y, x, deriv = 1)</code>, adding <code>fuzzy = t</code> for a fuzzy RKD.</p>
+    </div>
+    <div class="trap"><div class="label">Careful</div><p>Slopes are much harder to estimate than jumps: you need many observations near c, and curvature matters (Card et al. 2017).</p></div>
+  </div>
+
+  <div class="chunk">
+    <h2>Beyond the cut-off: the treatment effect derivative</h2>
+    <p>RD gives the effect only for people <strong>right at</strong> the cut-off (e.g. exactly 60 years old). Policy makers often ask: what if we moved the threshold a little, to 59 or 61? The <strong>treatment effect derivative</strong> (TED) measures how fast the effect changes as we move away from the cut-off (Dong &amp; Lewbel 2015).</p>
+    <figure>
+      <svg viewBox="0 0 400 200" role="img" aria-label="Two lines, with and without treatment, whose gap grows to the right of the cut-off">
+        <line x1="30" y1="175" x2="390" y2="175" stroke="var(--line)" stroke-width="1.5"/><line x1="30" y1="15" x2="30" y2="175" stroke="var(--line)" stroke-width="1.5"/>
+        <line x1="170" y1="15" x2="170" y2="175" stroke="var(--chart-mute)" stroke-dasharray="4 4"/>
+        <line x1="32" y1="160" x2="170" y2="135" stroke="var(--chart-a)" stroke-width="3"/><line x1="170" y1="135" x2="330" y2="106" stroke="var(--chart-a)" stroke-width="2" stroke-dasharray="6 5"/>
+        <line x1="32" y1="150" x2="170" y2="99" stroke="var(--chart-b)" stroke-width="2" stroke-dasharray="6 5"/><line x1="170" y1="99" x2="330" y2="40" stroke="var(--chart-b)" stroke-width="3"/>
+        <line x1="176" y1="100" x2="176" y2="134" stroke="var(--ink)" stroke-width="2"/><text x="182" y="118" class="ink" style="font-size:10px">effect at c</text>
+        <line x1="322" y1="43" x2="322" y2="104" stroke="var(--ink)" stroke-width="2"/><text x="316" y="101" text-anchor="end" class="ink" style="font-size:10px">effect further away</text>
+        <text x="210" y="66" text-anchor="middle" style="font-size:10px">with treatment</text><text x="40" y="170" style="font-size:10px">without treatment</text><text x="170" y="190" text-anchor="middle">c</text>
+      </svg>
+      <figcaption>Solid parts are observed. RD measures the gap at c; the TED measures how fast the gap grows (or shrinks) at c. In the data, the observed line changes its slope at c: that change is the TED.</figcaption>
+    </figure>
+    <ul>
+      <li><strong>Estimating it (sharp RD):</strong> run the usual RD regression above. δ is the effect at c and the slope change γ₁ is the TED. Same coefficient as in a kink design, different meaning: in a kink design the <em>policy</em> bends at c; here the <em>effect</em> changes with X.</li>
+      <li><strong>TED near zero:</strong> the effect is about the same near c, so the RD estimate holds a bit beyond it. <strong>TED far from zero:</strong> be careful when generalising.</li>
+      <li>Fuzzy RD: an adjusted version of the same idea (formula below; Stata command <code>ted</code>, Cerulli et al. 2017). Like any slope, it needs many observations near c.</li>
+    </ul>
+  </div>
+
+  <div class="chunk">
+    <h2>From TED to moving the threshold (MTTE)</h2>
+    <div class="tbl"><table>
+      <tr><th></th><th>TED</th><th>MTTE (marginal threshold treatment effect)</th></tr>
+      <tr><td><strong>Question</strong></td><td>Keep the threshold at c. How different is the effect for people a little above c?</td><td>Move the threshold to c + Δ. How does the RD effect at the new threshold change?</td></tr>
+      <tr><td><strong>About</strong></td><td>people</td><td>the policy</td></tr>
+    </table></div>
+    <p>They can differ: moving a threshold may itself change behaviour, e.g. people start sorting around the new threshold. Dong &amp; Lewbel (2015): if moving the threshold changes only <em>who is eligible</em> and nothing else (<strong>local policy invariance</strong>), then <mark>MTTE = TED</mark>. So the TED, estimated at the current threshold, tells us what a small change of the threshold would do:</p>
+    <div class="formula"><div class="eq">effect at c + Δ  ≈  effect at c + Δ × TED</div></div>
+    <div class="example"><div class="label">Worked example (made-up numbers)</div>
+      <p>Effect +17 pp at age 60, TED = −1 pp per year of age. Moving the threshold to 62: 17 + 2 × (−1) = <strong>15 pp</strong>.</p>
+    </div>
+    <div class="trap"><div class="label">When MTTE ≠ TED</div><p>Local policy invariance needs people not to move themselves around the new threshold and no other policy changing there. It fails for thresholds people can game, e.g. income limits for means-tested benefits, where people bunch just below the limit.</p></div>
+    <div class="example"><div class="label">Example: the vaccination bonus at age 60</div>
+      <p>The €200–300 bonus raised booster uptake by about 17–19 percentage points at age 60. The TED is not significantly different from zero in the preferred specifications: the effect is stable around 60. Age can't be manipulated, so moving the threshold slightly would only change who is eligible: invariance is plausible and MTTE = TED. Hence a slightly lower or higher age threshold would likely have had a similar effect.</p>
+    </div>
+  </div>
+
+  <div class="chunk">
+    <h2>Doubly robust DiD: two safety nets</h2>
+    <p>Recall <strong>conditional parallel trends</strong>: trends may differ by characteristics X but are parallel among units with the same X. With one or two categories we can compare within cells of X, as in lecture 7. With many characteristics (age, income, region, health…) the cells become tiny or empty, so we need a <strong>model</strong> to compare treated and controls "with the same X".</p>
+    <div class="tbl"><table>
+      <tr><th></th><th>Outcome regression</th><th>Reweighting</th></tr>
+      <tr><td><strong>Idea</strong></td><td>Use the controls to learn how the outcome <em>changes</em> with X; predict each treated unit's change without treatment</td><td>Estimate how likely each unit is to be treated given X (propensity score); give more weight to controls who look like the treated</td></tr>
+      <tr><td><strong>Risk</strong></td><td>The trend model is wrong</td><td>The propensity model is wrong, or weights are extreme</td></tr>
+    </table></div>
+    <p>Each works only if its own model is right. <strong>Doubly robust (DR) DiD</strong> uses both at once (Sant'Anna &amp; Zhao 2020) and gets the right answer if <mark>at least one</mark> of them is right:</p>
+    <div class="tbl"><table>
+      <tr><th></th><th>Weights right</th><th>Weights wrong</th></tr>
+      <tr><td><strong>Trend model right</strong></td><td>✓ right</td><td>✓ right</td></tr>
+      <tr><td><strong>Trend model wrong</strong></td><td>✓ right</td><td>✗ wrong</td></tr>
+    </table></div>
+    <p>Outcome regression alone works only in the first row; reweighting alone only in the first column. DR gets two chances.</p>
+    <div class="example"><div class="label">The recipe</div>
+      <ol>
+        <li>Using controls only, regress the change in the outcome on X; predict the change for everyone.</li>
+        <li>Residual = actual change − predicted change (what the trend model can't explain).</li>
+        <li>ATT = average residual of the treated − <strong>weighted</strong> average residual of the controls (weights from the propensity score).</li>
+      </ol>
+      <p><strong>Why it works:</strong> if the trend model is right, the control residuals average to zero anyway, whatever the weights. If the weights are right, they fix whatever the trend model gets wrong.</p>
+    </div>
+    <div class="demo card" data-demo="dr">
+      <div class="label">See it: two safety nets</div>
+      <p class="small">Who gets treated, and how the outcome would have changed, both depend on X and X². "Right" models include X²; "wrong" ones leave it out. True ATT = 2.</p>
+      <div class="controls">
+        <label class="check"><input type="checkbox" data-k="tr" checked> Trend model is right</label>
+        <label class="check"><input type="checkbox" data-k="wr" checked> Propensity model (weights) is right</label>
+      </div>
+      <svg viewBox="0 0 400 228" role="img" aria-label="Doubly robust DiD simulation"></svg>
+      <div class="stat" data-out aria-live="polite"></div>
+    </div>
+    <ul>
+      <li><strong>Software:</strong> <code>DRDID</code> in R and <code>drdid</code> in Stata. The Callaway &amp; Sant'Anna (2021) estimator from lecture 7 runs exactly this DR-DiD within each (g, t) cell.</li>
+      <li><strong>Check overlap:</strong> if some treated units have no comparable controls, weights explode and estimates become unstable.</li>
+      <li>If pre-trends remain after adjusting for X, rethink the design (controls, time window) rather than the estimator.</li>
+    </ul>
+    <p><button type="button" class="linkish" data-go="l7" data-anchor="l7-adding-covariates">Revisit conditional parallel trends in lecture 7 →</button></p>
+  </div>
+
+  <div class="chunk deep">
+    <h2>Formulas for reference <span class="deep-tag">deeper</span></h2>
+    <ul>
+      <li><strong>Complier mean</strong> (binary Z and D): μ<sub>co</sub> = (E[X] − π<sub>at</sub>μ<sub>at</sub> − π<sub>nt</sub>μ<sub>nt</sub>) / π<sub>co</sub>, with π<sub>at</sub> = Pr(D=1 | Z=0), π<sub>nt</sub> = Pr(D=0 | Z=1), π<sub>co</sub> = 1 − π<sub>at</sub> − π<sub>nt</sub>, μ<sub>at</sub> = E[X | D=1, Z=0], μ<sub>nt</sub> = E[X | D=0, Z=1].</li>
+      <li><strong>Kink design</strong> (T = treatment intensity, e.g. the benefit): τ<sub>RKD</sub> = [change in the slope of E[Y | X = x] at c] / [change in the slope of E[T | X = x] at c]. In a sharp RKD the denominator is the known slope change of the rule.</li>
+      <li><strong>TED</strong>, from the RD regressions for Y (δ, γ₁) and, in a fuzzy RD, for take-up T (λ, β₁): sharp π′(c) = γ̂₁; fuzzy π′<sub>f</sub>(c) = (γ̂₁ − β̂₁π̂<sub>f</sub>(c)) / λ̂, with π̂<sub>f</sub>(c) = δ̂/λ̂.</li>
+      <li><strong>MTTE:</strong> with τ(C) the RD effect if the threshold were C, local policy invariance gives τ′(c) = π′(c), so τ(c + Δ) ≈ π(c) + Δπ′(c).</li>
+      <li><strong>DR-DiD</strong> (panel, two periods, ΔY = Y₁ − Y₀): ATT<sub>DR</sub> = (1/n₁)Σ<sub>treated</sub>Rᵢ − Σ<sub>controls</sub>wᵢRᵢ / Σ<sub>controls</sub>wᵢ, with Rᵢ = ΔYᵢ − m̂₀(Xᵢ) (the controls' regression of ΔY on X) and wᵢ = ê(Xᵢ)/(1 − ê(Xᵢ)), ê the propensity score.</li>
+    </ul>
+  </div>
+
+
+  <div class="chunk method" id="l8-method">
+    <h2>The four extras in five questions</h2>
+    <div class="crit"><span class="label">The question to ask every time</span>Whose effect is it, and how far does it travel?</div>
+    <ol class="five">
+      <li><b>What problem are we solving?</b><span>A LATE, an RD jump or a covariate-adjusted DiD each answers a narrow question: for whom, at which point, under which model?</span></li>
+      <li><b>How does the method solve it?</b><span>Complier profiles describe whom the LATE is about; kink designs use a change in slope when a policy bends; the TED says how the RD effect changes near the cut-off; doubly robust DiD adjusts for covariates with two models so that only one needs to be right.</span></li>
+      <li><b>What must hold?</b><ul><li>Profiling: an as-good-as-random instrument and no defiers (exclusion is not needed).</li><li>Kink: nothing else bends at c, no sorting, and no jump or kink in the density or in pre-determined characteristics.</li><li>TED = MTTE: local policy invariance (moving the threshold only changes who is eligible).</li><li>DR-DiD: conditional parallel trends, overlap, and at least one of the two models right.</li></ul></li>
+      <li><b>What happens when it fails?</b><ul><li>Profiles only cover observed characteristics.</li><li>Kinks: slopes are noisy, and curvature can look like a kink.</li><li>Thresholds people can game: moving them changes behaviour, so MTTE ≠ TED.</li><li>DR-DiD: both models wrong, or poor overlap with extreme weights.</li></ul></li>
+      <li><b>How can we check?</b><ul><li>Compare complier means with the whole sample, with standard errors (ivdesc).</li><li>Density and covariates at c: no jump and no kink; bandwidth and polynomial sensitivity.</li><li>Ask whether the running variable can be manipulated (age: no; income: often).</li><li>Check overlap of propensity scores, and pre-trends after adjustment.</li></ul></li>
+    </ol>
+  </div>
+
+  <div class="practice-wrap" id="l8-apply">
+    <h2>Apply: work it out</h2>
+    <p class="muted small">Pick an answer and you get feedback on that exact choice, then the reasoning. Answering every question here marks the lecture as <strong>practised</strong>.</p>
+    <div class="practice" data-practice="l8" data-kind="apply"></div>
+  </div>
+
+  <div class="practice-wrap" id="l8-challenge">
+    <h2>Challenge: spot the problem</h2>
+    <p class="muted small">Each one hides a broken assumption or a wrong conclusion. Exam questions often look like this.</p>
+    <div class="practice" data-practice="l8" data-kind="challenge"></div>
+  </div>
+
+  <div class="rlab-wrap" id="l8-r">
+    <h2>Try it in R <span class="deep-tag">optional</span></h2>
+    <p class="muted small">The same method on simulated data, with the exact output you should get (R 4.3, fixed seed). Skip it if you are only revising theory.</p>
+    <details class="rlab"><summary>Lab 8 · Complier profiles, a kink and doubly robust DiD <span>about 15 min</span></summary><div class="rlab-body">
+      <pre class="code"><code># Lab 8: complier profiles, a kink design and doubly robust DiD
+library(rdrobust); library(ggplot2)
+set.seed(8)
+
+# (a) Profiling compliers: random offer z, take-up d, a characteristic (age)
+n &lt;- 20000
+type &lt;- sample(c(&quot;complier&quot;, &quot;always&quot;, &quot;never&quot;), n, replace = TRUE, prob = c(0.2, 0.5, 0.3))
+age  &lt;- ifelse(type == &quot;complier&quot;, 52.5, ifelse(type == &quot;always&quot;, 55, 40)) + rnorm(n, 0, 8)
+z &lt;- rbinom(n, 1, 0.5)                                  # the offer, as good as random
+d &lt;- ifelse(type == &quot;always&quot;, 1, ifelse(type == &quot;never&quot;, 0, z))
+pi_at &lt;- mean(d[z == 0])                                # treated without the offer
+pi_nt &lt;- mean(d[z == 1] == 0)                           # untreated despite the offer
+pi_co &lt;- 1 - pi_at - pi_nt                              # = first stage
+mu_at &lt;- mean(age[d == 1 &amp; z == 0]); mu_nt &lt;- mean(age[d == 0 &amp; z == 1])
+mu_co &lt;- (mean(age) - pi_at * mu_at - pi_nt * mu_nt) / pi_co
+round(c(compliers = pi_co, always = pi_at, never = pi_nt, first_stage = mean(d[z == 1]) - mean(d[z == 0])), 3)
+round(c(all = mean(age), always = mu_at, never = mu_nt, compliers = mu_co), 2)
+
+# (b) A sharp kink: subsidy 200 below the threshold, falling 0.20 per euro above it
+m &lt;- 40000
+x &lt;- runif(m, -1000, 1000)                              # income minus the threshold (euros)
+subsidy &lt;- ifelse(x &lt; 0, 200, 200 - 0.20 * x)
+hours &lt;- 120 + 0.004 * x - 0.05 * subsidy + rnorm(m, 0, 3)   # true effect: -0.05 hours per euro
+k &lt;- rdrobust(hours, x, c = 0, deriv = 1)               # change in slope at the threshold
+round(c(slope_change = k$coef[1], ci_low = k$ci[3, 1], ci_high = k$ci[3, 2],
+        effect_per_euro = k$coef[1] / -0.20), 4)
+bins &lt;- aggregate(hours ~ cut(x, seq(-1000, 1000, 50)), FUN = mean)
+bins$mid &lt;- seq(-975, 975, 50)
+ggplot(bins, aes(mid, hours)) + geom_point() + geom_vline(xintercept = 0, linetype = 2) +
+  geom_smooth(data = data.frame(x, hours, side = x &gt;= 0), aes(x, hours, group = side),
+              method = &quot;lm&quot;, formula = y ~ x, se = FALSE, colour = &quot;black&quot;) +
+  labs(x = &quot;Income minus threshold (EUR)&quot;, y = &quot;Hours worked per month&quot;) + theme_minimal()
+
+# (c) Doubly robust DiD by hand (two periods, change in outcome dy, true ATT = 2)
+k2 &lt;- 3000
+xx &lt;- rnorm(k2)
+g  &lt;- rbinom(k2, 1, plogis(-1 + 0.7 * xx + 0.6 * xx^2))     # who gets treated depends on x
+dy &lt;- 1 + 0.5 * xx + 0.8 * xx^2 + 2 * g + rnorm(k2)         # untreated trend also depends on x
+dat &lt;- data.frame(dy, xx, g)
+dr_did &lt;- function(trend, ps) {
+  m0 &lt;- lm(trend, data = dat[dat$g == 0, ])                  # trend model on controls only
+  r  &lt;- dat$dy - predict(m0, newdata = dat)                  # what the trend model can&#x27;t explain
+  e  &lt;- fitted(glm(ps, family = binomial, data = dat))       # propensity score
+  w  &lt;- (e / (1 - e))[dat$g == 0]
+  mean(r[dat$g == 1]) - sum(w * r[dat$g == 0]) / sum(w)
+}
+right_t &lt;- dy ~ xx + I(xx^2); wrong_t &lt;- dy ~ xx
+right_p &lt;- g ~ xx + I(xx^2);  wrong_p &lt;- g ~ xx
+round(c(naive = mean(dy[g == 1]) - mean(dy[g == 0]),
+        both_right = dr_did(right_t, right_p), trend_wrong = dr_did(wrong_t, right_p),
+        weights_wrong = dr_did(right_t, wrong_p), both_wrong = dr_did(wrong_t, wrong_p)), 3)</code></pre>
+      <h4>What you should see</h4>
+      <pre class="out">  compliers      always       never first_stage 
+      0.200       0.497       0.302       0.200 
+      all    always     never compliers 
+    49.96     55.02     39.89     52.58 
+   slope_change          ci_low         ci_high effect_per_euro 
+         0.0101          0.0034          0.0169         -0.0506 
+        naive    both_right   trend_wrong weights_wrong    both_wrong 
+        2.882         1.996         2.111         1.959         2.726 </pre>
+      <h4>How to read it</h4>
+      <ul><li>Profiles: the shares are recovered (20 % compliers = the first stage) and the complier mean age is 52.6, close to the true 52.5, although no single person can be labelled a complier.</li><li>Kink: <code>rdrobust(..., deriv = 1)</code> estimates the change in slope, 0.0101 (truth 0.01, robust CI 0.0034 to 0.0169). Dividing by the law's slope change gives −0.0506 hours per euro (truth −0.05). Even with 40,000 people the interval is wide relative to the estimate: slopes are hard.</li><li>DR-DiD: the naive comparison (2.88) is badly biased. DR is close to the truth of 2 when both models are right (2.00), when only the weights are right (2.11) or only the trend model is right (1.96), and misses only when both are wrong (2.73).</li></ul>
+      <h4>Common mistakes</h4>
+      <ul><li>Computing always-takers' characteristics from everyone who was treated. Only the treated who were <em>not</em> offered are pure always-takers.</li><li>Looking for a jump at a kink. With <code>deriv = 1</code>, rdrobust estimates the change in slope; divide it by the policy's slope change.</li><li>Fitting the trend model on everyone. In DR-DiD it is fitted on the controls only, then predicted for everyone.</li><li>Ignoring overlap: propensity scores near 1 give controls huge weights.</li></ul>
+      <h4>With the dedicated packages (not run here)</h4>
+      <pre class="code"><code># install.packages(c("ivdesc", "DRDID"))
+library(ivdesc)
+ivdesc(X = age, D = d, Z = z)                 # shares, group means, standard errors
+library(DRDID)
+drdid(yname = "y", tname = "t", idname = "id", dname = "g",
+      xformla = ~ x, data = panel)            # panel with two periods</code></pre>
+      <div class="dl"><a href="r/lab8_extras.R" download>lab8_extras.R</a><a href="data/lab8_compliers.csv" download>lab8_compliers.csv</a><a href="data/lab8_kink.csv" download>lab8_kink.csv</a><a href="data/lab8_drdid.csv" download>lab8_drdid.csv</a></div>
+    </div></details>
+  </div>
+  <div class="quiz">
+    <h2>Review: quick recall</h2>
+    <p class="muted small">Answer in your head first, then tap to check. Come back to these a few days later.</p>
+    <details class="q"><summary>Which cell of the offer × treatment table contains only always-takers?</summary><div class="a"><p>Treated but not offered (D = 1, Z = 0). Compliers only take the treatment when offered, and never-takers never do.</p></div></details>
+    <details class="q"><summary>Which assumptions does profiling compliers need?</summary><div class="a"><p>An as-good-as-random instrument and no defiers. Not the exclusion restriction.</p></div></details>
+    <details class="q"><summary>A subsidy's slope changes by −0.20 at a threshold; the outcome's slope changes by 0.01. Effect?</summary><div class="a"><p>0.01 / (−0.20) = −0.05 per euro of subsidy.</p></div></details>
+    <details class="q"><summary>What is the difference between TED and MTTE, and when are they equal?</summary><div class="a"><p>TED: how the effect changes for people slightly away from a fixed threshold. MTTE: how the effect changes if the threshold itself moves. Equal under local policy invariance (moving the threshold only changes who is eligible).</p></div></details>
+    <details class="q"><summary>When does doubly robust DiD fail?</summary><div class="a"><p>When both the trend model and the propensity model are wrong, or when poor overlap makes the weights extreme.</p></div></details>
+  </div>
+
+  <div class="read">
+    <div class="label">Read more</div>
+    <ul>
+      <li>Complier profiles: Marbach &amp; Hangartner (2020), "Profiling compliers and noncompliers for instrumental-variable analysis", <em>Political Analysis</em>.</li>
+      <li>Kink designs: Card, Lee, Pei &amp; Weber (2015), <em>Econometrica</em>; Bana, Bedard &amp; Rossin-Slater (2020) for the California example.</li>
+      <li>TED and MTTE: Dong &amp; Lewbel (2015), <em>Review of Economics and Statistics</em>; the vaccination bonus: Červený, Hellebrandt &amp; Kravec (2025), <em>Journal of Health Economics</em>.</li>
+      <li>Doubly robust DiD: Sant'Anna &amp; Zhao (2020), <em>Journal of Econometrics</em>.</li>
+    </ul>
+  </div>
+  <div class="finish"><label><input type="checkbox" data-done="l8" id="done-l8">I've studied this</label><button class="btn" data-go="cheat">Next: Cheat sheet →</button></div>
+  <p class="small">Studied all eight? <button type="button" class="linkish" data-go="final">Take the final test →</button></p>
 </section>
 
 <section class="page" id="cheat" data-page hidden>
@@ -2944,6 +3351,7 @@ feols(sales ~ cityA:post | shop + post, data = shops, cluster = ~shop)   # 2x2 w
       <label><input type="checkbox" value="l5" checked> 5 · IV</label>
       <label><input type="checkbox" value="l6" checked> 6 · RDD</label>
       <label><input type="checkbox" value="l7" checked> 7 · DiD</label>
+      <label><input type="checkbox" value="l8" checked> 8 · Extras</label>
       <label><input type="checkbox" value="design" checked> Research design</label>
       <button type="button" class="linkish" id="ex-all">Select all / none</button>
     </fieldset>
@@ -2984,12 +3392,12 @@ feols(sales ~ cityA:post | shop + post, data = shops, cluster = ~shop)   # 2x2 w
   <div class="page-head">
     <div class="eyebrow">Final test</div>
     <h1>Everything, one last time</h1>
-    <p class="lede">Thirty new questions from all seven lectures and from choosing a research design. Answer them all, then submit: you get a score for each lecture, feedback on every answer, and <mark>a study plan that sends you back to exactly what to revisit</mark>.</p>
+    <p class="lede">Thirty-three new questions from all eight lectures and from choosing a research design. Answer them all, then submit: you get a score for each lecture, feedback on every answer, and <mark>a study plan that sends you back to exactly what to revisit</mark>.</p>
     <div class="meta"><span>About 40 minutes</span><span>New questions, not the practice ones</span></div>
   </div>
   <div id="ft-intro" class="chunk"></div>
   <form id="ft-form" novalidate aria-label="Final test questions"></form>
-  <div class="ft-bar"><span id="ft-count" aria-live="polite">0 of 30 answered</span><button type="button" class="btn" id="ft-submit">Submit and see my results</button></div>
+  <div class="ft-bar"><span id="ft-count" aria-live="polite">0 of 33 answered</span><button type="button" class="btn" id="ft-submit">Submit and see my results</button></div>
   <div id="ft-warn" hidden role="alert"><p><strong><span id="ft-warn-n"></span> question(s) still unanswered.</strong> Unanswered questions count as "not yet known" in the study plan.</p><div class="boot-row"><button type="button" class="btn ghost" id="ft-back">Go to the first unanswered</button><button type="button" class="btn" id="ft-anyway">Submit anyway</button></div></div>
   <div id="ft-results" hidden aria-live="polite"></div>
 </section>
@@ -3398,6 +3806,70 @@ var QB = [
   {t:'Regression discontinuity', fb:'No cut-off assigns training.'},
   {t:'Instrumental variables with "did the course" as the instrument', fb:'The instrument must be something other than the treatment itself.'}],
  explain:'Estimand: the conditional association (causal only under "no unmeasured confounders"). Look for a design: e.g. course capacity limits, distance to training centres, or a rollout over time.'}
+/* ---------- Lecture 8: extras ---------- */
+,{id:'l8-a1', topic:'l8', kind:'apply', pool:'math', type:'num',
+ q:'Among people <em>not</em> offered a programme, 25 % take it anyway; among those offered, 15 % refuse it. Mean income: everyone €2,000, always-takers €2,400, never-takers €1,600. What is the compliers\' mean income (€)?',
+ answer:1933.33, tol:1, unit:'€', hint:'Compliers = 1 − 0.25 − 0.15; then solve the weighted average for the missing mean.',
+ wrong:[{v:2000, fb:'€2,000 is everyone\'s mean. Compliers are only part of that average.'},{v:1160, tol:1, fb:'1,160 is the numerator. Divide by the compliers\' share, 0.60.'}],
+ explain:'Compliers = 1 − 0.25 − 0.15 = 0.60. Mean = (2,000 − 0.25 × 2,400 − 0.15 × 1,600) / 0.60 = 1,160 / 0.60 ≈ <strong>€1,933</strong>.'},
+{id:'l8-a2', topic:'l8', kind:'apply', pool:'math', type:'num',
+ q:'A child benefit rises by €0.10 for every extra euro of past earnings up to a cap, then stays flat. At the cap, the slope of monthly hours worked (per euro of earnings) falls by 0.004. What is the effect of €1 of benefit on monthly hours?',
+ answer:0.04, tol:0.0005, unit:'hours', hint:'Effect = change in the outcome\'s slope ÷ change in the benefit\'s slope.',
+ wrong:[{v:-0.04, tol:0.0005, fb:'Check both signs: the benefit\'s slope changes by −0.10 (from 0.10 to 0) and the outcome\'s by −0.004. Negative ÷ negative is positive.'},{v:0.0004, tol:0.00005, fb:'You multiplied. Divide the outcome\'s slope change by the policy\'s slope change.'},{v:-0.004, tol:0.0005, fb:'That is the change in the outcome\'s slope. Divide it by the change in the benefit\'s slope (−0.10).'}],
+ explain:'The benefit\'s slope changes from 0.10 to 0: −0.10. Effect = (−0.004) / (−0.10) = <strong>0.04 hours per euro</strong>: €100 more benefit goes with about 4 more hours a month, for people near the cap.'},
+{id:'l8-a3', topic:'l8', kind:'apply', pool:'math', type:'num',
+ q:'The RD effect of a scholarship at a test-score threshold of 70 is 0.12 SD, and the TED is 0.01 SD per point. Assuming local policy invariance, what effect would a threshold of 65 have (SD)?',
+ answer:0.07, tol:0.0005, unit:'SD', hint:'Effect at c + Δ ≈ effect at c + Δ × TED, with Δ = 65 − 70.',
+ wrong:[{v:0.17, tol:0.0005, fb:'Δ is negative here: 65 − 70 = −5, so the effect changes by −5 × 0.01.'},{v:0.12, tol:0.0005, fb:'0.12 is the effect at 70. The TED says how it changes as the threshold moves.'}],
+ explain:'0.12 + (65 − 70) × 0.01 = 0.12 − 0.05 = <strong>0.07 SD</strong>. Valid only if moving the threshold changes nothing but who is eligible.'},
+{id:'l8-a4', topic:'l8', kind:'apply', pool:'concept', type:'mc',
+ q:'In a randomised offer, which group of people can we describe <em>directly</em>, without any calculation?',
+ options:[
+  {t:'People who took the treatment although they were not offered it: they are all always-takers.', ok:true, fb:'Right. Compliers only take it when offered, never-takers never do, so this cell is pure.'},
+  {t:'People who took the treatment after being offered it: they are all compliers.', fb:'Always-takers would have taken it too, so this cell mixes compliers and always-takers.'},
+  {t:'People who were not offered and didn\'t take it: they are all never-takers.', fb:'Compliers who weren\'t offered also don\'t take it, so this cell mixes compliers and never-takers.'},
+  {t:'None: no group can ever be described.', fb:'Two cells are pure: treated-without-offer (always-takers) and untreated-despite-offer (never-takers).'}],
+ explain:'Pure cells: D = 1, Z = 0 (always-takers) and D = 0, Z = 1 (never-takers). Compliers are always mixed in, which is why their mean has to be backed out.'},
+{id:'l8-c1', topic:'l8', kind:'challenge', pool:'concept', type:'mc',
+ q:'<strong>Spot the mistake.</strong> "We can\'t profile the compliers, because nobody can prove our instrument satisfies the exclusion restriction."',
+ options:[
+  {t:'Correct: profiling needs a fully valid instrument.', fb:'Profiling only uses who takes the treatment under each value of Z, not the outcome, so exclusion plays no role.'},
+  {t:'Profiling needs an as-good-as-random instrument and no defiers, but not exclusion, because it doesn\'t use the outcome.', ok:true, fb:'Yes.'},
+  {t:'Profiling needs no assumptions at all.', fb:'It needs Z to be as good as random (so the groups look alike in both arms) and no defiers.'},
+  {t:'Profiling only needs a strong first stage.', fb:'A strong first stage helps precision, but the identification comes from independence and monotonicity.'}],
+ explain:'Compliers\' characteristics come from the shares and means in the Z × D table; exclusion only matters for interpreting the outcome difference as the effect of D.'},
+{id:'l8-c2', topic:'l8', kind:'challenge', pool:'concept', type:'mc',
+ q:'<strong>Spot the mistake.</strong> "Hours worked show no jump at the income where the subsidy starts to phase out, so the subsidy has no effect on hours."',
+ options:[
+  {t:'Correct: no jump means no effect.', fb:'The subsidy doesn\'t jump either; it only starts to fall. With a kink in the policy, look for a kink in the outcome.'},
+  {t:'The policy bends rather than jumps, so the effect shows up as a change in the slope of hours, not a jump.', ok:true, fb:'Right: regression kink design.'},
+  {t:'The bandwidth must be too narrow.', fb:'The issue is what to look for (a slope change), not the bandwidth.'},
+  {t:'RDD can\'t be used with income as a running variable.', fb:'Income can be a running variable; the design here is a kink, not a jump.'}],
+ explain:'Kink design: effect = change in the outcome\'s slope ÷ change in the policy\'s slope at c.'},
+{id:'l8-c3', topic:'l8', kind:'challenge', pool:'concept', type:'mc',
+ q:'A tax credit phases out above an income limit, and the histogram shows many people with income just below the limit. What does this mean for a kink design at the limit?',
+ options:[
+  {t:'Nothing: bunching is expected and harmless.', fb:'Bunching means people sort around c, which breaks the "as good as random near c" logic.'},
+  {t:'People sort to stay under the limit, so units just below and above differ; the no-sorting assumption is in doubt.', ok:true, fb:'Yes. Check the density for jumps and kinks, and pre-determined characteristics.'},
+  {t:'It makes the estimate more precise, because there is more data near c.', fb:'More data near c doesn\'t help if the people there are selected.'},
+  {t:'Use a wider bandwidth to dilute the bunchers.', fb:'That trades a sorting problem for curvature bias; the assumption itself is in doubt.'}],
+ explain:'Kink designs need a smooth density: no jump and no kink at c. Income limits are classic places where people bunch.'},
+{id:'l8-c4', topic:'l8', kind:'challenge', pool:'concept', type:'mc',
+ q:'A study finds a TED of zero at the income limit of a means-tested benefit and concludes that raising the limit by €1,000 would have the same effect. What is the problem?',
+ options:[
+  {t:'There is no problem: a zero TED means the effect is constant.', fb:'TED describes people near the current limit. Whether it predicts the effect of a new limit depends on local policy invariance.'},
+  {t:'Income limits can be gamed: people would re-sort around the new limit, so local policy invariance (MTTE = TED) is doubtful.', ok:true, fb:'Right.'},
+  {t:'A TED of zero means the RD estimate is wrong.', fb:'A zero TED says nothing about whether the RD estimate itself is right.'},
+  {t:'TED can only be estimated in a fuzzy RD.', fb:'In a sharp RD the TED is simply the slope change γ₁.'}],
+ explain:'MTTE = TED requires that moving the threshold only changes who is eligible. With gameable thresholds, behaviour moves with the threshold.'},
+{id:'l8-c5', topic:'l8', kind:'challenge', pool:'concept', type:'mc',
+ q:'In a DR-DiD analysis, the trend model leaves out an important non-linearity, but the propensity-score model is correctly specified. What happens?',
+ options:[
+  {t:'The estimate is biased, because one of the two models is wrong.', fb:'That is the point of double robustness: one right model is enough.'},
+  {t:'The estimate is still consistent: the correct weights fix what the trend model gets wrong.', ok:true, fb:'Yes: second row, first column of the table.'},
+  {t:'Only outcome regression would work here.', fb:'Outcome regression alone needs the trend model to be right, which it isn\'t.'},
+  {t:'DiD can\'t be used once covariates are needed.', fb:'Conditional parallel trends is exactly what DR-DiD is built for.'}],
+ explain:'DR-DiD is right if the trend model or the weights are right. It fails only when both are wrong, or when poor overlap makes the weights extreme.'}
 ];
 
 /* Final test: 30 new questions across the course, graded together at the end.
@@ -3618,7 +4090,28 @@ var FT = [
   {t:'Compare recipients with non-recipients across all scores', fb:'Poorer households differ in many ways; the comparison is confounded.'},
   {t:'Difference-in-differences', fb:'No before/after data are described.'},
   {t:'Instrumental variables with enrolment as the instrument', fb:'Enrolment is the outcome; it can\'t be its own instrument.'}],
- explain:'Eligibility is set by a rule at a cut-off, so compare households just below and just above 30. The estimate applies to households near the cut-off; check for score manipulation.'}
+ explain:'Eligibility is set by a rule at a cut-off, so compare households just below and just above 30. The estimate applies to households near the cut-off; check for score manipulation.'},
+/* Lecture 8 */
+{id:'f31', topic:'l8', concept:'Backing out the compliers\' mean', see:['l8','l8-the-trick-everyone-is-a-mix-of-the-three','The trick: everyone is a mix of the three groups'], type:'num',
+ q:'In a randomised offer, 40 % of people take the treatment without being offered it, and 20 % refuse it when offered. Mean years of schooling: everyone 12, always-takers 13, never-takers 10. What is the compliers\' mean years of schooling?',
+ answer:12, tol:0.01, wrong:[{v:8, tol:0.01, fb:'You divided by 0.60, the share of always- plus never-takers. Divide by the compliers\' share: 1 − 0.40 − 0.20 = 0.40.'},{v:4.8, tol:0.01, fb:'4.8 is the numerator. Divide by the compliers\' share, 1 − 0.40 − 0.20 = 0.40.'}],
+ explain:'Compliers = 1 − 0.40 − 0.20 = 0.40. Mean = (12 − 0.40 × 13 − 0.20 × 10) / 0.40 = 4.8 / 0.40 = <strong>12</strong>: the compliers look like the average person in schooling.'},
+{id:'f32', topic:'l8', concept:'Regression kink design', see:['l8','l8-kink-designs-when-policies-bend','Kink designs: when policies bend'], type:'mc',
+ q:'Unemployment benefits equal 60 % of past wages up to a cap, then stay flat. Which comparison estimates the effect of the benefit level on the length of unemployment?',
+ options:[
+  {t:'The jump in unemployment duration at the cap.', fb:'The benefit doesn\'t jump at the cap, it stops rising, so there is no jump to look for.'},
+  {t:'The change in the slope of unemployment duration at the cap, divided by the change in the benefit\'s slope (from 0.60 to 0).', ok:true},
+  {t:'The average duration above the cap minus below it.', fb:'People above and below the cap differ in many ways (they earned more); that comparison is confounded.'},
+  {t:'The slope of duration below the cap, divided by 0.60.', fb:'A slope on one side mixes the benefit\'s effect with how duration changes with past wages anyway. The design uses the <em>change</em> in slope at the cap.'}],
+ explain:'Kink design: effect = change in the outcome\'s slope ÷ change in the policy\'s slope at the kink. Here the policy slope falls from 0.60 to 0.'},
+{id:'f33', topic:'l8', concept:'Doubly robust DiD', see:['l8','l8-doubly-robust-did-two-safety-nets','Doubly robust DiD: two safety nets'], type:'mc',
+ q:'When does doubly robust DiD give the right answer (assuming conditional parallel trends and good overlap)?',
+ options:[
+  {t:'Only when both the trend model and the propensity model are right.', fb:'That would make it "doubly fragile". One right model is enough.'},
+  {t:'When at least one of the two models (trend or propensity score) is right.', ok:true},
+  {t:'Always, whatever the models.', fb:'If both models are wrong, DR-DiD is biased too.'},
+  {t:'Only when there are no covariates.', fb:'Without covariates you don\'t need either model; DR-DiD is for adjusting for X.'}],
+ explain:'Two safety nets: if the trend model is right, control residuals average to zero for any weights; if the weights are right, they fix a wrong trend model.'}
 ];
 
 (function(){
@@ -3665,8 +4158,8 @@ try{
 }catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
-var LECTS=['l1','l2','l3','l4','l5','l6','l7'];
-var TOPIC_NAME={l1:'1 · Regression',l2:'2 · Max likelihood',l3:'3 · Bootstrap',l4:'4 · Causality',l5:'5 · IV',l6:'6 · RDD',l7:'7 · DiD',design:'Research design'};
+var LECTS=['l1','l2','l3','l4','l5','l6','l7','l8'];
+var TOPIC_NAME={l1:'1 · Regression',l2:'2 · Max likelihood',l3:'3 · Bootstrap',l4:'4 · Causality',l5:'5 · IV',l6:'6 · RDD',l7:'7 · DiD',l8:'8 · Extras',design:'Research design'};
 var QBYID={};QB.forEach(function(q){QBYID[q.id]=q;});
 function qsFor(t){return QB.filter(function(q){return q.topic===t;});}
 function lastCorrect(a){if(!a)return null;if(a.e!=null&&(a.pl==null||(a.et||0)>=(a.pt||0)))return a.e;return a.pl;}
@@ -3775,7 +4268,7 @@ function renderProgress(){
   LECTS.forEach(function(t){var st=stageOf(t);if(state.studied[t])c[1]++;if(practiced(t))c[2]++;if(mastered(t))c[3]++;});
   boxes.forEach(function(b){b.checked=!!state.studied[b.dataset.done];});
   tabs.forEach(function(t){var k=t.dataset.t;if(LECTS.indexOf(k)<0)return;var st=stageOf(k);t.dataset.stage=st;var d=$('.dot',t);if(d){d.setAttribute('title',STAGE[st]);}t.setAttribute('aria-label',t.textContent.replace(/\s+/g,' ').trim()+', '+STAGE[st]);});
-  var pr=$('#progress');if(pr)pr.innerHTML='<span title="Lectures you ticked as studied">Studied '+c[1]+'</span> · <span title="Lectures where you answered every practice question">practised '+c[2]+'</span> · <span title="Lectures with at least 80 % right in exam mode">mastered '+c[3]+'</span> <span class="of">of 7</span>';
+  var pr=$('#progress');if(pr)pr.innerHTML='<span title="Lectures you ticked as studied">Studied '+c[1]+'</span> · <span title="Lectures where you answered every practice question">practised '+c[2]+'</span> · <span title="Lectures with at least 80 % right in exam mode">mastered '+c[3]+'</span> <span class="of">of '+LECTS.length+'</span>';
   $$('[data-status]').forEach(function(el){
     var t=el.dataset.status,m=mastery(t),mis=mistakes(t).length,qs=qsFor(t).length,ans=qsFor(t).filter(function(q){return state.ans[q.id];}).length;
     var html='<span class="chip'+(state.studied[t]?' on':'')+'">'+(state.studied[t]?'✓ ':'')+'Studied</span>'+
@@ -4239,12 +4732,92 @@ function niceTicks(lo,hi,n){var span=hi-lo,step=Math.pow(10,Math.floor(Math.log1
   });
 })();
 
+/* ---------- Lecture 8: complier profile calculator ---------- */
+(function(){var root=$('[data-demo="cprof"]');if(!root)return;var svg=$('svg',root),out=$('[data-out]',root);
+  bindDemo(root,function(P){
+    var pat=P.pat,pnt=P.pnt,pco=1-pat-pnt;clear(svg);
+    if(pco<=0.02){out.innerHTML='Always-takers and never-takers already make up '+pct(pat+pnt)+'. There are (almost) no compliers left, so their mean can\'t be recovered: the first stage is too small.';return;}
+    var mco=(P.mall-pat*P.mat-pnt*P.mnt)/pco;
+    var segs=[[0,pco,'var(--accent-soft)','compliers '+pct(pco),'mean '+f(mco,1)],[pco,pat,'var(--warn-soft)','always-takers '+pct(pat),'mean '+f(P.mat,1)],[pco+pat,pnt,'var(--good-soft)','never-takers '+pct(pnt),'mean '+f(P.mnt,1)]];
+    var X=function(v){return 10+v*380;};
+    svg.appendChild(sv('text',{x:200,y:18,'text-anchor':'middle',class:'ink'},'everyone: mean '+f(P.mall,1)));
+    segs.forEach(function(s){if(s[1]<=0)return;svg.appendChild(sv('rect',{x:X(s[0]),y:30,width:Math.max(1,s[1]*380),height:34,fill:s[2],stroke:'var(--surface)','stroke-width':2}));
+      if(s[1]>0.12){svg.appendChild(sv('text',{x:X(s[0]+s[1]/2),y:52,'text-anchor':'middle',class:'ink'},s[3]));svg.appendChild(sv('text',{x:X(s[0]+s[1]/2),y:82,'text-anchor':'middle'},s[4]));}});
+    svg.setAttribute('aria-label','Bar split into compliers '+pct(pco)+', always-takers '+pct(pat)+', never-takers '+pct(pnt)+'. Complier mean '+f(mco,1)+'.');
+    out.innerHTML='Compliers = 1 − '+f(pat,2)+' − '+f(pnt,2)+' = <b>'+pct(pco)+'</b> (the first stage) · complier mean = ('+f(P.mall,1)+' − '+f(pat,2)+' × '+f(P.mat,1)+' − '+f(pnt,2)+' × '+f(P.mnt,1)+') / '+f(pco,2)+' = <b>'+f(mco,1)+'</b>'+(pco<0.1?' · With so few compliers, small errors in the other numbers move this a lot.':'');
+  });
+})();
+
+/* ---------- Lecture 8: kink simulator ---------- */
+(function(){var root=$('[data-demo="kink"]');if(!root)return;var svg=$('svg',root),out=$('[data-out]',root);var seed=8;
+  function sub(x){return x<0?200:200-0.2*x;}
+  function make(P){var r=rng(seed),n=+P.n,x=[],y=[];for(var i=0;i<n;i++){var xi=r()*2000-1000;x.push(xi);y.push(120+0.004*xi+1.2*(xi/1000)*(xi/1000)+P.tau*sub(xi)+4*gauss(r));}return{x:x,y:y};}
+  var P=bindDemo(root,draw);
+  function draw(P){var d=make(P),L={x:[],y:[]},R={x:[],y:[]};
+    for(var i=0;i<d.x.length;i++){if(Math.abs(d.x[i])>P.h)continue;var S=d.x[i]<0?L:R;S.x.push(d.x[i]);S.y.push(d.y[i]);}
+    var fl=ols(L.x,L.y),fr=ols(R.x,R.y);
+    var bins=[];for(var b=0;b<40;b++)bins.push([0,0]);d.x.forEach(function(xi,i){var k=Math.min(39,Math.floor((xi+1000)/50));bins[k][0]+=d.y[i];bins[k][1]++;});
+    var bm=bins.map(function(b,k){return[-975+50*k,b[1]?b[0]/b[1]:NaN];});
+    var ys=bm.map(function(b){return b[1];}).filter(isFinite);var lo=Math.min.apply(null,ys)-1,hi=Math.max.apply(null,ys)+1;
+    var o={x0:44,x1:388,y0:20,y1:200};var X=function(v){return o.x0+(v+1000)/2000*(o.x1-o.x0);},Y=function(v){return o.y1-(v-lo)/(hi-lo)*(o.y1-o.y0);};
+    o.xt=[-1000,-500,0,500,1000];o.xf=function(v){return f(v,0);};o.yt=niceTicks(lo,hi,4);o.yf=function(v){return f(v,0);};o.xl='income minus threshold (€)';o.yl='hours worked per month';
+    frame(svg,X,Y,o);
+    svg.appendChild(sv('rect',{x:X(-P.h),y:o.y0,width:X(P.h)-X(-P.h),height:o.y1-o.y0,fill:'var(--accent-soft)'}));
+    svg.appendChild(sv('line',{x1:X(0),y1:o.y0,x2:X(0),y2:o.y1,stroke:'var(--ink)','stroke-dasharray':'4 4'}));
+    bm.forEach(function(b){if(isFinite(b[1]))svg.appendChild(sv('circle',{cx:X(b[0]),cy:Y(b[1]),r:3,fill:'var(--chart-a)'}));});
+    var est='Too few points in the window. Widen the bandwidth.';
+    if(fl&&fr){svg.appendChild(sv('line',{x1:X(-P.h),y1:Y(fl.a-fl.b*P.h),x2:X(0),y2:Y(fl.a),stroke:'var(--chart-b)','stroke-width':3}));
+      svg.appendChild(sv('line',{x1:X(0),y1:Y(fr.a),x2:X(P.h),y2:Y(fr.a+fr.b*P.h),stroke:'var(--chart-b)','stroke-width':3}));
+      var dk=fr.b-fl.b,se=Math.sqrt(fr.rseB*fr.rseB+fl.rseB*fl.rseB),eff=dk/-0.2,see=se/0.2;
+      est='Slope left '+f(fl.b,4)+', right '+f(fr.b,4)+' → change <b>'+f(dk,4)+'</b> hours per € of income · effect = change ÷ (−0.20) = <b>'+f(eff,3)+'</b> hours per € of subsidy (95 % CI '+f(eff-1.96*see,3)+' to '+f(eff+1.96*see,3)+') · truth '+f(P.tau,2)+' · '+L.x.length.toLocaleString()+' + '+R.x.length.toLocaleString()+' points used';}
+    svg.setAttribute('aria-label','Binned hours worked against income around a subsidy kink, with straight-line fits on each side within the bandwidth.');
+    out.innerHTML=est;
+  }
+  $('[data-act="new"]',root).addEventListener('click',function(){seed=(seed*16807)>>>0||9;draw(P);});
+})();
+
+/* ---------- Lecture 8: doubly robust DiD ---------- */
+(function(){var root=$('[data-demo="dr"]');if(!root)return;var svg=$('svg',root),out=$('[data-out]',root);
+  function solve(A,b){var n=b.length,M=A.map(function(r,i){return r.concat([b[i]]);});for(var c=0;c<n;c++){var p=c;for(var r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;var t=M[c];M[c]=M[p];M[p]=t;if(Math.abs(M[c][c])<1e-12)return null;for(var r2=0;r2<n;r2++){if(r2===c)continue;var fct=M[r2][c]/M[c][c];for(var k=c;k<=n;k++)M[r2][k]-=fct*M[c][k];}}return M.map(function(r,i){return r[n]/r[i];});}
+  function lsq(F,y,idx){var k=F[0].length,A=[],b=[],i,j,l;for(i=0;i<k;i++){A.push(new Array(k).fill(0));b.push(0);}idx.forEach(function(r){for(j=0;j<k;j++){b[j]+=F[r][j]*y[r];for(l=0;l<k;l++)A[j][l]+=F[r][j]*F[r][l];}});return solve(A,b);}
+  function logit(F,d){var k=F[0].length,beta=new Array(k).fill(0);for(var it=0;it<30;it++){var A=[],g=new Array(k).fill(0);for(var i=0;i<k;i++)A.push(new Array(k).fill(0));
+      for(var r=0;r<F.length;r++){var z=0;for(var j=0;j<k;j++)z+=F[r][j]*beta[j];var p=1/(1+Math.exp(-z)),w=p*(1-p);for(j=0;j<k;j++){g[j]+=F[r][j]*(d[r]-p);for(var l=0;l<k;l++)A[j][l]+=w*F[r][j]*F[r][l];}}
+      var step=solve(A,g);if(!step)break;var mx=0;for(j=0;j<k;j++){beta[j]+=step[j];mx=Math.max(mx,Math.abs(step[j]));}if(mx<1e-8)break;}
+    return F.map(function(row){var z=0;for(var j=0;j<k;j++)z+=row[j]*beta[j];return 1/(1+Math.exp(-z));});}
+  function one(r,P){var n=800,x=[],d=[],dy=[],F2=[],F1=[],c=[],t=[];
+    for(var i=0;i<n;i++){var xi=gauss(r),e=1/(1+Math.exp(-(-1+0.7*xi+0.6*xi*xi))),di=r()<e?1:0;x.push(xi);d.push(di);dy.push(1+0.5*xi+0.8*xi*xi+2*di+gauss(r));F2.push([1,xi,xi*xi]);F1.push([1,xi]);(di?t:c).push(i);}
+    var Ft=P.tr?F2:F1,Fp=P.wr?F2:F1;var bt=lsq(Ft,dy,c);if(!bt)return null;var m=Ft.map(function(row){return row.reduce(function(s,v,j){return s+v*bt[j];},0);});
+    var e2=logit(Fp,d);var mT=function(arr){return mean(t.map(function(i){return arr[i];}));};
+    var wsum=0,wy=0,wr=0;c.forEach(function(i){var w=e2[i]/(1-e2[i]);wsum+=w;wy+=w*dy[i];wr+=w*(dy[i]-m[i]);});
+    var naive=mT(dy)-mean(c.map(function(i){return dy[i];}));
+    var orr=mean(t.map(function(i){return dy[i]-m[i];}));
+    var ipw=mT(dy)-wy/wsum;
+    var dr=orr-wr/wsum;
+    return[naive,orr,ipw,dr];}
+  function run(){var P={tr:$('[data-k="tr"]',root).checked,wr:$('[data-k="wr"]',root).checked};var r=rng(2026),S=[[],[],[],[]];
+    for(var k=0;k<120;k++){var v=one(r,P);if(v)v.forEach(function(x,j){S[j].push(x);});}
+    var names=['Naive DiD (no adjustment)','Outcome regression only','Reweighting only','Doubly robust'],ms=S.map(mean),sds=S.map(sdev);
+    clear(svg);var o={x0:16,x1:384,y0:18,y1:206};var lo=1,hi=3.4,X=function(v){return o.x0+(v-lo)/(hi-lo)*(o.x1-o.x0);};
+    [1,1.5,2,2.5,3].forEach(function(v){svg.appendChild(sv('line',{x1:X(v),y1:o.y0,x2:X(v),y2:o.y1,stroke:'var(--line)'}));svg.appendChild(sv('text',{x:X(v),y:o.y1+14,'text-anchor':'middle'},f(v,1)));});
+    svg.appendChild(sv('line',{x1:X(2),y1:o.y0-4,x2:X(2),y2:o.y1,stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'4 3'}));svg.appendChild(sv('text',{x:X(2)+4,y:o.y0-4},'truth = 2'));
+    names.forEach(function(nm,j){var y=o.y0+36+j*46,ok=Math.abs(ms[j]-2)<0.15;svg.appendChild(sv('text',{x:o.x0,y:y-13,class:'ink'},nm));
+      svg.appendChild(sv('line',{x1:X(Math.max(lo,ms[j]-sds[j])),y1:y,x2:X(Math.min(hi,ms[j]+sds[j])),y2:y,stroke:ok?'var(--good)':'var(--warn)','stroke-width':2}));
+      svg.appendChild(sv('circle',{cx:X(Math.min(hi,Math.max(lo,ms[j]))),cy:y,r:6,fill:ok?'var(--good)':'var(--warn)'}));
+      var pr=X(Math.min(hi,ms[j]+sds[j])),pl=X(Math.max(lo,ms[j]-sds[j]));var right=pr<320;svg.appendChild(sv('text',{x:right?pr+6:pl-6,y:y+4,'text-anchor':right?'start':'end',class:'ink'},f(ms[j],2)+(ok?' ✓':' ✗')));});
+    svg.setAttribute('aria-label','Average estimates over 120 samples: naive '+f(ms[0],2)+', outcome regression '+f(ms[1],2)+', reweighting '+f(ms[2],2)+', doubly robust '+f(ms[3],2)+'; truth 2.');
+    out.innerHTML='Trend model '+(P.tr?'<b>right</b>':'<b>wrong</b> (leaves out X²)')+' · weights '+(P.wr?'<b>right</b>':'<b>wrong</b> (leave out X²)')+' · averages over 120 samples of 800 (lines: ± 1 SD). '+(P.tr||P.wr?'At least one model is right, so the doubly robust estimate lands on the truth.':'Both models are wrong: now even the doubly robust estimate misses.');}
+  $$('[data-k]',root).forEach(function(i){i.addEventListener('change',run);});
+  var started=false;function maybe(){if(!started&&!$('#l8').hidden){started=true;run();}}
+  window.addEventListener('popstate',maybe);document.addEventListener('click',function(){setTimeout(maybe,50);});
+  setTimeout(maybe,100);
+})();
+
 /* ================= final test ================= */
 (function(){
 var page=$('#final');if(!page)return;
 var form=$('#ft-form'),res=$('#ft-results'),cnt=$('#ft-count'),sub=$('#ft-submit'),warn=$('#ft-warn'),intro=$('#ft-intro');
-var LNAME={l1:'Lecture 1 · Regression',l2:'Lecture 2 · Maximum likelihood',l3:'Lecture 3 · Bootstrap',l4:'Lecture 4 · Causality',l5:'Lecture 5 · Instrumental variables',l6:'Lecture 6 · Regression discontinuity',l7:'Lecture 7 · Difference-in-differences',design:'Research design (choosing a method)'};
-var TOPICS=['l1','l2','l3','l4','l5','l6','l7','design'];
+var LNAME={l1:'Lecture 1 · Regression',l2:'Lecture 2 · Maximum likelihood',l3:'Lecture 3 · Bootstrap',l4:'Lecture 4 · Causality',l5:'Lecture 5 · Instrumental variables',l8:'Lecture 8 · IV, RDD & DiD extras',l6:'Lecture 6 · Regression discontinuity',l7:'Lecture 7 · Difference-in-differences',design:'Research design (choosing a method)'};
+var TOPICS=['l1','l2','l3','l4','l5','l6','l7','l8','design'];
 function draft(){if(!state.ftDraft)state.ftDraft={start:0,ans:{},round:(state.ftRound||0)};return state.ftDraft;}
 function optOrder(q){return shuffle(q.options.map(function(_,i){return i;}),rng(hashStr(q.id+'#'+(draft().round||0))));}
 function render(){
@@ -4319,7 +4892,7 @@ function showResults(r){
 }
 function renderIntro(){
   var st=LECTS.filter(function(t){return state.studied[t];}).length,h2=state.ftHist||[];
-  var msg=st<7?'<p>You have ticked <strong>'+st+' of 7</strong> lectures as studied. The test is most useful at the end, but it can be taken any time; unfinished lectures will simply show up in the study plan.</p>':'<p>All seven lectures are ticked as studied. Good moment for the final test.</p>';
+  var msg=st<LECTS.length?'<p>You have ticked <strong>'+st+' of '+LECTS.length+'</strong> lectures as studied. The test is most useful at the end, but it can be taken any time; unfinished lectures will simply show up in the study plan.</p>':'<p>All '+LECTS.length+' lectures are ticked as studied. Good moment for the final test.</p>';
   msg+='<ul class="small"><li>Answer everything you can; a guess is fine, and a blank counts as not yet known.</li><li>Nothing is marked until you submit, and you can change answers until then. Your answers are kept if you leave this page.</li><li>Afterwards: a score per lecture, feedback on every answer, and a study plan that links to the exact sections to revisit.</li></ul>';
   if(h2.length)msg+='<p class="small muted">Previous attempts: '+h2.slice(-5).map(function(a){return a.score+'/'+a.n+' ('+new Date(a.at).toLocaleDateString(undefined,{day:'numeric',month:'short'})+')';}).join(' · ')+'</p>';
   intro.innerHTML=msg;

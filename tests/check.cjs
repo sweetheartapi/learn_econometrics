@@ -29,7 +29,7 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
 
   console.log('1. Pages');
   const pages = await page.evaluate(() => [...document.querySelectorAll('[data-page]')].map(p => p.id));
-  ok(pages.length === 12, 'twelve pages (start, basics, 7 lectures, cheat sheet, exam, final test): ' + pages.join(', '));
+  ok(pages.length === 13, 'thirteen pages (start, basics, 8 lectures, cheat sheet, exam, final test): ' + pages.join(', '));
   for (const id of pages) {
     await page.evaluate(id => { location.hash = '#' + id; }, id);
     await page.waitForTimeout(60);
@@ -51,7 +51,8 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
   }
   const N = { 'l1-a2': 0.08 + 0.10 * 0.15, 'l2-a1': 60 / 150, 'l2-a2': 4 / Math.sqrt(100), 'l3-a2': 0.025 * 2000,
     'l4-a1': (80 - 70) - 4, 'l4-a2': ((5 - 3) + (4 - 4) + (2 - 5)) / 3, 'l5-a1': 0.30 / (0.70 - 0.20),
-    'l6-a1': 0.15 / (0.7 - 0.2), 'l7-a1': (75 - 50) - (55 - 40), 'l7-a2': (29 - 22) - (36 - 32) };
+    'l6-a1': 0.15 / (0.7 - 0.2), 'l7-a1': (75 - 50) - (55 - 40), 'l7-a2': (29 - 22) - (36 - 32),
+    'l8-a1': (2000 - 0.25 * 2400 - 0.15 * 1600) / (1 - 0.25 - 0.15), 'l8-a2': -0.004 / (0 - 0.10), 'l8-a3': 0.12 + (65 - 70) * 0.01 };
   for (const q of qb.filter(q => q.type === 'num')) ok(N[q.id] !== undefined && near(N[q.id], q.answer, q.tol || 1e-6), q.id + ' numeric answer recomputed: ' + (N[q.id] && N[q.id].toFixed(4)));
 
   console.log('3. Practice questions accept their correct answers');
@@ -67,7 +68,7 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
     if (q.type !== 'open') ok(/Correct/.test(await card.locator('.verdict').first().innerText()), q.id + ' marked correct');
   }
   const prog = await page.locator('#progress').innerText();
-  ok(/practised 7/.test(prog), 'all seven lectures count as practised: ' + prog.replace(/\s+/g, ' '));
+  ok(/practised 8/.test(prog), 'all eight lectures count as practised: ' + prog.replace(/\s+/g, ' '));
 
   console.log('4. Worked examples in the text');
   const text = await page.evaluate(() => document.body.textContent.replace(/\s+/g, ' '));
@@ -93,9 +94,12 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
   ok(near(5.179 + 11.601, 16.78, 0.001), 'Lab 4: ATT + selection bias = naive difference');
   ok(near(0.332 / 0.768, 0.432, 0.001), 'Lab 5: Wald = reduced form / first stage = 0.432');
   ok(near(-0.949 + -3.975, -4.924), 'Lab 7 distractor: total change in city A = −4.92');
+  ok(near((50 - 0.5 * 55 - 0.3 * 40) / 0.2, 52.5) && has('(50 − 27.5 − 12) / 0.2 = 52.5'), 'Lecture 8: complier mean age 52.5');
+  ok(near(0.17 * 8713 + 0.65 * 10706 + 0.18 * 9437, 10140, 5), 'Lecture 8: vaccination-bonus weighted income ≈ 10,140');
+  ok(near(0.01 / -0.20, -0.05) && near(17 + 2 * -1, 15), 'Lecture 8: kink −0.05 and TED 15 pp examples');
 
   console.log('5. Demos, exam, search');
-  const demos = { l1: '[data-demo=ols] [data-out]', l2: '[data-demo=mle] [data-out]', l3: '#b-origmean', l4: '[data-demo=sel] [data-out]', l5: '[data-demo=iv] [data-out]', l6: '[data-demo=rd] [data-out]', l7: '[data-demo=did] [data-out]' };
+  const demos = { l8: '[data-demo=kink] [data-out]', l1: '[data-demo=ols] [data-out]', l2: '[data-demo=mle] [data-out]', l3: '#b-origmean', l4: '[data-demo=sel] [data-out]', l5: '[data-demo=iv] [data-out]', l6: '[data-demo=rd] [data-out]', l7: '[data-demo=did] [data-out]' };
   for (const [pg, sel] of Object.entries(demos)) { await page.evaluate(pg => { location.hash = '#' + pg; }, pg); await page.waitForTimeout(150); ok((await page.locator(sel).innerText()).length > 10, pg + ' demo shows results'); }
   await page.evaluate(() => { location.hash = '#l7'; });
   await page.locator('[data-demo=did] [data-k=ex]').fill('0.5'); await page.waitForTimeout(100);
@@ -113,8 +117,8 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
   ok(/Results by topic/.test(await page.locator('#ex-results').innerText()), 'exam shows results by topic');
   console.log('5b. Final test');
   const ft = await page.evaluate(() => FT);
-  ok(ft.length === 30, 'final test has 30 questions');
-  const FN = { f1: 0.45 * 4, f6: 3.2, f7: 1 / Math.sqrt(400), f10: 0.8, f13: 3 + (-2), f16: -400 / (0.35 - 0.15), f22: 55.5 - 52.0, f25: (9.5 - 8.0) - (8.5 - 6.0) };
+  ok(ft.length === 33, 'final test has 33 questions');
+  const FN = { f1: 0.45 * 4, f6: 3.2, f7: 1 / Math.sqrt(400), f10: 0.8, f13: 3 + (-2), f16: -400 / (0.35 - 0.15), f22: 55.5 - 52.0, f25: (9.5 - 8.0) - (8.5 - 6.0), f31: (12 - 0.4 * 13 - 0.2 * 10) / (1 - 0.4 - 0.2) };
   for (const q of ft) {
     ok(q.type !== 'mc' || q.options.filter(o => o.ok).length === 1, q.id + ' has one correct option');
     if (q.type === 'num') ok(FN[q.id] !== undefined && near(FN[q.id], q.answer, q.tol), q.id + ' numeric answer recomputed');
@@ -131,10 +135,10 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
     else await fs.locator('input').fill(i < 15 ? String(q.answer) : '999');
   }
   await page.reload(); await page.evaluate(() => { location.hash = '#final'; }); await page.waitForTimeout(150);
-  ok(/30 of 30 answered/.test(await page.locator('#ft-count').innerText()), 'final-test answers survive a page reload');
+  ok(/33 of 33 answered/.test(await page.locator('#ft-count').innerText()), 'final-test answers survive a page reload');
   await page.locator('#ft-submit').click();
   const score = await page.locator('#ft-results .big').innerText();
-  ok(score.trim() === '15 / 30', 'final test scores 15 / 30 for 15 right answers: ' + score);
+  ok(score.trim() === '15 / 33', 'final test scores 15 / 33 for 15 right answers: ' + score);
   const planLinks = await page.locator('#ft-results .plan [data-anchor]').count();
   ok(planLinks >= 15, 'study plan links back to sections (' + planLinks + ' links)');
   await page.locator('#ft-results .plan [data-anchor]').first().click(); await page.waitForTimeout(200);
@@ -144,7 +148,7 @@ function binomTail(n, k) { let s = 0; for (let j = k; j <= n; j++) s += Math.exp
   await page.locator('#ft-retake').click();
   for (const q of ft) { const fs = page.locator('#ftq-' + q.id); if (q.type === 'mc') await fs.locator(`input[value="${q.options.findIndex(o => o.ok)}"]`).check(); else await fs.locator('input').fill(String(q.answer)); }
   await page.locator('#ft-submit').click();
-  ok((await page.locator('#ft-results .big').innerText()).trim() === '30 / 30', 'all right answers score 30 / 30');
+  ok((await page.locator('#ft-results .big').innerText()).trim() === '33 / 33', 'all right answers score 33 / 33');
   ok(/Nothing to fix/.test(await page.locator('#ft-results').innerText()), 'a perfect score gives no study-plan items');
   await page.locator('#search-btn').click(); await page.locator('#s-input').fill('bandwidth');
   ok((await page.locator('.s-hit').count()) >= 3, 'search finds "bandwidth" in several places');
