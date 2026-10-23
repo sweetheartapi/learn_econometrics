@@ -6,7 +6,7 @@ formulas translated into words, and a learning path in every lecture.
 
 Kudos to my professors for allowing me to use their learning materials (doc. Lafférs, dr. Červený, doc. Němec)
 
-**Open it:** https://sweetheartapi.github.io/learn_econometrics/
+**Open it:** https://apiholec.github.io/learn_econometrics/
 
 ## What's inside
 
